@@ -46,80 +46,12 @@
       font-weight: bold;
       color: #333;
     }
-    /* .circle {
-      position: relative;
-      margin: 0 auto;
-      width: 88px;
-      height: 88px;
-    }
-    .percent-circle {
-     position: absolute;
-     height: 100%;
-     background: #4a9bff;
-     overflow: hidden;
-   }
-   .percent-circle-left {
-    left: 0;
-    width: 44px;
-    border-radius: 44px 0 0 44px/44px 0 0 44px;
-  }
-   .left-content {
-    position: absolute;
-    content: '';
-    width: 100%;
-    height: 100%;
-    transform-origin: right center;
-    border-radius: 50px 0 0 50px/50px 0 0 50px;
-    background: #e5edff;
-    /* transform: rotate(90deg); */ /* 角度调节 */
-}
-.percent-circle-right {
-  right: 0;
-  width: 44px;
-  transform-origin: right center;
-  border-radius: 0 44px 44px 0/0 44px 44px 0;
-}
-.right-content {
-  position: absolute;
-  content: '';
-  width: 100%;
-  height: 100%;
-  transform-origin: left center;
-  border-radius: 0 44px 44px 0/0 44px 44px 0;
-  background: #e5edff;
-  /* transform: rotate(180deg); */ /*  角度调节 */
-}
-.c-c-inside {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  width: 60px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #fff;
-  border-radius: 100%;
-  font-size: 25px;
-  color: #4a9bff;
-} */
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Redis 状态</h1>
     <div class="stats">
-      <!-- <div class="circle">
-        <div class="percent-circle percent-circle-left">
-          <div class="left-content" style="transform: rotate({{left_content_degree}}deg);"></div>
-        </div>
-        <div class="percent-circle percent-circle-right">
-          <div class="right-content" style="transform: rotate({{right_content_degree}}deg);"></div>
-        </div>
-        <div class="c-c-inside">
-          {{occupation}}%
-        </div>
-      </div> -->
       <div><span>已运行天数:</span> {{uptime_in_days}} days</div>
       <div><span>当前监听端口:</span> {{tcp_port}}</div>
       <div><span>连接的客户端数量:</span> {{connected_clients}}</div>
@@ -134,6 +66,12 @@
       <div><span>查找数据库键失败的次数:</span> {{keyspace_misses}}</div>
       <div><span>查找数据库键命中率:</span> {{hit_rate}}%</div>
       <div><span>最近一次 fork() 操作耗费的微秒数:</span> {{latest_fork_usec}}</div>
+      <div><span>连接的从节点数量:</span> {{connected_slaves}}</div>
+      <div><span>角色:</span> {{role}}</div>
+      <div><span>总输入字节数:</span> {{total_net_input_bytes}} MB</div>
+      <div><span>总输出字节数:</span> {{total_net_output_bytes}} MB</div>
+      <div><span>被拒绝的连接数:</span> {{rejected_connections}}</div>
+      <div><span>过期的键数:</span> {{expired_keys}}</div>
     </div>
     <div class="db-stats">
       <h2>数据库统计信息</h2>
