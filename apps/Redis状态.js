@@ -93,7 +93,7 @@ export class RedisStatus extends plugin {
   }
 
   generateHtml(stats, hitRate, dbStats, redisConfig) {
-    return fs.readFileSync('plugins/fengye-plugin/resources/html/redis/redis.html', 'utf8')
+    return fs.readFileSync('plugins/memz-plugin/resources/html/redis/redis.html', 'utf8')
       .replace('{{occupation}}', (stats.used_memory_peak / stats.used_memory_rss).toFixed(2))
       .replace('{{uptime_in_days}}', stats.uptime_in_days)
       .replace('{{tcp_port}}', stats.tcp_port || redisConfig.port)
