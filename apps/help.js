@@ -18,7 +18,6 @@ export class setting extends plugin {
                 {
                     reg: /^#?(memz)(帮助|help|菜单)$/i,
                     fnc: 'help',
-                    permission: 'master'
                 }
             ]
         })
