@@ -8,11 +8,11 @@ Yunzai系列Bot插件
 
 ### 安装本体命令
 ```
-    git clone --depth=1 https://gitee.com/memzjs/memz-plugin.git ./plugins/memz-plugin/
+git clone --depth=1 https://gitee.com/memzjs/memz-plugin.git ./plugins/memz-plugin/
 ```
 ### 安装依赖命令
 ```
-    npm install -P #or pnpm install -P
+npm install -P #or pnpm install -P
 ```
 ## 使用
 
