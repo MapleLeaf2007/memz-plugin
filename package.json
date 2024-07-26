@@ -1,0 +1,11 @@
+{
+    "name": "MEMZ-Plugin",
+    "version": "V 1.0.0",
+    "author": "@MEMZ",
+    "type": "module",
+    "dependencies": {
+        "yaml": "^2.2.2",
+        "axios": "^0.24.0",
+        "ioredis": "latest"
+    }
+}
