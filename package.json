@@ -6,6 +6,7 @@
     "dependencies": {
         "yaml": "^2.2.2",
         "axios": "^0.24.0",
-        "ioredis": "latest"
+        "ioredis": "*",
+        "whois-json": "*"
     }
 }
