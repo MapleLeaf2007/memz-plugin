@@ -12,113 +12,48 @@ export const helpCfg = {
 }
 export const helpList = [
     {
-        "group": "占位符",
+        "group": "WebTools",
         "list": [
             {
                 "icon": 80,
-                "title": "#占位符",
-                "desc": "占位符"
+                "title": "#whois+域名",
+                "desc": "查询域名信息"
             },
             {
                 "icon": 63,
-                "title": "#占位符",
-                "desc": "占位符"
+                "title": "#ping+域名",
+                "desc": "Ping域名"
             }
         ]
     },
     {
-        "group": "占位符",
+        "group": "加解码功能",
         "list": [
             {
                 "icon": 67,
-                "title": "占位符",
-                "desc": "占位符"
-            },
-            {
-                "icon": 68,
-                "title": "占位符",
-                "desc": "Unicode编码,解码"
-            },
-            {
-                "icon": 69,
-                "title": "占位符",
-                "desc": "占位符"
-            },
-            {
-                "icon": 70,
-                "title": "占位符",
-                "desc": "占位符"
+                "title": "#url(编码|解码)+内容",
+                "desc": "URL编码,解码"
             }
         ]
     },
     {
-        "group": "占位符",
-        "list": [
-            {
-                "icon": 81,
-                "title": "#占位符",
-                "desc": "占位符"
-            },
-            {
-                "icon": 24,
-                "title": "#占位符",
-                "desc": "占位符！"
-            },
-            {
-                "icon": 25,
-                "title": "#占位符",
-                "desc": "占位符"
-            }
-        ]
-    },
-    {
-        "group": "占位符",
-        "list": [
-            {
-                "icon": 51,
-                "title": "#占位符",
-                "desc": "占位符"
-            }
-        ]
-    },
-    {
-        "group": "占位符",
-        "list": [
-            {
-                "icon": 31,
-                "title": "#占位符",
-                "desc": "占位符"
-            }
-        ]
-    },
-    {
-        "group": "占位符",
-        "list": [
-            {
-                "icon": 41,
-                "title": "#占位符",
-                "desc": "占位符"
-            }
-        ]
-    },
-    {
-        "group": "占位符",
+        "group": "MEMZ管理",
         "list": [
             {
                 "icon": 58,
-                "title": "#占位符",
-                "desc": "占位符"
+                "title": "#MEMZ(强制)更新",
+                "desc": "(强制)更新MEMZ插件"
             },
             {
                 "icon": 50,
-                "title": "#占位符",
-                "desc": "占位符"
+                "title": "#MEMZ更新日志",
+                "desc": "查看MEMZ插件更新日志"
             },
             {
-                "icon": 31,
-                "title": "#占位符",
-                "desc": "占位符"
-            }
+                "icon": 40,
+                "title": "#Redis状态",
+                "desc": "查看Redis状态"
+            },
         ]
     }
 ]
