@@ -22,7 +22,7 @@ export const helpList = [
             {
                 "icon": 63,
                 "title": "#ping+域名",
-                "desc": "Ping域名"
+                "desc": "本地Ping域名"
             }
         ]
     },
