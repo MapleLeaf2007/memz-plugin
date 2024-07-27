@@ -30,9 +30,9 @@ export class UrlPlugin extends plugin {
     let msg = e.msg.match(/^#?url编码\s*(.+)/)[1].trim();
     const encodedMsg = encodeToUrl(msg);
     try {
-      await e.reply(`原始数据: ${msg}\n编码结果: ${encodedMsg}`);
+      await e.reply(`原始数据: ${msg}\n编码结果: ${encodedMsg}`, true);
     } catch (error) {
-      await e.reply(`Error: ${error.message}`);
+      await e.reply(`Error: ${error.message}`, true);
     }
   }
 

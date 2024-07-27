@@ -43,7 +43,7 @@ export class RedisStatus extends plugin {
       const stats = this.parseRedisInfo(info);
 
       const hitRate = this.calculateHitRate(stats);
-      const dbStats = this.getDbStats(stats);
+      const dbStats = this.getDbStats(stats, textMode);
 
       if (textMode) {
         const textResponse = this.generateTextResponse(stats, hitRate, dbStats, redisConfig);
@@ -84,7 +84,7 @@ export class RedisStatus extends plugin {
     return ((keyspaceHits / (keyspaceHits + keyspaceMisses)) * 100).toFixed(2);
   }
 
-  getDbStats(stats) {
+  getDbStats(stats, textMode) {
     return Object.entries(stats)
       .filter(([key]) => key.startsWith('db'))
       .map(([key, value]) => {
@@ -95,7 +95,7 @@ export class RedisStatus extends plugin {
         }, {});
         return `数据库 ${key}: 键数=${dbInfo.keys}, 过期键数=${dbInfo.expires}, 平均TTL=${dbInfo.avg_ttl}`;
       })
-      .join('\n');
+      .join(textMode ? '\n' : '<br>');
   }
 
   generateHtml(stats, hitRate, dbStats, redisConfig) {
@@ -125,7 +125,7 @@ export class RedisStatus extends plugin {
   }
 
   generateTextResponse(stats, hitRate, dbStats, redisConfig) {
-    return `Redis 状态信息:
+    return `---------Redis状态---------
 已运行天数: ${stats.uptime_in_days} days
 当前监听端口: ${stats.tcp_port || redisConfig.port}
 连接的客户端数量: ${stats.connected_clients}
