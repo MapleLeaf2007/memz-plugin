@@ -33,6 +33,26 @@ export const helpList = [
                 "icon": 67,
                 "title": "#url(编码|解码)+内容",
                 "desc": "URL编码,解码"
+            },
+            {
+                "icon": 68,
+                "title": "#ascii(编码|解码)+内容",
+                "desc": "ascii(解|编)码"
+            },
+            {
+                "icon": 69,
+                "title": "#unicode(编码|解码)+内容",
+                "desc": "unicode(解|编)码"
+            },
+        ]
+    },
+    {
+        "group": "Steam功能",
+        "list": [
+            {
+                "icon": 48,
+                "title": "#Steam喜加一",
+                "desc": "查询Steam今日免费游戏"
             }
         ]
     },
