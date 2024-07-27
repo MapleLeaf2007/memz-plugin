@@ -9,6 +9,6 @@
         "ioredis": "*",
         "whois-json": "*",
         "cheerio": "^1.0.0-rc.10",
-        "ping": "^1.0.7"
+        "ping": "^0.4.4"
     }
 }
