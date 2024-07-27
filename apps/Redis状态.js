@@ -121,11 +121,28 @@ export class RedisStatus extends plugin {
       .replace('{{total_net_input_bytes}}', (stats.total_net_input_bytes / 1024 / 1024).toFixed(2))
       .replace('{{total_net_output_bytes}}', (stats.total_net_output_bytes / 1024 / 1024).toFixed(2))
       .replace('{{rejected_connections}}', stats.rejected_connections)
-      .replace('{{expired_keys}}', stats.expired_keys);
+      .replace('{{expired_keys}}', stats.expired_keys)
+      .replace('{{evicted_keys}}', stats.evicted_keys)
+      .replace('{{keyspace_misses}}', stats.keyspace_misses)
+      .replace('{{keyspace_hits}}', stats.keyspace_hits)
+      .replace('{{keyspace_misses}}', stats.keyspace_misses)
+      .replace('{{keyspace_hits}}', stats.keyspace_hits)
+      .replace('{{keyspace_misses}}', stats.keyspace_misses)
+      .replace('{{pubsub_channels}}', stats.pubsub_channels)
+      .replace('{{pubsub_patterns}}', stats.pubsub_patterns)
+      .replace('{{connected_clients}}', stats.connected_clients)
+      .replace('{{blocked_clients}}', stats.blocked_clients)
+      .replace('{{loading}}', stats.loading)
+      .replace('{{rdb_last_bgsave_status}}', stats.rdb_last_bgsave_status)
+      .replace('{{aof_last_write_status}}', stats.aof_last_write_status)
+      .replace('{{role}}', stats.role)
+      .replace('{{sync_full}}', stats.sync_full)
+      .replace('{{sync_partial_ok}}', stats.sync_partial_ok)
+      .replace('{{sync_partial_err}}', stats.sync_partial_err);
   }
 
   generateTextResponse(stats, hitRate, dbStats, redisConfig) {
-    return `---------Redis状态---------
+    return `Redis 状态信息:
 已运行天数: ${stats.uptime_in_days} days
 当前监听端口: ${stats.tcp_port || redisConfig.port}
 连接的客户端数量: ${stats.connected_clients}
@@ -146,6 +163,16 @@ Redis 实例的内存碎片化情况: ${stats.mem_fragmentation_ratio}
 输出网络流量: ${(stats.total_net_output_bytes / 1024 / 1024).toFixed(2)} MB
 被拒绝的连接数量: ${stats.rejected_connections}
 过期的键数量: ${stats.expired_keys}
+被逐出的键数量: ${stats.evicted_keys}
+Pub/Sub 频道数量: ${stats.pubsub_channels}
+Pub/Sub 模式数量: ${stats.pubsub_patterns}
+被阻塞的客户端数量: ${stats.blocked_clients}
+正在加载数据集: ${stats.loading}
+最后一次 RDB 保存状态: ${stats.rdb_last_bgsave_status}
+最后一次 AOF 写入状态: ${stats.aof_last_write_status}
+同步全量传输次数: ${stats.sync_full}
+同步部分传输成功次数: ${stats.sync_partial_ok}
+同步部分传输失败次数: ${stats.sync_partial_err}
 
 数据库统计信息:
 ${dbStats}`;

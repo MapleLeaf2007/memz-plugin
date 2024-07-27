@@ -72,6 +72,16 @@
       <div><span>总输出字节数:</span> {{total_net_output_bytes}} MB</div>
       <div><span>被拒绝的连接数:</span> {{rejected_connections}}</div>
       <div><span>过期的键数:</span> {{expired_keys}}</div>
+      <div><span>被逐出的键数:</span> {{evicted_keys}}</div>
+      <div><span>Pub/Sub 频道数:</span> {{pubsub_channels}}</div>
+      <div><span>Pub/Sub 模式数:</span> {{pubsub_patterns}}</div>
+      <div><span>被阻塞的客户端数:</span> {{blocked_clients}}</div>
+      <div><span>正在加载数据集:</span> {{loading}}</div>
+      <div><span>最后一次 RDB 保存状态:</span> {{rdb_last_bgsave_status}}</div>
+      <div><span>最后一次 AOF 写入状态:</span> {{aof_last_write_status}}</div>
+      <div><span>同步全量传输次数:</span> {{sync_full}}</div>
+      <div><span>同步部分传输成功次数:</span> {{sync_partial_ok}}</div>
+      <div><span>同步部分传输失败次数:</span> {{sync_partial_err}}</div>
     </div>
     <div class="db-stats">
       <h2>数据库统计信息</h2>
