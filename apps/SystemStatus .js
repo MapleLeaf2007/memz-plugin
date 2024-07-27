@@ -29,7 +29,7 @@ export class SystemStatus extends plugin {
         try {
             const stats = this.getSystemStats();
 
-            const message = `--------系统状态--------
+            const message = `----------系统状态----------
 操作系统: ${stats.osType}
 系统架构: ${stats.arch}
 主机名: ${stats.hostname}
@@ -38,9 +38,7 @@ export class SystemStatus extends plugin {
 已用内存: ${stats.usedMem} MB
 系统运行时间: ${stats.uptime} 天
 CPU 数量: ${stats.cpuCount}
-CPU 负载: ${stats.cpuLoad}
-磁盘总量: ${stats.diskTotal}
-磁盘可用量: ${stats.diskFree}`;
+CPU 负载: ${stats.cpuLoad}`;
 
             await e.reply(message);
         } catch (error) {
