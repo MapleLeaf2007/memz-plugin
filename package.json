@@ -8,6 +8,7 @@
         "axios": "^0.24.0",
         "ioredis": "*",
         "whois-json": "*",
-        "cheerio": "^1.0.0-rc.10"
+        "cheerio": "^1.0.0-rc.10",
+        "ping": "^1.0.7"
     }
 }
