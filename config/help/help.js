@@ -51,8 +51,8 @@ export const helpList = [
             },
             {
                 "icon": 40,
-                "title": "#Redis状态",
-                "desc": "查看Redis状态"
+                "title": "#Redis状态(文本)",
+                "desc": "(文本|图片)查看Redis状态"
             },
         ]
     }
