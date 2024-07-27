@@ -1,6 +1,4 @@
 import puppeteer from 'puppeteer';
-import ping from 'ping';
-
 export class WebmasterToolbox extends plugin {
     constructor() {
         super({
@@ -20,10 +18,6 @@ export class WebmasterToolbox extends plugin {
                 {
                     reg: '^#移动端优化检测\\s*(.+)',
                     fnc: 'mobileOptimizationCheck'
-                },
-                {
-                    reg: '^#ping\\s*(.+)',
-                    fnc: 'pingTest'
                 }
             ]
         });
@@ -81,20 +75,6 @@ export class WebmasterToolbox extends plugin {
             const dom = new JSDOM(content);
             const mobileFriendly = dom.window.document.querySelector('meta[name="viewport"]') !== null;
             await this.reply(`移动端优化检测结果: ${mobileFriendly ? '通过' : '不通过'}`);
-        } catch (error) {
-            await this.reply(`错误: ${error.message}`);
-        }
-    }
-
-    async pingTest(e) {
-        let host = e.msg.match(/#ping\s*(.+)/)[1].trim();
-        try {
-            const res = await ping.promise.probe(host, { timeout: 10 });
-            if (res.alive) {
-                await this.reply(`Ping ${host} 成功: ${res.time}ms`);
-            } else {
-                await this.reply(`Ping ${host} 失败`);
-            }
         } catch (error) {
             await this.reply(`错误: ${error.message}`);
         }
