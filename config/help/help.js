@@ -54,6 +54,11 @@ export const helpList = [
                 "title": "#Redis状态(文本)",
                 "desc": "(文本|图片)查看Redis状态"
             },
+            {
+                "icon": 48,
+                "title": "#(memz)系统状态",
+                "desc": "查看系统状态"
+            },
         ]
     }
 ]
