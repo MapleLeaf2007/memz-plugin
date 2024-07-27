@@ -1,6 +1,7 @@
 import whois from 'whois-json';
 import puppeteer from 'puppeteer';
 import fs from 'fs';
+
 const whoisFieldsMap = {
   domainName: '域名',
   roid: '注册号',
@@ -21,7 +22,6 @@ const whoisFieldsMap = {
   expiration_date: '过期日期',
   status: '状态',
   nameservers: 'DNS 服务器',
-  registrant: '注册人信息',
   admin: '管理员信息',
   tech: '技术联系人信息',
   name: '姓名',
@@ -36,34 +36,23 @@ const whoisFieldsMap = {
   email: '电子邮件'
 };
 
-export async function getDetailedWhoisData(domain) {
+async function getDetailedWhoisData(domain) {
   try {
-    const result = await whois(domain, { timeout: 10000 });
-    return result;
+    return await whois(domain, { timeout: 10000 });
   } catch (error) {
     throw new Error(`获取 WHOIS 数据时出错: ${error.message}`);
   }
 }
 
-export function translateWhoisData(data) {
-  const translatedData = {};
-  
-  for (const key in data) {
-    if (whoisFieldsMap[key]) {
-      if (typeof data[key] === 'object' && !Array.isArray(data[key])) {
-        translatedData[whoisFieldsMap[key]] = translateWhoisData(data[key]);
-      } else {
-        translatedData[whoisFieldsMap[key]] = data[key];
-      }
-    } else {
-      translatedData[key] = data[key];
-    }
-  }
-  
-  return translatedData;
+function translateWhoisData(data) {
+  return Object.entries(data).reduce((acc, [key, value]) => {
+    const translatedKey = whoisFieldsMap[key] || key;
+    acc[translatedKey] = typeof value === 'object' && !Array.isArray(value) ? translateWhoisData(value) : value;
+    return acc;
+  }, {});
 }
 
-export class Whois extends plugin {
+class Whois extends plugin {
   constructor() {
     super({
       name: 'Whois',
@@ -80,39 +69,41 @@ export class Whois extends plugin {
   }
 
   async whois(e) {
-    let domain = e.msg.match(/#?whois\s*(.+)/)[1].trim();
-    let whoisdata = '';
+    const domain = e.msg.match(/#?whois\s*(.+)/)[1].trim();
     try {
       const data = await getDetailedWhoisData(domain);
       const translatedData = translateWhoisData(data);
-      for (const key in translatedData) {
-        whoisdata += `${key}: ${translatedData[key]}, <br>`;
-      }
+      const whoisDataHtml = Object.entries(translatedData)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join('<br>');
 
-      let html = fs.readFileSync('plugins/fengye-plugin/resources/html/whois/whois.html', 'utf8')
-        .replace('{{whoisdata}}', whoisdata);
-      
+      const htmlTemplate = fs.readFileSync('plugins/memz-plugin/resources/html/whois/whois.html', 'utf8');
+      const html = htmlTemplate.replace('{{whoisdata}}', whoisDataHtml);
+
       const browser = await puppeteer.launch({
-        headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        headless: true,
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
       });
-      
+
       const page = await browser.newPage();
-      await page.setContent(html);
-      
-      const contentHeight = await page.evaluate(() => {
-        return document.documentElement.scrollHeight;
+
+      // 使用 goto 代替 setContent 加快页面加载
+      await page.goto(`data:text/html;charset=UTF-8,${encodeURIComponent(html)}`, {
+        waitUntil: 'networkidle0'
       });
-      
+
+      // 计算内容高度
+      const contentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
       await page.setViewport({ width: 800, height: contentHeight });
-      
+
       const buffer = await page.screenshot();
       await browser.close();
-      
+
       await this.reply(segment.image(buffer), true);
     } catch (error) {
-      await this.reply(`错误: ${error.message}`, true); // 修正错误处理
+      await this.reply(`错误: ${error.message}`, true);
     }
   }
 }
-    
+
+export { Whois, getDetailedWhoisData, translateWhoisData };
