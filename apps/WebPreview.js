@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+
 const coinList = [
     'dnx', 'kas', 'rvn', 'btc', 'chia', 'clore', 'doge', 'ergo', 'eth', 'nexa', 'neoxa', 'rxd', 'xch', 'meme', 'pepe'
 ];
@@ -20,6 +21,7 @@ const url_list = {
     'meme': "https://www.coincarp.com/zh/currencies/meme-bsc/",
     'pepe': "https://www.coincarp.com/zh/currencies/pepe/"
 };
+
 export class WebPreview extends plugin {
     constructor() {
         super({
@@ -29,7 +31,7 @@ export class WebPreview extends plugin {
             priority: 100,
             rule: [
                 {
-                    reg: `^#?(dnx|kas|rvn|btc|chia|clore|doge|ergo|eth|nexa|neoxa|rxd|xch|meme|pepe)$`,
+                    reg: `^#查询(币|b|B)种(dnx|kas|rvn|btc|chia|clore|doge|ergo|eth|nexa|neoxa|rxd|xch|meme|pepe)$`,
                     fnc: 'preview'
                 },
                 {
@@ -45,23 +47,30 @@ export class WebPreview extends plugin {
     }
 
     async preview(e) {
-        let name = e.msg.replace(/#/g, '').trim();
+        const name = e.msg.replace(/#查询(币|b|B)种/i, '').trim();
         const url = url_list[name];
+        if (!url) return await e.reply('未找到该币种的信息。');
+
         const browser = await puppeteer.launch();
         const page = await browser.newPage();
-        await page.goto(url);
-        await page.setViewport({ width: 1000, height: 1200 });
-        await page.waitForTimeout(5000);
-        const imgBuffer = await page.screenshot();
-        await browser.close();
-        await this.reply(segment.image(imgBuffer));
-    }
 
+        try {
+            await page.goto(url, { waitUntil: 'networkidle2' });
+            await page.setViewport({ width: 1000, height: 1200 });
+            const imgBuffer = await page.screenshot();
+            await this.reply(segment.image(imgBuffer));
+        } catch (error) {
+            await e.reply(`无法获取网页截图: ${error.message}`);
+        } finally {
+            await browser.close();
+        }
+    }
 
     async sendCoinList(e) {
         const replyMessage = '支持的币种列表：\n' + coinList.join('\n');
         await this.reply(replyMessage);
     }
+
     async chajianku(e) {
         await this.reply(chajianku);
     }
