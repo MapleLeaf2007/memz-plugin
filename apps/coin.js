@@ -25,7 +25,7 @@ const url_list = {
 export class WebPreview extends plugin {
     constructor() {
         super({
-            name: '网页预览',
+            name: '虚拟货币查询',
             dsc: '发送#查询币种,返回此币种价格网页截图',
             event: 'message',
             priority: 100,
