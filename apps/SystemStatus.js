@@ -37,22 +37,22 @@ CPU 负载: ${stats.cpuLoad}`;
     }
 
     async getSystemInfo(e) {
-	    if (!e.isMaster) return await e.reply('就凭你也配');
+	    if (!e.isMaster) return await e.reply('你没有权限awa');
 	    try {
 	        await e.reply(this.basicInfo());
         } catch (error) {
-	        await e.reply(`Error fetching system info: ${error.message}`);
+	        await e.reply(`获取系统信息错误: ${error.message}`);
 	    }
     }
 
     async getExtendedSystemInfo(e) {
-        if (!e.isMaster) return await e.reply('就凭你也配');
+        if (!e.isMaster) return await e.reply('你没有权限awa');
         try {
             const additionalInfo = this.getAdditionalSystemInfo();
             const message = this.basicInfo()+'\n'+additionalInfo;
             await e.reply(message);
         } catch (error) {
-            await e.reply(`Error fetching extended system info: ${error.message}`);
+            await e.reply(`获取附加系统信息错误: ${error.message}`);
         }
     }
 
@@ -120,15 +120,15 @@ CPU 负载: ${stats.cpuLoad}`;
             ? this.getWindowsServiceStatus()
             : this.getLinuxServiceStatus();
 
-        return `磁盘总量: ${diskTotal}
-磁盘可用量: ${diskFree}
-磁盘已用量: ${diskUsed}
+        return `磁盘总空间: ${diskTotal}
+磁盘可用空间: ${diskFree}
+磁盘已用空间: ${diskUsed}
 网络接口信息: ${networkInterfaces}
 系统温度: ${systemTemperature}
 今日网络使用情况: ${networkBandwidth}
 文件系统使用情况: ${fileSystemUsage}
 系统负载平均值: ${loadAvg}
-登录用户: ${loggedInUsers}
+已登录用户: ${loggedInUsers}
 服务状态: ${serviceStatus}`;
     }
 
