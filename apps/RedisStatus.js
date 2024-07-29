@@ -11,7 +11,7 @@ export class RedisStatus extends plugin {
       priority: 6,
       rule: [
         {
-          reg: /^#?redis(状态|统计)/i,
+          reg: /^#?redis(状态|统计)(\s*pro)?/i,
           fnc: 'getRedisInfo'
         }
       ]
@@ -21,16 +21,17 @@ export class RedisStatus extends plugin {
   async getRedisInfo(e) {
     if (!e.isMaster) return await e.reply('就凭你也配');
 
-    let qw = e.msg.match(/^#?redis(状态|统计)(\s*文本)?(\s*;?\s*([^;]*);\s*([^;]*);\s*([^;]*))?/i);
+    let qw = e.msg.match(/^#?redis(状态|统计)(\s*pro)?(\s*文本)?(\s*;?\s*([^;]*);\s*([^;]*);\s*([^;]*))?/i);
 
-    const textMode = !!qw[2];
+    const isPro = !!qw[2];
+    const textMode = !!qw[3];
 
     let redisConfig;
-    if (qw && qw[4]) {
+    if (qw && qw[5]) {
       redisConfig = {
-        host: qw[4],
-        port: parseInt(qw[5], 10),
-        password: qw[6] || ''
+        host: qw[5],
+        port: parseInt(qw[6], 10),
+        password: qw[7] || ''
       };
     } else {
       redisConfig = '本体';
@@ -46,10 +47,14 @@ export class RedisStatus extends plugin {
       const dbStats = this.getDbStats(stats, textMode);
 
       if (textMode) {
-        const textResponse = this.generateTextResponse(stats, hitRate, dbStats, redisConfig);
+        const textResponse = isPro
+          ? this.generateProTextResponse(stats, hitRate, dbStats, redisConfig)
+          : this.generateBasicTextResponse(stats, hitRate, dbStats, redisConfig);
         await e.reply(textResponse, true);
       } else {
-        const html = this.generateHtml(stats, hitRate, dbStats, redisConfig);
+        const html = isPro
+          ? this.generateProHtml(stats, hitRate, dbStats, redisConfig)
+          : this.generateBasicHtml(stats, hitRate, dbStats, redisConfig);
         const screenshotBuffer = await this.generateScreenshot(html);
         await this.reply(segment.image(screenshotBuffer), true);
       }
@@ -63,18 +68,14 @@ export class RedisStatus extends plugin {
   }
 
   parseRedisInfo(info) {
-    const lines = info.split('\n');
+    const lines = info.split('\r\n');
     const stats = {};
-
-    lines.forEach(line => {
-      const parts = line.split(':');
-      if (parts.length === 2) {
-        const key = parts[0].trim();
-        const value = parts[1].trim();
+    for (let line of lines) {
+      if (line && line.includes(':')) {
+        const [key, value] = line.split(':');
         stats[key] = value;
       }
-    });
-
+    }
     return stats;
   }
 
@@ -85,66 +86,33 @@ export class RedisStatus extends plugin {
   }
 
   getDbStats(stats, textMode) {
-    return Object.entries(stats)
+    const dbStats = Object.entries(stats)
       .filter(([key]) => key.startsWith('db'))
-      .map(([key, value]) => {
-        const dbInfo = value.split(',').reduce((acc, part) => {
-          const [k, v] = part.split('=');
-          acc[k] = v;
-          return acc;
-        }, {});
-        return `数据库 ${key}: 键数=${dbInfo.keys}, 过期键数=${dbInfo.expires}, 平均TTL=${dbInfo.avg_ttl}`;
-      })
-      .join(textMode ? '\n' : '<br>');
+      .map(([key, value]) => textMode ? `${key}: ${value}` : `<div><span>${key}:</span> ${value}</div>`)
+      .join(textMode ? '\n' : '');
+    return dbStats;
   }
 
-  generateHtml(stats, hitRate, dbStats, redisConfig) {
-    return fs.readFileSync('plugins/memz-plugin/resources/html/redis/redis.html', 'utf8')
-      .replace('{{occupation}}', (stats.used_memory_peak / stats.used_memory_rss).toFixed(2))
-      .replace('{{uptime_in_days}}', stats.uptime_in_days)
-      .replace('{{tcp_port}}', stats.tcp_port || redisConfig.port)
-      .replace('{{connected_clients}}', stats.connected_clients)
-      .replace('{{used_memory_rss}}', (stats.used_memory_rss / 1024 / 1024).toFixed(2))
-      .replace('{{used_memory}}', (stats.used_memory / 1024 / 1024).toFixed(2))
-      .replace('{{used_memory_peak}}', (stats.used_memory_peak / 1024 / 1024).toFixed(2))
-      .replace('{{mem_fragmentation_ratio}}', stats.mem_fragmentation_ratio)
-      .replace('{{total_connections_received}}', stats.total_connections_received)
-      .replace('{{total_commands_processed}}', stats.total_commands_processed)
-      .replace('{{instantaneous_ops_per_sec}}', stats.instantaneous_ops_per_sec)
-      .replace('{{keyspace_hits}}', stats.keyspace_hits)
-      .replace('{{keyspace_misses}}', stats.keyspace_misses)
-      .replace('{{hit_rate}}', hitRate)
-      .replace('{{latest_fork_usec}}', stats.latest_fork_usec)
-      .replace('{{db_stats}}', dbStats)
-      .replace('{{connected_slaves}}', stats.connected_slaves || 'N/A')
-      .replace('{{role}}', stats.role || 'N/A')
-      .replace('{{total_net_input_bytes}}', (stats.total_net_input_bytes / 1024 / 1024).toFixed(2))
-      .replace('{{total_net_output_bytes}}', (stats.total_net_output_bytes / 1024 / 1024).toFixed(2))
-      .replace('{{rejected_connections}}', stats.rejected_connections)
-      .replace('{{expired_keys}}', stats.expired_keys)
-      .replace('{{evicted_keys}}', stats.evicted_keys)
-      .replace('{{keyspace_misses}}', stats.keyspace_misses)
-      .replace('{{keyspace_hits}}', stats.keyspace_hits)
-      .replace('{{keyspace_misses}}', stats.keyspace_misses)
-      .replace('{{keyspace_hits}}', stats.keyspace_hits)
-      .replace('{{keyspace_misses}}', stats.keyspace_misses)
-      .replace('{{pubsub_channels}}', stats.pubsub_channels)
-      .replace('{{pubsub_patterns}}', stats.pubsub_patterns)
-      .replace('{{connected_clients}}', stats.connected_clients)
-      .replace('{{blocked_clients}}', stats.blocked_clients)
-      .replace('{{loading}}', stats.loading)
-      .replace('{{rdb_last_bgsave_status}}', stats.rdb_last_bgsave_status)
-      .replace('{{aof_last_write_status}}', stats.aof_last_write_status)
-      .replace('{{role}}', stats.role)
-      .replace('{{sync_full}}', stats.sync_full)
-      .replace('{{sync_partial_ok}}', stats.sync_partial_ok)
-      .replace('{{sync_partial_err}}', stats.sync_partial_err);
-  }
-
-  generateTextResponse(stats, hitRate, dbStats, redisConfig) {
-    return `Redis 状态信息:
+  generateBasicTextResponse(stats, hitRate, dbStats, redisConfig) {
+    return `
+Redis 实例: ${redisConfig}
 已运行天数: ${stats.uptime_in_days} days
-当前监听端口: ${stats.tcp_port || redisConfig.port}
+当前监听端口: ${stats.tcp_port}
+连接的客户端数量: ${stats.connected_clients}
+向操作系统申请的内存大小: ${(stats.used_memory_rss / 1024 / 1024).toFixed(2)} MB
+当前 Redis 使用的内存大小: ${(stats.used_memory / 1024 / 1024).toFixed(2)} MB
+Redis 的内存消耗峰值: ${(stats.used_memory_peak / 1024 / 1024).toFixed(2)} MB
+Redis 实例的内存碎片化情况: ${stats.mem_fragmentation_ratio}
+查找数据库键命中率: ${hitRate}%
+数据库统计信息:
+${dbStats}`;
+  }
+
+  generateProTextResponse(stats, hitRate, dbStats, redisConfig) {
+    return `
+Redis 实例: ${redisConfig}
+已运行天数: ${stats.uptime_in_days} days
+当前监听端口: ${stats.tcp_port}
 连接的客户端数量: ${stats.connected_clients}
 向操作系统申请的内存大小: ${(stats.used_memory_rss / 1024 / 1024).toFixed(2)} MB
 当前 Redis 使用的内存大小: ${(stats.used_memory / 1024 / 1024).toFixed(2)} MB
@@ -176,6 +144,58 @@ Pub/Sub 模式数量: ${stats.pubsub_patterns}
 
 数据库统计信息:
 ${dbStats}`;
+  }
+
+  generateBasicHtml(stats, hitRate, dbStats, redisConfig) {
+    let htmlTemplate = fs.readFileSync('plugins/memz-plugin/resources/html/redis/redis-basic.html', 'utf-8');
+    htmlTemplate = htmlTemplate.replace('{{uptime_in_days}}', stats.uptime_in_days)
+      .replace('{{tcp_port}}', stats.tcp_port)
+      .replace('{{connected_clients}}', stats.connected_clients)
+      .replace('{{used_memory_rss}}', (stats.used_memory_rss / 1024 / 1024).toFixed(2))
+      .replace('{{used_memory}}', (stats.used_memory / 1024 / 1024).toFixed(2))
+      .replace('{{used_memory_peak}}', (stats.used_memory_peak / 1024 / 1024).toFixed(2))
+      .replace('{{mem_fragmentation_ratio}}', stats.mem_fragmentation_ratio)
+      .replace('{{keyspace_hits}}', stats.keyspace_hits)
+      .replace('{{keyspace_misses}}', stats.keyspace_misses)
+      .replace('{{hit_rate}}', hitRate)
+      .replace('{{db_stats}}', dbStats);
+    return htmlTemplate;
+  }
+
+  generateProHtml(stats, hitRate, dbStats, redisConfig) {
+    let htmlTemplate = fs.readFileSync('plugins/memz-plugin/resources/html/redis/redis-pro.html', 'utf-8');
+    htmlTemplate = htmlTemplate.replace('{{uptime_in_days}}', stats.uptime_in_days)
+      .replace('{{tcp_port}}', stats.tcp_port)
+      .replace('{{connected_clients}}', stats.connected_clients)
+      .replace('{{used_memory_rss}}', (stats.used_memory_rss / 1024 / 1024).toFixed(2))
+      .replace('{{used_memory}}', (stats.used_memory / 1024 / 1024).toFixed(2))
+      .replace('{{used_memory_peak}}', (stats.used_memory_peak / 1024 / 1024).toFixed(2))
+      .replace('{{mem_fragmentation_ratio}}', stats.mem_fragmentation_ratio)
+      .replace('{{total_connections_received}}', stats.total_connections_received)
+      .replace('{{total_commands_processed}}', stats.total_commands_processed)
+      .replace('{{instantaneous_ops_per_sec}}', stats.instantaneous_ops_per_sec)
+      .replace('{{keyspace_hits}}', stats.keyspace_hits)
+      .replace('{{keyspace_misses}}', stats.keyspace_misses)
+      .replace('{{hit_rate}}', hitRate)
+      .replace('{{latest_fork_usec}}', stats.latest_fork_usec)
+      .replace('{{connected_slaves}}', stats.connected_slaves || 'N/A')
+      .replace('{{role}}', stats.role || 'N/A')
+      .replace('{{total_net_input_bytes}}', (stats.total_net_input_bytes / 1024 / 1024).toFixed(2))
+      .replace('{{total_net_output_bytes}}', (stats.total_net_output_bytes / 1024 / 1024).toFixed(2))
+      .replace('{{rejected_connections}}', stats.rejected_connections)
+      .replace('{{expired_keys}}', stats.expired_keys)
+      .replace('{{evicted_keys}}', stats.evicted_keys)
+      .replace('{{pubsub_channels}}', stats.pubsub_channels)
+      .replace('{{pubsub_patterns}}', stats.pubsub_patterns)
+      .replace('{{blocked_clients}}', stats.blocked_clients)
+      .replace('{{loading}}', stats.loading)
+      .replace('{{rdb_last_bgsave_status}}', stats.rdb_last_bgsave_status)
+      .replace('{{aof_last_write_status}}', stats.aof_last_write_status)
+      .replace('{{sync_full}}', stats.sync_full)
+      .replace('{{sync_partial_ok}}', stats.sync_partial_ok)
+      .replace('{{sync_partial_err}}', stats.sync_partial_err)
+      .replace('{{db_stats}}', dbStats);
+    return htmlTemplate;
   }
 
   async generateScreenshot(html) {
