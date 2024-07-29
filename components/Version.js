@@ -13,7 +13,7 @@ const getLine = function (line) {
     return line
 }
 
-const readLogFile = function (root, versionCount = 4) {
+const readLogFile = function (root, versionCount = 5) {
     let logPath = `${root}/CHANGELOG.md`
     let logs = {}
     let changelogs = []
