@@ -71,12 +71,12 @@ export const helpList = [
             },
             {
                 "icon": 40,
-                "title": "#Redis状态(文本)",
+                "title": "#Redis状态(pro)(文本)",
                 "desc": "(文本|图片)查看Redis状态"
             },
             {
                 "icon": 48,
-                "title": "#(memz)系统状态",
+                "title": "#(memz)系统状态(pro)",
                 "desc": "查看系统状态"
             },
         ]
