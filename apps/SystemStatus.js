@@ -20,9 +20,30 @@ export class SystemStatus extends plugin {
             ]
         });
     }
+
+    async getSystemInfo(e) {
+        if (!e.isMaster) return await e.reply('就凭你也配');
+        try {
+            await e.reply(this.basicInfo());
+        } catch (error) {
+            await e.reply(`Error fetching system info: ${error.message}`);
+        }
+    }
+
+    async getExtendedSystemInfo(e) {
+        if (!e.isMaster) return await e.reply('就凭你也配');
+        try {
+            const additionalInfo = this.getAdditionalSystemInfo();
+            const message = this.basicInfo() + '\n' + additionalInfo;
+            await e.reply(message);
+        } catch (error) {
+            await e.reply(`Error fetching extended system info: ${error.message}`);
+        }
+    }
+
     basicInfo() {
         const stats = this.getSystemStats();
-        const message = `--------系统状态--------
+        return `--------系统状态--------
 操作系统: ${stats.osType}
 系统架构: ${stats.arch}
 主机名: ${stats.hostname}
@@ -32,28 +53,6 @@ export class SystemStatus extends plugin {
 系统运行时间: ${stats.uptime} 天
 CPU 数量: ${stats.cpuCount}
 CPU 负载: ${stats.cpuLoad}`;
-
-        return message;
-    }
-
-    async getSystemInfo(e) {
-	    if (!e.isMaster) return await e.reply('就凭你也配');
-	    try {
-	        await e.reply(this.basicInfo());
-        } catch (error) {
-	        await e.reply(`Error fetching system info: ${error.message}`);
-	    }
-    }
-
-    async getExtendedSystemInfo(e) {
-        if (!e.isMaster) return await e.reply('就凭你也配');
-        try {
-            const additionalInfo = this.getAdditionalSystemInfo();
-            const message = this.basicInfo()+'\n'+additionalInfo;
-            await e.reply(message);
-        } catch (error) {
-            await e.reply(`Error fetching extended system info: ${error.message}`);
-        }
     }
 
     getSystemStats() {
@@ -123,7 +122,6 @@ CPU 负载: ${stats.cpuLoad}`;
         return `磁盘总量: ${diskTotal}
 磁盘可用量: ${diskFree}
 磁盘已用量: ${diskUsed}
-网络接口信息: ${networkInterfaces}
 系统温度: ${systemTemperature}
 今日网络使用情况: ${networkBandwidth}
 文件系统使用情况: ${fileSystemUsage}
@@ -174,7 +172,7 @@ CPU 负载: ${stats.cpuLoad}`;
 
     getLinuxDiskInfo(type) {
         try {
-            return '\n'+execSync(`df -h --total | grep total | awk '{print $${this.getDiskColumn(type)}}'`).toString().trim() || 'N/A';
+            return '\n' + execSync(`df -h --total | grep total | awk '{print $${this.getDiskColumn(type)}}'`).toString().trim() || 'N/A';
         } catch {
             return 'N/A';
         }
@@ -204,16 +202,16 @@ CPU 负载: ${stats.cpuLoad}`;
     }
 
     getLinuxNetworkBandwidth() {
-	try {
-	    execSync('apt install vnstat -y || yum install vnstat -y || pacman -S vnstat -y')
+        try {
+            execSync('apt install vnstat -y || yum install vnstat -y || pacman -S vnstat -y');
         } catch {
-	    return '请自行安装vnstat或系统不支持'
-	} const i = execSync("vnstat --oneline | awk -F ';' \'{print $4}\'").toString().trim();
-	const o = execSync("vnstat --oneline | awk -F ';' \'{print $5}\'").toString().trim();
-	const t = execSync("vnstat --oneline | awk -F ';' \'{print $6}\'").toString().trim();
-	return '\nInbound: '+i+'\nOutbound: '+o+'\nTotal: '+t;
+            return '请自行安装vnstat或系统不支持';
+        }
+        const i = execSync("vnstat --oneline | awk -F ';' '{print $4}'").toString().trim();
+        const o = execSync("vnstat --oneline | awk -F ';' '{print $5}'").toString().trim();
+        const t = execSync("vnstat --oneline | awk -F ';' '{print $6}'").toString().trim();
+        return `\nInbound: ${i}\nOutbound: ${o}\nTotal: ${t}`;
     }
-    
 
     getLinuxFileSystemUsage() {
         try {
