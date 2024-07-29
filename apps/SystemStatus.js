@@ -91,10 +91,6 @@ CPU 负载: ${stats.cpuLoad}`;
             ? 'N/A'
             : this.getLinuxDiskInfo('used');
 
-        const networkInterfaces = isWindows
-            ? this.getWindowsNetworkInterfaces()
-            : this.getLinuxNetworkInterfaces();
-
         const systemTemperature = isWindows
             ? 'N/A'
             : this.getLinuxSystemTemperature();
