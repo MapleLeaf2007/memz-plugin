@@ -1,6 +1,6 @@
 {
     "name": "MEMZ-Plugin",
-    "version": "V 1.0.0",
+    "version": "V 1.0.2",
     "author": "@MEMZJS",
     "type": "module",
     "dependencies": {
