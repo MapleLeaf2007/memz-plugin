@@ -86,11 +86,45 @@ export class RedisStatus extends plugin {
   }
 
   getDbStats(stats, textMode) {
-    const dbStats = Object.entries(stats)
-      .filter(([key]) => key.startsWith('db'))
-      .map(([key, value]) => textMode ? `${key}: ${value}` : `<div><span>${key}:</span> ${value}</div>`)
-      .join(textMode ? '\n' : '');
-    return dbStats;
+    const categories = {
+      databaseStats: [],
+      generalStats: [],
+      networkStats: [],
+      replicationStats: [],
+      aofRdbStats: []
+    };
+
+    Object.entries(stats).forEach(([key, value]) => {
+      if (key.startsWith('db')) {
+        categories.databaseStats.push({ key, value });
+      } else if (key.startsWith('total_') || key.startsWith('instantaneous_') || key.startsWith('keyspace_')) {
+        categories.generalStats.push({ key, value });
+      } else if (key.startsWith('total_net_')) {
+        categories.networkStats.push({ key, value });
+      } else if (key.startsWith('connected_slaves') || key.startsWith('role')) {
+        categories.replicationStats.push({ key, value });
+      } else if (key.startsWith('rdb') || key.startsWith('aof') || key.startsWith('sync')) {
+        categories.aofRdbStats.push({ key, value });
+      }
+    });
+
+    return this.formatDbStats(categories, textMode);
+  }
+
+  formatDbStats(categories, textMode) {
+    const formatCategory = (category) => {
+      return category.map(({ key, value }) =>
+        textMode ? `${key}: ${value}` : `<div><span>${key}:</span> ${value}</div>`
+      ).join(textMode ? '\n' : '');
+    };
+
+    return {
+      databaseStats: formatCategory(categories.databaseStats),
+      generalStats: formatCategory(categories.generalStats),
+      networkStats: formatCategory(categories.networkStats),
+      replicationStats: formatCategory(categories.replicationStats),
+      aofRdbStats: formatCategory(categories.aofRdbStats)
+    };
   }
 
   generateBasicTextResponse(stats, hitRate, dbStats, redisConfig) {
@@ -105,7 +139,7 @@ Redis 的内存消耗峰值: ${(stats.used_memory_peak / 1024 / 1024).toFixed(2)
 Redis 实例的内存碎片化情况: ${stats.mem_fragmentation_ratio}
 查找数据库键命中率: ${hitRate}%
 数据库统计信息:
-${dbStats}`;
+${dbStats.databaseStats}`;
   }
 
   generateProTextResponse(stats, hitRate, dbStats, redisConfig) {
@@ -143,7 +177,7 @@ Pub/Sub 模式数量: ${stats.pubsub_patterns}
 同步部分传输失败次数: ${stats.sync_partial_err}
 
 数据库统计信息:
-${dbStats}`;
+${dbStats.databaseStats}`;
   }
 
   generateBasicHtml(stats, hitRate, dbStats, redisConfig) {
@@ -158,7 +192,7 @@ ${dbStats}`;
       .replace('{{keyspace_hits}}', stats.keyspace_hits)
       .replace('{{keyspace_misses}}', stats.keyspace_misses)
       .replace('{{hit_rate}}', hitRate)
-      .replace('{{db_stats}}', dbStats);
+      .replace('{{db_stats}}', dbStats.databaseStats);
     return htmlTemplate;
   }
 
@@ -194,7 +228,7 @@ ${dbStats}`;
       .replace('{{sync_full}}', stats.sync_full)
       .replace('{{sync_partial_ok}}', stats.sync_partial_ok)
       .replace('{{sync_partial_err}}', stats.sync_partial_err)
-      .replace('{{db_stats}}', dbStats);
+      .replace('{{db_stats}}', dbStats.databaseStats);
     return htmlTemplate;
   }
 
