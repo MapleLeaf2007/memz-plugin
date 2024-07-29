@@ -14,7 +14,7 @@ export class Steam extends plugin {
                     fnc: 'steamxi',
                 }
             ]
-        })
+        });
     }
 
     async steamxi(e) {
@@ -26,13 +26,13 @@ export class Steam extends plugin {
         try {
             const response = await fetch(url, { headers });
             if (!response.ok) {
-                this.e.reply(`HTTP错误! 状态码: ${response.status}`);
+                return await e.reply(`HTTP错误! 状态码: ${response.status}`);
             }
             const html = await response.text();
             const $ = cheerio.load(html);
             const tbody = $('tbody');
             const tr = tbody.find('tr');
-            let text = "🎮Steam今日🆓喜加一列表💡" + '\n';
+            let text = "🎮Steam今日🆓喜加一列表💡\n";
 
             tr.each((i, element) => {
                 const td = $(element).find('td');
@@ -43,11 +43,12 @@ export class Steam extends plugin {
                 const time = td.eq(5).text().trim().replace(/\s+/g, ' ');
                 const origin = td.eq(6).find('span').text().trim().replace(/\s+/g, ' ');
 
-                text += `🔢序号：${i + 1}\n🎮游戏名称：${name}\n🌟DLC/game：${gametype}\n⌛️开始时间：${start}\n⌛️结束时间：${end}\n😄是否永久：${time}\n📦平台：${origin}\n`;
+                text += `🔢序号：${i + 1}\n🎮游戏名称：${name}\n🌟DLC/game：${gametype}\n⌛️开始时间：${start}\n⌛️结束时间：${end}\n😄是否永久：${time}\n📦平台：${origin}\n\n`;
             });
-            this.e.reply(text)
+
+            await e.reply(text.trim());
         } catch (error) {
-            this.e.reply('获取或解析数据时出错:', error);
+            await e.reply(`获取或解析数据时出错: ${error.message}`);
         }
     }
 }
