@@ -20,8 +20,7 @@ npm install -P #or pnpm install -P
 
 ## 交流与反馈
 
-[QQ交流群](https://qm.qq.com/q/625YLnMSsg)
-[QQ交流2群(不推荐)](https://qm.qq.com/q/C6MpDYLaVy)
+暂时无了
 
 ## 免责声明
 
