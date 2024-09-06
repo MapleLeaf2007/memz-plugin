@@ -8,7 +8,6 @@
         "axios": "^0.24.0",
         "ioredis": "*",
         "whois-json": "*",
-        "cheerio": "*",
         "systeminformation": "*"
     }
 }
