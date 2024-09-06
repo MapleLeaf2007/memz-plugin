@@ -20,7 +20,7 @@ npm install -P #or pnpm install -P
 
 ## 交流与反馈
 
-暂时无了
+QQ群 423710046
 
 ## 免责声明
 
