@@ -1,5 +1,5 @@
 import os from 'os';
-import { execSync } from 'child_process';
+import { exec } from 'child_process';
 
 export class SystemStatus extends plugin {
     constructor() {
@@ -9,20 +9,14 @@ export class SystemStatus extends plugin {
             event: 'message',
             priority: 6,
             rule: [
-                {
-                    reg: /^#(memz)?(插件)?系统状态pro/i,
-                    fnc: 'getExtendedSystemInfo'
-                },
-                {
-                    reg: /^#(memz)?(插件)?系统状态$/i,
-                    fnc: 'getSystemInfo'
-                }
+                { reg: /^#(memz)?(插件)?系统状态pro/i, fnc: 'getExtendedSystemInfo' },
+                { reg: /^#(memz)?(插件)?系统状态$/i, fnc: 'getSystemInfo' }
             ]
         });
     }
 
     async getSystemInfo(e) {
-        if (!e.isMaster) return await e.reply('就凭你也配');
+        if (!e.isMaster) return await e.reply('就凭你也配', true);
         try {
             await e.reply(this.basicInfo());
         } catch (error) {
@@ -31,10 +25,10 @@ export class SystemStatus extends plugin {
     }
 
     async getExtendedSystemInfo(e) {
-        if (!e.isMaster) return await e.reply('就凭你也配');
+        if (!e.isMaster) return await e.reply('就凭你也配', true);
         try {
-            const additionalInfo = this.getAdditionalSystemInfo();
-            const message = this.basicInfo() + '\n' + additionalInfo;
+            const additionalInfo = await this.getAdditionalSystemInfo();
+            const message = `${this.basicInfo()}\n${additionalInfo}`;
             await e.reply(message);
         } catch (error) {
             await e.reply(`Error fetching extended system info: ${error.message}`);
@@ -43,7 +37,7 @@ export class SystemStatus extends plugin {
 
     basicInfo() {
         const stats = this.getSystemStats();
-        return `--------系统状态--------
+        return `---------系统状态---------
 操作系统: ${stats.osType}
 系统架构: ${stats.arch}
 主机名: ${stats.hostname}
@@ -76,44 +70,17 @@ CPU 负载: ${stats.cpuLoad}`;
         };
     }
 
-    getAdditionalSystemInfo() {
+    async getAdditionalSystemInfo() {
         const isWindows = os.platform() === 'win32';
-
-        const diskTotal = isWindows
-            ? this.getWindowsDiskInfo('size')
-            : this.getLinuxDiskInfo('total');
-
-        const diskFree = isWindows
-            ? this.getWindowsDiskInfo('freespace')
-            : this.getLinuxDiskInfo('free');
-
-        const diskUsed = isWindows
-            ? 'N/A'
-            : this.getLinuxDiskInfo('used');
-
-        const systemTemperature = isWindows
-            ? 'N/A'
-            : this.getLinuxSystemTemperature();
-
-        const networkBandwidth = isWindows
-            ? 'N/A'
-            : this.getLinuxNetworkBandwidth();
-
-        const fileSystemUsage = isWindows
-            ? 'N/A'
-            : this.getLinuxFileSystemUsage();
-
-        const loadAvg = isWindows
-            ? 'N/A'
-            : os.loadavg().map(val => val.toFixed(2)).join(' ');
-
-        const loggedInUsers = isWindows
-            ? this.getWindowsLoggedInUsers()
-            : this.getLinuxLoggedInUsers();
-
-        const serviceStatus = isWindows
-            ? this.getWindowsServiceStatus()
-            : this.getLinuxServiceStatus();
+        const diskTotal = await this.getDiskInfo('total');
+        const diskFree = await this.getDiskInfo('free');
+        const diskUsed = isWindows ? 'N/A' : await this.getDiskInfo('used');
+        const systemTemperature = isWindows ? 'N/A' : await this.getSystemTemperature();
+        const networkBandwidth = isWindows ? 'N/A' : await this.getNetworkBandwidth();
+        const fileSystemUsage = isWindows ? 'N/A' : await this.getFileSystemUsage();
+        const loadAvg = isWindows ? 'N/A' : os.loadavg().map(val => val.toFixed(2)).join(' ');
+        const loggedInUsers = isWindows ? await this.getLoggedInUsers() : await this.getLinuxLoggedInUsers();
+        const serviceStatus = isWindows ? await this.getServiceStatus() : await this.getLinuxServiceStatus();
 
         return `磁盘总量: ${diskTotal}
 磁盘可用量: ${diskFree}
@@ -126,52 +93,10 @@ CPU 负载: ${stats.cpuLoad}`;
 服务状态: ${serviceStatus}`;
     }
 
-    getWindowsDiskInfo(type) {
-        try {
-            return execSync(`wmic logicaldisk get ${type}`).toString().split('\n')[1]?.trim() || 'N/A';
-        } catch {
-            return 'N/A';
-        }
-    }
-
-    getWindowsNetworkInterfaces() {
-        try {
-            return execSync('ipconfig').toString().split('\n').filter(line => line.includes('IPv4')).join('; ');
-        } catch {
-            return 'N/A';
-        }
-    }
-
-    getWindowsLoggedInUsers() {
-        try {
-            return execSync('query user').toString().trim().split('\n').map(line => line.split(' ')[0]).join(', ');
-        } catch {
-            return 'N/A';
-        }
-    }
-
-    getWindowsServiceStatus() {
-        try {
-            const services = ['ssh', 'w3svc'];
-            return services.map(service => {
-                try {
-                    const status = execSync(`sc query ${service} | findstr /R /C:"STATE"`).toString().trim();
-                    return `${service}: ${status}`;
-                } catch {
-                    return `${service}: N/A`;
-                }
-            }).join(', ');
-        } catch {
-            return 'N/A';
-        }
-    }
-
-    getLinuxDiskInfo(type) {
-        try {
-            return '\n' + execSync(`df -h --total | grep total | awk '{print $${this.getDiskColumn(type)}}'`).toString().trim() || 'N/A';
-        } catch {
-            return 'N/A';
-        }
+    async getDiskInfo(type) {
+        const isWindows = os.platform() === 'win32';
+        const command = isWindows ? `wmic logicaldisk get ${type}` : `df -h --total | grep total | awk '{print $${this.getDiskColumn(type)}}'`;
+        return this.executeCommand(command);
     }
 
     getDiskColumn(type) {
@@ -183,60 +108,88 @@ CPU 负载: ${stats.cpuLoad}`;
         }
     }
 
-    getLinuxNetworkInterfaces() {
-        return Object.entries(os.networkInterfaces())
-            .map(([name, infos]) => `${name}: ${infos.map(info => info.address).join(', ')}`)
-            .join('; ');
+    async executeCommand(command) {
+        return new Promise((resolve, reject) => {
+            exec(command, (error, stdout, stderr) => {
+                if (error) {
+                    resolve('N/A');
+                    return;
+                }
+                resolve(stdout.split('\n')[1]?.trim() || 'N/A');
+            });
+        });
     }
 
-    getLinuxSystemTemperature() {
+    async getSystemTemperature() {
         try {
-            return execSync('sensors | grep -E "°C|N/A" | sed "s/[[:space:]]//g"').toString().trim();
-        } catch {
+            const result = await this.executeCommand('sensors | grep -E "°C|N/A" | sed "s/[[:space:]]//g"');
+            return result;
+        } catch (error) {
             return 'N/A';
         }
     }
 
-    getLinuxNetworkBandwidth() {
+    async getNetworkBandwidth() {
         try {
-            execSync('apt install vnstat -y || yum install vnstat -y || pacman -S vnstat -y');
-        } catch {
+            await this.executeCommand('apt install vnstat -y || yum install vnstat -y || pacman -S vnstat -y');
+            const i = await this.executeCommand("vnstat --oneline | awk -F ';' '{print $4}'");
+            const o = await this.executeCommand("vnstat --oneline | awk -F ';' '{print $5}'");
+            const t = await this.executeCommand("vnstat --oneline | awk -F ';' '{print $6}'");
+            return `Inbound: ${i}\nOutbound: ${o}\nTotal: ${t}`;
+        } catch (error) {
             return '请自行安装vnstat或系统不支持';
         }
-        const i = execSync("vnstat --oneline | awk -F ';' '{print $4}'").toString().trim();
-        const o = execSync("vnstat --oneline | awk -F ';' '{print $5}'").toString().trim();
-        const t = execSync("vnstat --oneline | awk -F ';' '{print $6}'").toString().trim();
-        return `\nInbound: ${i}\nOutbound: ${o}\nTotal: ${t}`;
     }
 
-    getLinuxFileSystemUsage() {
+    async getFileSystemUsage() {
         try {
-            return execSync('df -h | awk \'{if (NR!=1) print $1 ": " $5 " used (" $3 " of " $2 ")"}\'').toString().trim();
-        } catch {
+            const result = await this.executeCommand('df -h | awk \'{if (NR!=1) print $1 ": " $5 " used (" $3 " of " $2 ")"}\'');
+            return result;
+        } catch (error) {
             return 'N/A';
         }
     }
 
-    getLinuxLoggedInUsers() {
+    async getLoggedInUsers() {
         try {
-            return execSync('who | awk \'{print $1}\'').toString().trim().split('\n').join(', ');
-        } catch {
+            const result = await this.executeCommand('query user');
+            return result.trim().split('\n').map(line => line.split(' ')[0]).join(', ');
+        } catch (error) {
             return 'N/A';
         }
     }
 
-    getLinuxServiceStatus() {
+    async getServiceStatus() {
+        try {
+            const services = ['ssh', 'w3svc'];
+            const serviceStatus = await Promise.all(services.map(async (service) => {
+                const status = await this.executeCommand(`sc query ${service} | findstr /R /C:"STATE"`);
+                return `${service}: ${status}`;
+            }));
+            return serviceStatus.join(', ');
+        } catch (error) {
+            return 'N/A';
+        }
+    }
+
+    async getLinuxLoggedInUsers() {
+        try {
+            const result = await this.executeCommand('who | awk \'{print $1}\'');
+            return result.trim().split('\n').join(', ');
+        } catch (error) {
+            return 'N/A';
+        }
+    }
+
+    async getLinuxServiceStatus() {
         try {
             const services = ['ssh', 'httpd'];
-            return services.map(service => {
-                try {
-                    const status = execSync(`systemctl is-active ${service}`).toString().trim();
-                    return `${service}: ${status}`;
-                } catch {
-                    return `${service}: N/A`;
-                }
-            }).join(', ');
-        } catch {
+            const serviceStatus = await Promise.all(services.map(async (service) => {
+                const status = await this.executeCommand(`systemctl is-active ${service}`);
+                return `${service}: ${status}`;
+            }));
+            return serviceStatus.join(', ');
+        } catch (error) {
             return 'N/A';
         }
     }
