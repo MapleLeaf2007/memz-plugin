@@ -1,26 +1,47 @@
-import fs from 'node:fs'
-import chalk from 'chalk'
+import fs from 'node:fs';
+import path from 'node:path';
+import chalk from 'chalk';
+import { fileURLToPath, pathToFileURL } from 'url';
 
-const files = fs.readdirSync('./plugins/memz-plugin/apps').filter(file => file.endsWith('.js'))
+// 获取当前模块的目录
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-let ret = []
+const appsDir = path.join(__dirname, 'apps');  // 使用绝对路径
+const files = fs.readdirSync(appsDir).filter(file => file.endsWith('.js'));
 
-logger.info(`\t\n\t${chalk.cyan(`「MEMZ插件载入中···」`)}\t\n\t`);
-files.forEach((file) => {
-    ret.push(import(`./apps/${file}`))
-})
+let ret = [];
 
-ret = await Promise.allSettled(ret)
+logger.info(`\n\t${chalk.cyan('「MEMZ插件载入中···」')}`);
 
-let apps = {}
-for (let i in files) {
-    let name = files[i].replace('.js', '')
+files.forEach(file => {
+    // 将文件路径转换为 file:// URL 格式
+    const filePath = pathToFileURL(path.join(appsDir, file)).href;
+    ret.push(import(filePath));
+});
 
-    if (ret[i].status != 'fulfilled') {
-        logger.error(`MEMZ插件载入错误：${logger.red(name)}`)
-        logger.error(ret[i].reason)
-        continue
+// 等待所有导入操作完成
+ret = await Promise.allSettled(ret);
+
+let apps = {};
+
+files.forEach((file, i) => {
+    const name = path.basename(file, '.js');
+
+    if (ret[i].status !== 'fulfilled') {
+        logger.error(`MEMZ插件载入错误：${chalk.red(name)}`);
+        logger.error(ret[i].reason);
+        return;
     }
-    apps[name] = ret[i].value[Object.keys(ret[i].value)[0]]
-}
-export { apps }
+
+    // 动态获取导入模块的默认导出或其他导出
+    const moduleExports = ret[i].value;
+    const defaultExport = moduleExports?.default || moduleExports[Object.keys(moduleExports)[0]];
+
+    apps[name] = defaultExport;
+
+    // 成功提示
+    logger.info(`MEMZ插件成功载入：${chalk.green(name)}`);
+});
+
+export { apps };
