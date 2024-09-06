@@ -19,7 +19,7 @@ export class RedisStatus extends plugin {
   }
 
   async getRedisInfo(e) {
-    if (!e.isMaster) return await e.reply('就凭你也配');
+    if (!e.isMaster) return await e.reply('就凭你也配?', true);
 
     let qw = e.msg.match(/^#?redis(状态|统计)(\s*pro)?(\s*文本)?(\s*;?\s*([^;]*);\s*([^;]*);\s*([^;]*))?/i);
 
@@ -129,7 +129,7 @@ export class RedisStatus extends plugin {
 
   generateBasicTextResponse(stats, hitRate, dbStats, redisConfig) {
     return `
-Redis 实例: ${redisConfig}
+Redis 实例 -- ${redisConfig}
 已运行天数: ${stats.uptime_in_days} days
 当前监听端口: ${stats.tcp_port}
 连接的客户端数量: ${stats.connected_clients}
