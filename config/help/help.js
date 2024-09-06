@@ -47,16 +47,6 @@ export const helpList = [
         ]
     },
     {
-        "group": "Steam功能",
-        "list": [
-            {
-                "icon": 48,
-                "title": "#Steam喜加一",
-                "desc": "查询Steam今日免费游戏"
-            }
-        ]
-    },
-    {
         "group": "MEMZ管理",
         "list": [
             {
