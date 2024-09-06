@@ -87,7 +87,6 @@ class Whois extends plugin {
 
       const page = await browser.newPage();
 
-      // 使用 goto 代替 setContent 加快页面加载
       await page.goto(`data:text/html;charset=UTF-8,${encodeURIComponent(html)}`, {
         waitUntil: 'networkidle0'
       });

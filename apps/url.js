@@ -30,7 +30,7 @@ export class UrlPlugin extends plugin {
     let msg = e.msg.match(/^#?url编码\s*(.+)/)[1].trim();
     const encodedMsg = encodeToUrl(msg);
     try {
-      await e.reply(`原始数据: ${msg}\n编码结果: ${encodedMsg}`, true);
+      await e.reply(`编码结果: ${encodedMsg}`, true);
     } catch (error) {
       await e.reply(`Error: ${error.message}`, true);
     }
@@ -40,7 +40,7 @@ export class UrlPlugin extends plugin {
     let msg = e.msg.match(/^#?url解码\s*(.+)/)[1].trim();
     const decodedMsg = decodeFromUrl(msg);
     try {
-      await e.reply(`原始数据: ${msg}\n解码结果: ${decodedMsg}`);
+      await e.reply(`解码结果: ${decodedMsg}`);
     } catch (error) {
       await e.reply(`Error: ${error.message}`);
     }
