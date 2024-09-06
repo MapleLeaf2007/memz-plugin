@@ -1,4 +1,4 @@
-import fs from 'node:fs/promises'; // 使用 promises 版本的 fs 模块
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import chalk from 'chalk';
 import { fileURLToPath, pathToFileURL } from 'url';
@@ -17,13 +17,11 @@ let apps = {};
 logger.info(`\t${chalk.cyan('「MEMZ插件载入中···」')}`);
 
 try {
-    // 同时读取文件目录和处理文件路径
     const files = (await fs.readdir(appsDir)).filter(file => file.endsWith('.js'));
 
     const loadModules = files.map(async file => {
         const filePath = pathToFileURL(path.join(appsDir, file)).href;
         try {
-            // 并行加载模块
             const moduleExports = await import(filePath);
             const defaultExport = moduleExports?.default || moduleExports[Object.keys(moduleExports)[0]];
             const name = path.basename(file, '.js');
@@ -38,7 +36,6 @@ try {
         }
     });
 
-    // 等待所有模块加载完成
     await Promise.all(loadModules);
 
 } catch (error) {
