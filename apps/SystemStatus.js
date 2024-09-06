@@ -16,7 +16,7 @@ export class SystemStatus extends plugin {
     }
 
     async getSystemInfo(e) {
-        if (!e.isMaster) return await e.reply('就凭你也配', true);
+        if (!e.isMaster) return await e.reply('就凭你也配?', true);
         try {
             await e.reply(this.basicInfo());
         } catch (error) {
@@ -25,7 +25,7 @@ export class SystemStatus extends plugin {
     }
 
     async getExtendedSystemInfo(e) {
-        if (!e.isMaster) return await e.reply('就凭你也配', true);
+        if (!e.isMaster) return await e.reply('就凭你也配?', true);
         try {
             const additionalInfo = await this.getAdditionalSystemInfo();
             const message = `${this.basicInfo()}\n${additionalInfo}`;
