@@ -6,65 +6,61 @@
   <title>Whois</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #f2f2f2, #e0e0e0);
+      font-family: Number, "汉仪文黑-65W", YS, PingFangSC-Medium, "PingFang SC", sans-serif;
+      background-color: #f7f7f7;
       margin: 0;
       padding: 20px;
       background-image: url('https://api.r10086.com/樱道随机图片api接口.php?图片系列=原神竖屏系列1');
-      background-size: cover;
       background-repeat: no-repeat;
     }
     .container {
       max-width: 600px;
       margin: 0 auto;
-      background: rgba(255, 255, 255, 0.9);
+      background-color: #fff;
       padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     h1 {
-      font-size: 3rem;
+      font-size: 50px;
+      font-family: Number, "印品南征北战NZBZ体", NZBZ, "汉仪文黑-65W", YS, PingFangSC-Medium, "PingFang SC", sans-serif;
       text-align: center;
-      background: linear-gradient(270deg, #001bff, #00f0ff, #fce84a, #f34628, #b275ff, #a50cdd);
+      background-image: linear-gradient(271.14deg);
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      margin: 0;
-      padding: 10px 0;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+      text-shadow: none;
     }
     .stats {
       margin: 20px 0;
     }
     .stats div {
-      margin-bottom: 15px;
-      font-size: 1.1rem;
+      margin-bottom: 10px;
     }
     .stats div span {
       display: inline-block;
-      min-width: 150px;
+      min-width: 200px;
       font-weight: bold;
-      color: #333;
     }
     .footer {
       text-align: center;
       margin-top: 20px;
-      font-size: 0.9rem;
-      color: #777;
+      font-size: 1em;
+      color: #666;
     }
   </style>
 </head>
 <body>
     <div class="container">
-      <h1>Whois 查询</h1>
-      <div class="stats">
-        <div>
-          {{whoisdata}}
-        </div>
+    <h1>Whois 查询</h1>
+    <div class="stats">
+      <div>
+        {{whoisdata}}
       </div>
       <div class="footer">
         Created By Yunzai-Bot & MEMZ-Plugin
       </div>
     </div>
+  </div>
 </body>
 </html>
