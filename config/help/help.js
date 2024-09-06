@@ -20,10 +20,10 @@ export const helpList = [
                 "desc": "查询域名信息"
             },
             {
-                "icon": 63,
-                "title": "#ping+域名",
-                "desc": "本地Ping域名"
-            }
+                "icon": 81,
+                "title": "#摩尔斯(编|解)码",
+                "desc": "摩尔斯(编|解)码,仅支持英文"
+            },
         ]
     },
     {
