@@ -18,12 +18,7 @@ export const helpList = [
                 "icon": 80,
                 "title": "#whois+域名",
                 "desc": "查询域名信息"
-            },
-            {
-                "icon": 81,
-                "title": "#摩尔斯(编|解)码",
-                "desc": "摩尔斯(编|解)码,仅支持英文"
-            },
+            }
         ]
     },
     {
@@ -43,6 +38,11 @@ export const helpList = [
                 "icon": 69,
                 "title": "#unicode(编码|解码)+内容",
                 "desc": "unicode(解|编)码"
+            },
+            {
+                "icon": 81,
+                "title": "#摩尔斯(编|解)码",
+                "desc": "摩尔斯(编|解)码,仅支持英文"
             },
         ]
     },
