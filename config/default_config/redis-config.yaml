@@ -1,0 +1,5 @@
+RedisHost: # Redis地址
+
+RedisPort: # Redis端口
+
+RedisPassword: # Redis密码

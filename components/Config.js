@@ -58,6 +58,33 @@ class Config {
 
         return this.config[key]
     }
+    /**
+     * 获取默认配置和用户配置，并将它们合并为一个新的对象返回。
+     * @param {string} name - 配置名称
+     * @returns {object} - 合并后的配置对象
+     */
+    getDefOrConfig(name) {
+        let def = this.getdefSet(name)
+        let config = this.getConfig(name)
+        return { ...def, ...config }
+    }
+    /**
+     * 根据配置名称获取默认配置。
+     * @param {string} name - 配置名称
+     * @returns {object} - 默认配置对象
+     */
+    getdefSet(name) {
+        return this.getYaml('default_config', name)
+    }
+
+    /**
+    * 根据配置名称获取用户配置。
+    * @param {string} name - 配置名称
+    * @returns {object} - 用户配置对象
+    */
+    getConfig(name) {
+        return this.getYaml('config', name)
+    }
 
     /** 监听配置文件 */
     watch(file, name, type = 'default_config') {
