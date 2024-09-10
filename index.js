@@ -19,24 +19,25 @@ logger.info(`\t${chalk.cyan('「MEMZ插件载入中···」')}`);
 try {
     const files = (await fs.readdir(appsDir)).filter(file => file.endsWith('.js'));
 
-    const loadModules = files.map(async file => {
-        const filePath = pathToFileURL(path.join(appsDir, file)).href;
+    const filePaths = files.map(file => ({
+        name: path.basename(file, '.js'),
+        filePath: pathToFileURL(path.join(appsDir, file)).href
+    }));
+    const loadModules = filePaths.map(async ({ name, filePath }) => {
         try {
             const moduleExports = await import(filePath);
             const defaultExport = moduleExports?.default || moduleExports[Object.keys(moduleExports)[0]];
-            const name = path.basename(file, '.js');
             apps[name] = defaultExport;
             logger.info(`MEMZ插件成功载入：${chalk.green(name)}`);
             successCount++;
         } catch (error) {
-            const name = path.basename(file, '.js');
             logger.error(`MEMZ插件载入错误：${chalk.red(name)}`);
             logger.error(error);
             failureCount++;
         }
     });
 
-    await Promise.all(loadModules);
+    await Promise.allSettled(loadModules);
 
 } catch (error) {
     logger.error(`读取文件时出错：${chalk.red(error.message)}`);
