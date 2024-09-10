@@ -111,7 +111,18 @@ export class RedisStatus extends plugin {
     return this.formatDbStats(categories, textMode);
   }
 
+  /**
+   * 格式化数据库统计信息
+   * @param {Object} categories - 包含不同类别统计信息的对象
+   * @param {boolean} textMode - 是否以纯文本模式输出
+   * @returns {Object} - 返回一个包含格式化后的数据库统计信息的对象
+   */
   formatDbStats(categories, textMode) {
+    /**
+     * 格式化单个类别的统计信息
+     * @param {Array} category - 类别统计信息数组
+     * @returns {string} - 返回格式化后的类别统计信息字符串
+     */
     const formatCategory = (category) => {
       return category.map(({ key, value }) =>
         textMode ? `${key}: ${value}` : `<div><span>${key}:</span> ${value}</div>`
@@ -126,6 +137,7 @@ export class RedisStatus extends plugin {
       aofRdbStats: formatCategory(categories.aofRdbStats)
     };
   }
+
 
   generateBasicTextResponse(stats, hitRate, dbStats, redisConfig) {
     return `Redis 实例 -- ${redisConfig}
@@ -230,7 +242,16 @@ ${dbStats.databaseStats}`;
     return htmlTemplate;
   }
 
+  /**
+   * 生成网页截图
+   * @param {string} html - 要生成截图的 HTML 内容
+   * @returns {Promise<Buffer>} - 返回一个 Promise，包含生成的截图数据的 Buffer
+   */
   async generateScreenshot(html) {
+    /**
+     * 启动 Puppeteer 浏览器实例
+     * @type {import('puppeteer').Browser}
+     */
     const browser = await puppeteer.launch({
       args: [
         '--no-sandbox',
@@ -243,17 +264,24 @@ ${dbStats.databaseStats}`;
     let buffer;
 
     try {
+      // 创建新的页面实例
       const page = await browser.newPage();
+      // 设置页面内容并等待网络空闲
       await page.setContent(html, { waitUntil: 'networkidle0' });
+      // 获取页面内容的高度
       const contentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+      // 设置页面视口大小
       await page.setViewport({ width: 800, height: contentHeight });
+      // 生成截图并将结果保存到 buffer
       buffer = await page.screenshot();
     } catch (error) {
-      throw new Error(`Puppeteer screenshot generation failed: ${error.message}`);
+      throw new Error(`Puppeteer 截图生成失败：${error.message}`);
     } finally {
+      // 关闭浏览器实例
       await browser.close();
     }
 
     return buffer;
   }
+
 }

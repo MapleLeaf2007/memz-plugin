@@ -49,26 +49,46 @@ CPU 数量: ${stats.cpuCount}
 CPU 负载: ${stats.cpuLoad}`;
     }
 
+    /**
+     * 获取系统统计信息
+     * @returns {Object} - 返回包含系统统计信息的对象
+     */
     getSystemStats() {
+        // 获取总内存大小（以MB为单位）
         const totalMem = (os.totalmem() / 1024 / 1024).toFixed(2);
+        // 获取可用内存大小（以MB为单位）
         const freeMem = (os.freemem() / 1024 / 1024).toFixed(2);
+        // 计算已使用内存大小（以MB为单位）
         const usedMem = (totalMem - freeMem).toFixed(2);
+        // 获取系统运行时间（以天为单位）
         const uptime = (os.uptime() / 86400).toFixed(2);
+        // 获取当前 CPU 负载
         const cpuLoad = os.loadavg()[0].toFixed(2);
+        // 获取 CPU 信息
         const cpus = os.cpus();
 
         return {
+            // 操作系统类型
             osType: os.type(),
+            // 操作系统架构
             arch: os.arch(),
+            // 主机名
             hostname: os.hostname(),
+            // 总内存大小
             totalMem,
+            // 可用内存大小
             freeMem,
+            // 已使用内存大小
             usedMem,
+            // 系统运行时间
             uptime,
+            // CPU 核心数
             cpuCount: cpus.length,
+            // 当前 CPU 负载
             cpuLoad
         };
     }
+
 
     async getAdditionalSystemInfo() {
         const isWindows = os.platform() === 'win32';
@@ -93,21 +113,58 @@ CPU 负载: ${stats.cpuLoad}`;
 服务状态: ${serviceStatus}`;
     }
 
+    /**
+ * 获取磁盘信息
+ * @param {string} type - 磁盘类型
+ * @returns {Promise<string>} - 返回一个 Promise，包含磁盘信息的字符串
+ */
     async getDiskInfo(type) {
+        /**
+         * 判断操作系统是否为 Windows
+         * @type {boolean}
+         */
         const isWindows = os.platform() === 'win32';
-        const command = isWindows ? `wmic logicaldisk get ${type}` : `df -h --total | grep total | awk '{print $${this.getDiskColumn(type)}}'`;
+
+        /**
+         * 构建命令字符串
+         * @type {string}
+         */
+        const command = isWindows
+            ? `wmic logicaldisk get ${type}`
+            : `df -h --total | grep total | awk '{print $${this.getDiskColumn(type)}}'`;
+
+        /**
+         * 执行命令并返回结果
+         * @type {Promise<string>}
+         */
         return this.executeCommand(command);
     }
 
+
+    /**
+     * 根据磁盘类型获取对应的列索引
+     * @param {string} type - 磁盘类型
+     * @returns {number} - 返回对应的列索引
+     */
     getDiskColumn(type) {
         switch (type) {
-            case 'total': return 2;
-            case 'free': return 4;
-            case 'used': return 3;
-            default: return 2;
+            case 'total':
+                return 2;
+            case 'free':
+                return 4;
+            case 'used':
+                return 3;
+            default:
+                return 2;
         }
     }
 
+
+    /**
+     * 执行命令并返回结果
+     * @param {string} command - 要执行的命令
+     * @returns {Promise<string>} - 返回一个 Promise，包含命令执行结果的字符串
+     */
     async executeCommand(command) {
         return new Promise((resolve, reject) => {
             exec(command, (error, stdout, stderr) => {
@@ -119,6 +176,7 @@ CPU 负载: ${stats.cpuLoad}`;
             });
         });
     }
+
 
     async getSystemTemperature() {
         try {

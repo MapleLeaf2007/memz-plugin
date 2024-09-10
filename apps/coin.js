@@ -46,35 +46,91 @@ export class WebPreview extends plugin {
         });
     }
 
+    /**
+     * 预览功能，生成网页截图并回复给用户
+     * @param {Object} e - 事件对象
+     * @returns {Promise<void>} - 返回一个 Promise，表示预览操作的异步结果
+     */
     async preview(e) {
+        /**
+         * 从事件消息中提取要查询的币种名称，并转换为小写
+         * @type {string}
+         */
         const name = e.msg.replace(/#查询(币|b|B)种/i, '').trim().toLowerCase();
-        const url = urlList[name];
-        if (!url) return await e.reply('未找到该币种的信息。');
 
+        /**
+         * 根据币种名称获取对应的 URL
+         * @type {string}
+         */
+        const url = urlList[name];
+
+        // 如果未找到对应的 URL，回复用户未找到该币种的信息
+        if (!url) {
+            return await e.reply('未找到该币种的信息。');
+        }
+
+        /**
+         * 启动 Puppeteer 浏览器实例
+         * @type {import('puppeteer').Browser}
+         */
         const browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
+
+        /**
+         * 创建新的页面实例
+         * @type {import('puppeteer').Page}
+         */
         const page = await browser.newPage();
 
         try {
+            // 访问指定的 URL，并等待页面加载完成
             await page.goto(url, { waitUntil: 'networkidle2' });
+
+            // 设置页面视口大小
             await page.setViewport({ width: 1000, height: 580 });
+
+            // 生成网页截图
             const imgBuffer = await page.screenshot();
+
+            // 将截图回复给用户
             await this.reply(segment.image(imgBuffer));
         } catch (error) {
+            // 发生错误时，回复用户无法获取网页截图
             await e.reply(`无法获取网页截图: ${error.message}`);
         } finally {
+            // 关闭浏览器实例
             await browser.close();
         }
     }
 
+
+    /**
+     * 发送币种列表
+     * @param {Object} e - 事件对象
+     * @returns {Promise<void>} - 返回一个 Promise，表示发送币种列表操作的异步结果
+     */
     async sendCoinList(e) {
+        /**
+         * 构建回复消息
+         * @type {string}
+         */
         const replyMessage = '支持的币种列表：\n' + coinList.join('\n');
+
+        // 发送币种列表回复消息给用户
         await this.reply(replyMessage);
     }
 
+
+    /**
+     * 插件库功能，回复插件库信息
+     * @param {Object} e - 事件对象
+     * @returns {Promise<void>} - 返回一个 Promise，表示插件库功能的异步结果
+     */
     async chajianku(e) {
+        // 回复插件库信息给用户
         await this.reply(chajianku);
     }
+
 }
