@@ -81,6 +81,13 @@ class Whois extends plugin {
     });
   }
 
+  /**
+ * @async
+ * @function whois
+ * @param {Object} e - 事件对象，包含消息信息。
+ * @returns {Promise<void>} - 一个在函数完成时解析的 Promise。
+ * @description 获取给定域名的详细 WHOIS 数据，翻译数据，生成 HTML 报告，对报告进行截图，并作为回复发送。
+ */
   async whois(e) {
     const domain = e.msg.match(/#?whois\s*(.+)/)[1].trim();
     try {
@@ -104,7 +111,6 @@ class Whois extends plugin {
         waitUntil: 'networkidle0'
       });
 
-      // 计算内容高度
       const contentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
       await page.setViewport({ width: 800, height: contentHeight });
 
