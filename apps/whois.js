@@ -36,6 +36,12 @@ const whoisFieldsMap = {
   email: '电子邮件'
 };
 
+/**
+ * 获取详细的 Whois 数据
+ * @param {string} domain - 要查询的域名
+ * @returns {Promise<Object>} - 返回一个 Promise，包含获取到的 Whois 数据对象
+ * @throws {Error} - 如果获取 Whois 数据时出错，将抛出一个错误
+ */
 async function getDetailedWhoisData(domain) {
   try {
     return await whois(domain, { timeout: 10000 });
@@ -44,6 +50,12 @@ async function getDetailedWhoisData(domain) {
   }
 }
 
+
+/**
+ * 将 Whois 数据进行翻译
+ * @param {Object} data - 要翻译的 Whois 数据对象
+ * @returns {Object} - 返回翻译后的 Whois 数据对象
+ */
 function translateWhoisData(data) {
   return Object.entries(data).reduce((acc, [key, value]) => {
     const translatedKey = whoisFieldsMap[key] || key;
@@ -51,6 +63,7 @@ function translateWhoisData(data) {
     return acc;
   }, {});
 }
+
 
 class Whois extends plugin {
   constructor() {
