@@ -1,3 +1,8 @@
+/**
+ * 将字符串编码为 Unicode 格式
+ * @param {string} msg - 要编码的字符串
+ * @returns {string} - 返回编码后的 Unicode 字符串
+ */
 export function encodeToUnicode(msg) {
   return msg.split('').map(char => {
     const code = char.charCodeAt(0).toString(16).padStart(4, '0');
@@ -5,12 +10,24 @@ export function encodeToUnicode(msg) {
   }).join('');
 }
 
+
+/**
+ * 将 Unicode 字符串解码为普通字符串
+ * @param {string} unicodeStr - 要解码的 Unicode 字符串
+ * @returns {string} - 返回解码后的普通字符串
+ */
 export function decodeFromUnicode(unicodeStr) {
   return unicodeStr.replace(/\\u[\dA-Fa-f]{4}/g, match => {
     return String.fromCharCode(parseInt(match.replace('\\u', ''), 16));
   });
 }
 
+
+/**
+ * 将字符串编码为 ASCII 格式
+ * @param {string} msg - 要编码的字符串
+ * @returns {string} - 返回编码后的 ASCII 字符串
+ */
 export function encodeToAscii(msg) {
   return msg.split('').map(char => {
     const code = char.charCodeAt(0);
@@ -18,11 +35,18 @@ export function encodeToAscii(msg) {
   }).join('');
 }
 
+
+/**
+ * 将 ASCII 字符串解码为普通字符串
+ * @param {string} asciiStr - 要解码的 ASCII 字符串
+ * @returns {string} - 返回解码后的普通字符串
+ */
 export function decodeFromAscii(asciiStr) {
   return asciiStr.replace(/\\x[\dA-Fa-f]{2}/g, match => {
     return String.fromCharCode(parseInt(match.replace('\\x', ''), 16));
   });
-} export class Unicode extends plugin {
+}
+export class Unicode extends plugin {
   constructor() {
     super({
       name: 'unicode',

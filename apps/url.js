@@ -1,10 +1,21 @@
+/**
+ * 将字符串编码为 URL 格式
+ * @param {string} msg - 要编码的字符串
+ * @returns {string} - 返回编码后的 URL 字符串
+ */
 export function encodeToUrl(msg) {
   return encodeURIComponent(msg);
 }
 
+/**
+ * 从 URL 字符串中解码
+ * @param {string} urlStr - 要解码的 URL 字符串
+ * @returns {string} - 返回解码后的字符串
+ */
 export function decodeFromUrl(urlStr) {
   return decodeURIComponent(urlStr);
 }
+
 
 export class UrlPlugin extends plugin {
   constructor() {
