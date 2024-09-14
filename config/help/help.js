@@ -48,6 +48,7 @@ export const helpList = [
     },
     {
         "group": "MEMZ管理",
+        "auth": "master",
         "list": [
             {
                 "icon": 58,
