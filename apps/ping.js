@@ -50,7 +50,7 @@ export class PingScreenshot extends plugin {
 
             // 设置页面视口大小
             const viewportHeight = 1000; // 页面总高度
-            await page.setViewport({ width: 1280, height: viewportHeight });
+            await page.setViewport({ width: 1420, height: viewportHeight });
 
             // 获取页面高度，确保可以在不同屏幕尺寸下正常截图
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
@@ -64,7 +64,7 @@ export class PingScreenshot extends plugin {
                 clip: {
                     x: 140,            // 截图区域的 x 坐标 (从左边开始)
                     y: clipTop,      // 截图区域的 y 坐标 (从顶部开始)
-                    width: 1080,     // 截图的宽度
+                    width: 1280,     // 截图的宽度
                     height: clipHeight // 截图的高度
                 }
             });
