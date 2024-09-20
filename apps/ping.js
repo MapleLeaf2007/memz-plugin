@@ -6,7 +6,7 @@ export class PingScreenshot extends plugin {
             name: 'Ping 截图',
             dsc: '发送#ping网站或#tcpping网站, 截图对应页面中间部分',
             event: 'message',
-            priority: 100,
+            priority: 1,
             rule: [
                 {
                     reg: `^#(ping|tcpping)\\s*(\\S+)$`,
@@ -48,8 +48,8 @@ export class PingScreenshot extends plugin {
             await new Promise(resolve => setTimeout(resolve, 10000)); // 等待10秒
 
             // 设置页面视口大小
-            const viewportHeight = 1200; // 页面总高度
-            await page.setViewport({ width: 1280, height: viewportHeight });
+            const viewportHeight = 1800; // 页面总高度
+            await page.setViewport({ width: 1380, height: viewportHeight });
 
             // 获取页面高度，确保可以在不同屏幕尺寸下正常截图
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
