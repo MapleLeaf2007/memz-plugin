@@ -81,7 +81,7 @@ export class Update extends plugin {
     }
 
     async getLog(plugin = 'memz-plugin') {
-        const cm = `cd ./plugins/${plugin}/ && git log -50 --oneline --pretty=format:"%h||[%cd]  %s" --date=format:"%F %T"`;
+        const cm = `cd ./plugins/${plugin}/ && git log -5 --oneline --pretty=format:"%h||[%cd]  %s" --date=format:"%F %T"`;
         let logAll;
         try {
             logAll = execSync(cm, { encoding: 'utf-8' });
