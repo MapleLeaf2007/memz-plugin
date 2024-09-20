@@ -49,22 +49,22 @@ export class PingScreenshot extends plugin {
             await new Promise(resolve => setTimeout(resolve, 10000)); // 等待10秒
 
             // 设置页面视口大小
-            const viewportHeight = 1800; // 页面总高度
+            const viewportHeight = 1000; // 页面总高度
             await page.setViewport({ width: 1280, height: viewportHeight });
 
             // 获取页面高度，确保可以在不同屏幕尺寸下正常截图
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
 
             // 定义你想要截图的中间部分
-            const clipHeight = 900; // 截图的高度
+            const clipHeight = 800; // 截图的高度
             const clipTop = (pageHeight - clipHeight) / 2; // 中间区域的顶部位置
 
             // 截取页面中间部分
             const screenshot = await page.screenshot({
                 clip: {
-                    x: 20,            // 截图区域的 x 坐标 (从左边开始)
+                    x: 200,            // 截图区域的 x 坐标 (从左边开始)
                     y: clipTop,      // 截图区域的 y 坐标 (从顶部开始)
-                    width: 1280,     // 截图的宽度
+                    width: 1080,     // 截图的宽度
                     height: clipHeight // 截图的高度
                 }
             });
