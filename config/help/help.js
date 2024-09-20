@@ -18,7 +18,12 @@ export const helpList = [
                 "icon": 80,
                 "title": "#whois+域名",
                 "desc": "查询域名信息"
-            }
+            },
+            {
+                "icon": 82,
+                "title": "#(tcp)?ping+网站",
+                "desc": "(TCP)Ping网站"
+            },
         ]
     },
     {
