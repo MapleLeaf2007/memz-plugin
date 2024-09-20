@@ -22,6 +22,7 @@ export class PingScreenshot extends plugin {
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
+        e.reply('正在获取网页截图...请稍等......', true);
         const [, type, siteName] = e.msg.match(/^#(ping|tcpping)\s*(\S+)$/i);
         if (!siteName) {
             return await e.reply('我怎么知道你要ping什么网站呢？', true);
