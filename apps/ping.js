@@ -42,7 +42,7 @@ export class PingScreenshot extends plugin {
 
             await new Promise(resolve => setTimeout(resolve, 10000)); // 等待10秒
 
-            await page.setViewport({ width: 1280, height: 800 });
+            await page.setViewport({ width: 1280, height: 1800 });
 
             const screenshot = await page.screenshot();
 
