@@ -56,13 +56,13 @@ export class PingScreenshot extends plugin {
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
 
             // 定义你想要截图的中间部分
-            const clipHeight = 800; // 截图的高度
+            const clipHeight = 1000; // 截图的高度
             const clipTop = (pageHeight - clipHeight) / 2; // 中间区域的顶部位置
 
             // 截取页面中间部分
             const screenshot = await page.screenshot({
                 clip: {
-                    x: 200,            // 截图区域的 x 坐标 (从左边开始)
+                    x: 140,            // 截图区域的 x 坐标 (从左边开始)
                     y: clipTop,      // 截图区域的 y 坐标 (从顶部开始)
                     width: 1080,     // 截图的宽度
                     height: clipHeight // 截图的高度
