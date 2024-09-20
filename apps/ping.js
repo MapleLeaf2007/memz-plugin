@@ -22,6 +22,7 @@ export class PingScreenshot extends plugin {
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
+        e.reply('正在获取Ping结果...请稍等......', true);
         // 提取命令类型 (ping 或 tcpping) 和网站名称
         const [, type, siteName] = e.msg.match(/^#(ping|tcpping)\s*(\S+)$/i);
         if (!siteName) {
@@ -49,13 +50,13 @@ export class PingScreenshot extends plugin {
 
             // 设置页面视口大小
             const viewportHeight = 1800; // 页面总高度
-            await page.setViewport({ width: 1380, height: viewportHeight });
+            await page.setViewport({ width: 1280, height: viewportHeight });
 
             // 获取页面高度，确保可以在不同屏幕尺寸下正常截图
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
 
             // 定义你想要截图的中间部分
-            const clipHeight = 600; // 截图的高度
+            const clipHeight = 800; // 截图的高度
             const clipTop = (pageHeight - clipHeight) / 2; // 中间区域的顶部位置
 
             // 截取页面中间部分
