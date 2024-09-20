@@ -9,7 +9,7 @@ export class PingScreenshot extends plugin {
             priority: 100,
             rule: [
                 {
-                    reg: `^#(ping|tcpping)\\s*(\\S+)$`,
+                    reg: /^#(ping|tcpping)\\s*(\\S+)$/i,
                     fnc: 'handlePing'
                 }
             ]
@@ -22,10 +22,9 @@ export class PingScreenshot extends plugin {
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
-        // 提取命令类型 (ping 或 tcpping) 和网站名称
         const [, type, siteName] = e.msg.match(/^#(ping|tcpping)\s*(\S+)$/i);
         if (!siteName) {
-            return await e.reply('你不输入网站名称，我怎么知道你要干嘛', true);
+            return await e.reply('我怎么知道你要ping什么网站呢？', true);
         }
 
         const url = `https://www.itdog.cn/${type}/${siteName}`;
@@ -40,7 +39,7 @@ export class PingScreenshot extends plugin {
         try {
             await page.goto(url, { waitUntil: 'networkidle2' });
 
-            await page.waitForTimeout(10000); // 等待10秒
+            await new Promise(resolve => setTimeout(resolve, 10000)); // 等待10秒
 
             await page.setViewport({ width: 1280, height: 800 });
 
