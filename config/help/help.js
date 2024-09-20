@@ -21,8 +21,8 @@ export const helpList = [
             },
             {
                 "icon": 82,
-                "title": "#(tcp)?ping+网站",
-                "desc": "(TCP)Ping网站"
+                "title": "#(tc)?ping+网站",
+                "desc": "(TC)Ping网站"
             },
         ]
     },

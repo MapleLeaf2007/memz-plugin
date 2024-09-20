@@ -4,7 +4,7 @@ export class PingScreenshot extends plugin {
     constructor() {
         super({
             name: 'Ping 截图',
-            dsc: '发送#ping网站或#tcpping网站, 截图对应页面中间部分',
+            dsc: '发送#ping网站或#tcping网站, 截图对应页面中间部分',
             event: 'message',
             priority: 1,
             rule: [
@@ -17,13 +17,13 @@ export class PingScreenshot extends plugin {
     }
 
     /**
-     * 处理Ping或TCPing命令
+     * 处理Ping/TCPing命令
      * @param {Object} e - 事件对象
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
         e.reply('正在获取Ping结果...请稍等......', true);
-        const [, type, siteName] = e.msg.match(/^#(ping|tcpping)\s*(\S+)$/i);
+        const [, type, siteName] = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!siteName) {
             return await e.reply('?我怎么知道你要Ping什么玩意', true);
         }
