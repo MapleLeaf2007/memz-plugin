@@ -60,7 +60,7 @@ export class PingScreenshot extends plugin {
                     height: clipHeight // 截图的高度
                 }
             });
-            await this.reply(segment.image(screenshot));
+            await this.reply(segment.image(screenshot), true);
         } catch (error) {
             await e.reply(`无法获取网页截图: ${error.message}`);
         } finally {
