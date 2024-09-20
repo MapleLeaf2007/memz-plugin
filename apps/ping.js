@@ -64,7 +64,7 @@ export class PingScreenshot extends plugin {
                 clip: {
                     x: 140,            // 截图区域的 x 坐标 (从左边开始)
                     y: clipTop,      // 截图区域的 y 坐标 (从顶部开始)
-                    width: 1280,     // 截图的宽度
+                    width: 1180,     // 截图的宽度
                     height: clipHeight // 截图的高度
                 }
             });
