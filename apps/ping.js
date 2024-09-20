@@ -9,7 +9,7 @@ export class PingScreenshot extends plugin {
             priority: 100,
             rule: [
                 {
-                    reg: /^#(ping|tcpping)\\s*(\\S+)$/i,
+                    reg: '^#(ping|tcpping)\\s*(\\S+)$',
                     fnc: 'handlePing'
                 }
             ]
