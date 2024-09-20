@@ -26,7 +26,7 @@ export class PingScreenshot extends plugin {
         // 提取命令类型 (ping 或 tcpping) 和网站名称
         const [, type, siteName] = e.msg.match(/^#(ping|tcpping)\s*(\S+)$/i);
         if (!siteName) {
-            return await e.reply('请输入要查询的网站。');
+            return await e.reply('?我怎么知道你要Ping什么玩意', true);
         }
 
         // 构建相应的 URL
@@ -56,13 +56,13 @@ export class PingScreenshot extends plugin {
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
 
             // 定义你想要截图的中间部分
-            const clipHeight = 800; // 截图的高度
+            const clipHeight = 900; // 截图的高度
             const clipTop = (pageHeight - clipHeight) / 2; // 中间区域的顶部位置
 
             // 截取页面中间部分
             const screenshot = await page.screenshot({
                 clip: {
-                    x: 0,            // 截图区域的 x 坐标 (从左边开始)
+                    x: 20,            // 截图区域的 x 坐标 (从左边开始)
                     y: clipTop,      // 截图区域的 y 坐标 (从顶部开始)
                     width: 1280,     // 截图的宽度
                     height: clipHeight // 截图的高度
