@@ -3,7 +3,6 @@ import puppeteer from 'puppeteer';
 const coinList = [
     'dnx', 'kas', 'rvn', 'btc', 'chia', 'clore', 'doge', 'ergo', 'eth', 'nexa', 'neoxa', 'rxd', 'xch', 'meme', 'pepe'
 ];
-const chajianku = '【Gitee】\nhttps://gitee.com/yhArcadia/Yunzai-Bot-plugins-index\n【Github】\nhttps://github.com/yhArcadia/Yunzai-Bot-plugins-index';
 const urlList = {
     'dnx': "https://www.coincarp.com/zh/currencies/dynex/",
     'kas': "https://www.coincarp.com/zh/currencies/kaspa/",
@@ -37,11 +36,7 @@ export class WebPreview extends plugin {
                 {
                     reg: `^#?(b|B|币)种列表$`,
                     fnc: 'sendCoinList'
-                },
-                {
-                    reg: `^#?(yunzai|Yunzai|云崽|云崽bot|云崽机器人|云仔|云仔bot|云仔机器人)?(插件库|插件索引)$`,
-                    fnc: 'chajianku'
-                },
+                }
             ]
         });
     }
@@ -121,16 +116,4 @@ export class WebPreview extends plugin {
         // 发送币种列表回复消息给用户
         await this.reply(replyMessage);
     }
-
-
-    /**
-     * 插件库功能，回复插件库信息
-     * @param {Object} e - 事件对象
-     * @returns {Promise<void>} - 返回一个 Promise，表示插件库功能的异步结果
-     */
-    async chajianku(e) {
-        // 回复插件库信息给用户
-        await this.reply(chajianku);
-    }
-
 }
