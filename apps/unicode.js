@@ -84,13 +84,23 @@ export class Unicode extends plugin {
     });
   }
 
+  /**
+   * 处理回复的异步函数
+   * @param {Object} e - 事件对象
+   * @param {Object} handler - 处理程序对象
+   * @returns {Promise<void>}
+   */
   async handleReply(e, handler) {
+    // 从事件对象中获取消息并匹配处理程序的正则表达式
     const msg = e.msg.match(handler.reg)[1].trim();
     let result;
     try {
+      // 根据处理程序的isEncode属性选择是否对消息进行编码处理
       result = handler.isEncode ? handler.fn(msg) : handler.fn(msg);
+      // 将结果作为回复消息发送
       await e.reply(`结果:${result}`, true);
     } catch (error) {
+      // 发生错误时，将错误信息作为回复消息发送
       await e.reply(`Error: ${error.message}`);
     }
   }
