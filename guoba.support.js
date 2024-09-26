@@ -18,51 +18,51 @@ export function supportGuoba() {
         },
         configInfo: {
             schemas: [
-                {
-                    component: 'Divider',
-                    label: 'MEMZ设置'
-                },
-                {
-                    field: 'memz.autoupdate',
-                    label: '自动更新',
-                    helpMessage: '启用时默认每天1:20自动更新',
-                    bottomHelpMessage: '是否自动更新',
-                    component: 'Switch',
-                },
-                {
-                    component: 'Divider',
-                    label: 'Redis设置'
-                },
-                {
-                    field: 'redis.RedisHost',
-                    label: 'Redis地址',
-                    bottomHelpMessage: 'Redis地址',
-                    component: 'Input',
-                    required: false,
-                    componentProps: {
-                        placeholder: '请输入Redis地址',
-                    }
-                },
-                {
-                    field: 'redis.RedisPort',
-                    label: 'Redis端口',
-                    bottomHelpMessage: 'Redis端口',
-                    component: 'Input',
-                    required: false,
-                    componentProps: {
-                        placeholder: '请输入Redis端口',
-                    }
-                },
-                {
-                    field: 'redis.RedisPassword',
-                    label: 'Redis密码',
-                    bottomHelpMessage: 'Redis密码',
-                    component: 'Input',
-                    required: false,
-                    componentProps: {
-                        placeholder: '请输入Redis密码',
-                    }
-                },
+                // {
+                //     component: 'Divider',
+                //     label: 'MEMZ设置'
+                // },
+                // {
+                //     field: 'memz.autoupdate',
+                //     label: '自动更新',
+                //     helpMessage: '启用时默认每天1:20自动更新',
+                //     bottomHelpMessage: '是否自动更新',
+                //     component: 'Switch',
+                // },
+                // {
+                //     component: 'Divider',
+                //     label: 'Redis设置'
+                // },
+                // {
+                //     field: 'redis.RedisHost',
+                //     label: 'Redis地址',
+                //     bottomHelpMessage: 'Redis地址',
+                //     component: 'Input',
+                //     required: false,
+                //     componentProps: {
+                //         placeholder: '请输入Redis地址',
+                //     }
+                // },
+                // {
+                //     field: 'redis.RedisPort',
+                //     label: 'Redis端口',
+                //     bottomHelpMessage: 'Redis端口',
+                //     component: 'Input',
+                //     required: false,
+                //     componentProps: {
+                //         placeholder: '请输入Redis端口',
+                //     }
+                // },
+                // {
+                //     field: 'redis.RedisPassword',
+                //     label: 'Redis密码',
+                //     bottomHelpMessage: 'Redis密码',
+                //     component: 'Input',
+                //     required: false,
+                //     componentProps: {
+                //         placeholder: '请输入Redis密码',
+                //     }
+                // },
             ],
             /**
              * 获取配置数据
@@ -70,7 +70,7 @@ export function supportGuoba() {
              */
             getConfigData() {
                 return {
-                    redis: Config.getDefOrConfig('redis-config'),
+                    // redis: Config.getDefOrConfig('redis-config'),
                     memz: Config.getDefOrConfig('memz-config'),
                 }
             },
