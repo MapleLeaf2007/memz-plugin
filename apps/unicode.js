@@ -1,4 +1,5 @@
 import punycode from 'punycode';
+
 process.noDeprecation = true;
 
 /**
@@ -88,7 +89,7 @@ export class Unicode extends plugin {
     let result;
     try {
       result = handler.isEncode ? handler.fn(msg) : handler.fn(msg);
-      await e.reply(`结果: ${result}`);
+      await e.reply(`结果:${result}`, true);
     } catch (error) {
       await e.reply(`Error: ${error.message}`);
     }
