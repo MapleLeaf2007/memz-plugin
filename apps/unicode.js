@@ -1,3 +1,24 @@
+import punycode from 'punycode';
+process.noDeprecation = true;
+
+/**
+ * 将字符串编码为 Punycode 格式
+ * @param {string} msg - 要编码的字符串
+ * @returns {string} - 返回编码后的 Punycode 字符串
+ */
+export function encodeToPunycode(msg) {
+  return `xn--${punycode.encode(msg)}`;
+}
+
+/**
+ * 将 Punycode 字符串解码为普通字符串
+ * @param {string} punycodeStr - 要解码的 Punycode 字符串
+ * @returns {string} - 返回解码后的普通字符串
+ */
+export function decodeFromPunycode(punycodeStr) {
+  return punycode.decode(punycodeStr.replace(/^xn--/, ''));
+}
+
 /**
  * 将字符串编码为 Unicode 格式
  * @param {string} msg - 要编码的字符串
@@ -10,18 +31,16 @@ export function encodeToUnicode(msg) {
   }).join('');
 }
 
-
 /**
  * 将 Unicode 字符串解码为普通字符串
  * @param {string} unicodeStr - 要解码的 Unicode 字符串
  * @returns {string} - 返回解码后的普通字符串
  */
 export function decodeFromUnicode(unicodeStr) {
-  return unicodeStr.replace(/\\u[\dA-Fa-f]{4}/g, match => {
-    return String.fromCharCode(parseInt(match.replace('\\u', ''), 16));
-  });
+  return unicodeStr.replace(/\\u[\dA-Fa-f]{4}/g, match =>
+    String.fromCharCode(parseInt(match.replace('\\u', ''), 16))
+  );
 }
-
 
 /**
  * 将字符串编码为 ASCII 格式
@@ -35,17 +54,17 @@ export function encodeToAscii(msg) {
   }).join('');
 }
 
-
 /**
  * 将 ASCII 字符串解码为普通字符串
  * @param {string} asciiStr - 要解码的 ASCII 字符串
  * @returns {string} - 返回解码后的普通字符串
  */
 export function decodeFromAscii(asciiStr) {
-  return asciiStr.replace(/\\x[\dA-Fa-f]{2}/g, match => {
-    return String.fromCharCode(parseInt(match.replace('\\x', ''), 16));
-  });
+  return asciiStr.replace(/\\x[\dA-Fa-f]{2}/g, match =>
+    String.fromCharCode(parseInt(match.replace('\\x', ''), 16))
+  );
 }
+
 export class Unicode extends plugin {
   constructor() {
     super({
@@ -54,64 +73,48 @@ export class Unicode extends plugin {
       event: 'message',
       priority: 6,
       rule: [
-        {
-          reg: '^#?unicode编码\\s*(.+)',
-          fnc: 'encodeToUnicodeHandler'
-        },
-        {
-          reg: '^#?unicode解码\\s*(.+)',
-          fnc: 'decodeFromUnicodeHandler'
-        },
-        {
-          reg: '^#?ascii编码\\s*(.+)',
-          fnc: 'encodeToAsciiHandler'
-        },
-        {
-          reg: '^#?ascii解码\\s*(.+)',
-          fnc: 'decodeFromAsciiHandler'
-        }
+        { reg: '^#?unicode编码\\s*(.+)', fnc: 'encodeToUnicodeHandler' },
+        { reg: '^#?unicode解码\\s*(.+)', fnc: 'decodeFromUnicodeHandler' },
+        { reg: '^#?ascii编码\\s*(.+)', fnc: 'encodeToAsciiHandler' },
+        { reg: '^#?ascii解码\\s*(.+)', fnc: 'decodeFromAsciiHandler' },
+        { reg: '^#?punycode编码\\s*(.+)', fnc: 'encodeToPunycodeHandler' },
+        { reg: '^#?punycode解码\\s*(.+)', fnc: 'decodeFromPunycodeHandler' },
       ]
     });
   }
 
-  async encodeToUnicodeHandler(e) {
-    let msg = e.msg.match(/#?unicode编码\s*(.+)/)[1].trim();
-    const encodedMsg = encodeToUnicode(msg);
+  async handleReply(e, handler) {
+    const msg = e.msg.match(handler.reg)[1].trim();
+    let result;
     try {
-      await e.reply(`编码结果: ${encodedMsg}`);
+      result = handler.isEncode ? handler.fn(msg) : handler.fn(msg);
+      await e.reply(`结果: ${result}`);
     } catch (error) {
       await e.reply(`Error: ${error.message}`);
     }
+  }
+
+  async encodeToUnicodeHandler(e) {
+    await this.handleReply(e, { reg: /^#?unicode编码\s*(.+)/, fn: encodeToUnicode, isEncode: true });
   }
 
   async decodeFromUnicodeHandler(e) {
-    let msg = e.msg.match(/#?unicode解码\s*(.+)/)[1].trim();
-    const decodedMsg = decodeFromUnicode(msg);
-    try {
-      await e.reply(`解码结果: ${decodedMsg}`);
-    } catch (error) {
-      await e.reply(`Error: ${error.message}`);
-    }
+    await this.handleReply(e, { reg: /^#?unicode解码\s*(.+)/, fn: decodeFromUnicode, isEncode: false });
   }
 
   async encodeToAsciiHandler(e) {
-    let msg = e.msg.match(/#?ascii编码\s*(.+)/)[1].trim();
-    const encodedMsg = encodeToAscii(msg);
-    try {
-      await e.reply(`编码结果: ${encodedMsg}`);
-    } catch (error) {
-      await e.reply(`Error: ${error.message}`);
-    }
+    await this.handleReply(e, { reg: /^#?ascii编码\s*(.+)/, fn: encodeToAscii, isEncode: true });
   }
 
   async decodeFromAsciiHandler(e) {
-    let msg = e.msg.match(/#?ascii解码\s*(.+)/)[1].trim();
-    const decodedMsg = decodeFromAscii(msg);
-    try {
-      await e.reply(`解码结果: ${decodedMsg}`);
-    } catch (error) {
-      await e.reply(`Error: ${error.message}`);
-    }
+    await this.handleReply(e, { reg: /^#?ascii解码\s*(.+)/, fn: decodeFromAscii, isEncode: false });
+  }
+
+  async encodeToPunycodeHandler(e) {
+    await this.handleReply(e, { reg: /^#?punycode编码\s*(.+)/, fn: encodeToPunycode, isEncode: true });
+  }
+
+  async decodeFromPunycodeHandler(e) {
+    await this.handleReply(e, { reg: /^#?punycode解码\s*(.+)/, fn: decodeFromPunycode, isEncode: false });
   }
 }
-

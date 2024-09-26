@@ -45,6 +45,11 @@ export const helpList = [
                 "desc": "unicode(解|编)码"
             },
             {
+                "icon": 70,
+                "title": "#punycode(编码|解码)+内容",
+                "desc": "punycode(解|编)码"
+            },
+            {
                 "icon": 81,
                 "title": "#摩尔斯(编|解)码",
                 "desc": "摩尔斯(编|解)码,仅支持英文"
