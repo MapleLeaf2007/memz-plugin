@@ -9,7 +9,7 @@ export class PingScreenshot extends plugin {
             priority: 1,
             rule: [
                 {
-                    reg: `^#(ping|tcping)\\s*(\\S+)$`,
+                    reg: /^#(ping|tcping|dns)\\s*(\\S+)$/i,
                     fnc: 'handlePing'
                 }
             ]
@@ -17,15 +17,15 @@ export class PingScreenshot extends plugin {
     }
 
     /**
-     * 处理Ping/TCPing命令
+     * 处理Ping/TCPing/dns命令
      * @param {Object} e - 事件对象
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
-        e.reply('正在获取Ping结果...请稍等......', true);
-        const [, type, siteName] = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
+        e.reply('正在获取...请稍等......', true);
+        const [, type, siteName] = e.msg.match(/^#(ping|tcping|dns)\s*(\S+)$/i);
         if (!siteName) {
-            return await e.reply('?我怎么知道你要Ping什么玩意', true);
+            return await e.reply('?我怎么知道你要干嘛', true)
         }
 
         const url = `https://www.itdog.cn/${type}/${siteName}`;
