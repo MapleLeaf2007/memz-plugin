@@ -29,6 +29,7 @@ export class PingScreenshot extends plugin {
         }
 
         const url = `https://www.itdog.cn/${type}/${siteName}`;
+        logger.info(`[MEMZ-Plugin]${type} : ${url}`);
 
         const browser = await puppeteer.launch({
             headless: true,
@@ -40,24 +41,26 @@ export class PingScreenshot extends plugin {
         try {
             await page.goto(url, { waitUntil: 'networkidle2' });
 
-            await new Promise(resolve => setTimeout(resolve, 10000)); // 等待10秒
+            // 点击按钮
+            await page.click('button.btn.btn-primary.ml-3.mb-3');
+
+            // 等待7秒
+            await new Promise(resolve => setTimeout(resolve, 7000));
 
             // 设置页面视口大小
-            const viewportHeight = 1000; // 页面总高度
+            const viewportHeight = 1000;
             await page.setViewport({ width: 1420, height: viewportHeight });
 
-            // 获取页面高度，确保可以在不同屏幕尺寸下正常截图
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
-
-            const clipHeight = 1000; // 截图的高度
-            const clipTop = (pageHeight - clipHeight) / 2; // 中间区域的顶部位置
+            const clipHeight = 1000;
+            const clipTop = (pageHeight - clipHeight) / 2;
 
             const screenshot = await page.screenshot({
                 clip: {
-                    x: 140,            // 截图区域的 x 坐标 (从左边开始)
-                    y: clipTop,      // 截图区域的 y 坐标 (从顶部开始)
-                    width: 1245,     // 截图的宽度
-                    height: clipHeight // 截图的高度
+                    x: 140,
+                    y: clipTop,
+                    width: 1245,
+                    height: clipHeight
                 }
             });
             await this.reply(segment.image(screenshot), true);
@@ -67,4 +70,5 @@ export class PingScreenshot extends plugin {
             await browser.close();
         }
     }
+
 }
