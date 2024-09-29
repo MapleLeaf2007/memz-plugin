@@ -54,7 +54,7 @@ export class ResourceSearchPlugin extends plugin {
                     fnc: 'handleSearch'
                 },
                 {
-                    reg: '^#?资源添加\\s*(\\S+),\\s*(\\S+),\\s*(\\S+)$',
+                    reg: '^#?资源添加\\s*(\\S+)?,\\s*(\\S+)?,\\s*(\\S+)$',
                     fnc: 'handleAddResource'
                 }
             ]
@@ -83,7 +83,7 @@ export class ResourceSearchPlugin extends plugin {
                     ]
                 }));
 
-                const nmsg = await Bot.makeForwardMsg(`---点击查看搜索结果---`, forward);
+                const nmsg = await Bot.makeForwardMsg(forward);
 
                 await e.reply(nmsg);
             } else {
@@ -111,7 +111,7 @@ export class ResourceSearchPlugin extends plugin {
 
         try {
             await addResource(keyword, url, category);
-            await e.reply('资源已成功添加！', true);
+            await e.reply('资源已添加:', { ID: newId, 关键词: keyword, 内容: url, 分类: category }, true);
         } catch (error) {
             await e.reply(`添加资源时发生错误：${error.message}`, true);
         }
