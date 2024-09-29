@@ -4,10 +4,10 @@
     "author": "@MEMZJS",
     "type": "module",
     "dependencies": {
-        "yaml": "^2.2.2",
         "axios": "^0.24.0",
         "ioredis": "*",
+        "systeminformation": "*",
         "whois-json": "*",
-        "systeminformation": "*"
+        "yaml": "^2.2.2"
     }
 }
