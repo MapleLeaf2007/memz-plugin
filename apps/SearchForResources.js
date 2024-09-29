@@ -12,24 +12,27 @@ async function openDatabase() {
 // 添加资源
 async function addResource(keyword, url, category) {
     const db = await openDatabase();
-
-    // 检索是否已存在相同的内容
     const existingResource = await db.get('SELECT * FROM 自定义词库 WHERE 内容 = ?', [url]);
     if (existingResource) {
         console.log('该资源已存在，未添加。');
         await db.close();
-        return;
+        return null;
     }
 
-    // 获取当前最大 ID
     const result = await db.get('SELECT MAX(ID) AS maxId FROM 自定义词库');
     const newId = result.maxId ? result.maxId + 1 : 1;
-
-    // 插入新资源
     await db.run('INSERT INTO 自定义词库 (ID, 关键词, 内容, 分类) VALUES (?, ?, ?, ?)', [newId, keyword, url, category]);
     console.log('资源已添加:', { ID: newId, 关键词: keyword, 内容: url, 分类: category });
-
     await db.close();
+    return { ID: newId, 关键词: keyword, 内容: url, 分类: category };
+}
+
+// 删除资源
+async function deleteResource(id) {
+    const db = await openDatabase();
+    const result = await db.run('DELETE FROM 自定义词库 WHERE ID = ?', [id]);
+    await db.close();
+    return result.changes > 0; // 返回是否删除成功
 }
 
 // 搜索资源
@@ -45,7 +48,7 @@ export class ResourceSearchPlugin extends plugin {
     constructor() {
         super({
             name: '资源搜索',
-            dsc: '根据关键词搜索自定义词库，或添加新资源',
+            dsc: '根据关键词搜索自定义词库，或添加、删除资源',
             event: 'message',
             priority: 1,
             rule: [
@@ -54,20 +57,20 @@ export class ResourceSearchPlugin extends plugin {
                     fnc: 'handleSearch'
                 },
                 {
-                    reg: '^#?资源添加\\s*(\\S+)?,\\s*(\\S+)?,\\s*(\\S+)$',
+                    reg: '^#?资源添加\\s*(\\S+),\\s*(\\S+),\\s*(\\S+)$',
                     fnc: 'handleAddResource'
+                },
+                {
+                    reg: '^#?资源删除\\s*(\\d+)$',
+                    fnc: 'handleDeleteResource'
                 }
             ]
         });
     }
 
-    /**
-     * 处理搜索命令
-     * @param {Object} e - 事件对象
-     */
     async handleSearch(e) {
         const match = e.msg.match(/^#?搜资源\s*(\S+)$/);
-        const keyword = match ? match[1] : null; // 使用正则捕获
+        const keyword = match ? match[1] : null;
 
         if (!keyword) {
             return await e.reply('请输入关键词进行搜索！', true);
@@ -84,7 +87,6 @@ export class ResourceSearchPlugin extends plugin {
                 }));
 
                 const nmsg = await Bot.makeForwardMsg(forward);
-
                 await e.reply(nmsg);
             } else {
                 await e.reply('未找到匹配的结果。', true);
@@ -94,26 +96,53 @@ export class ResourceSearchPlugin extends plugin {
         }
     }
 
-    /**
-     * 处理添加资源命令
-     * @param {Object} e - 事件对象
-     */
     async handleAddResource(e) {
-        if (!(e.user_id == 382879217 || e.user_id == 1011303349)) return e.reply('你没有权限!', true);
-        const match = e.msg.match(/^#?资源添加\s*(\S+)?,\s*(\S+)?,\s*(\S+)$/);
+        if (!(e.isMaster || e.user_id == 382879217 || e.user_id == 1011303349)) {
+            return e.reply('你没有权限!', true);
+        }
+
+        const match = e.msg.match(/^#?资源添加\s*(\S+),\s*(\S+),\s*(\S+)$/);
+        if (!match) {
+            return e.reply('请按照格式输入: \n#资源添加 关键词, 链接, 分类\n注意都是英文逗号', true);
+        }
+
         const keyword = match[1];
         const url = match[2];
         const category = match[3];
 
-        if (!keyword || !url || !category) {
-            return await e.reply('参数不完整，添加失败。请确保格式为：#添加资源关键词,url,分类', true);
-        }
-
         try {
-            await addResource(keyword, url, category);
-            await e.reply('资源已添加:', { ID: newId, 关键词: keyword, 内容: url, 分类: category }, true);
+            const newResource = await addResource(keyword, url, category);
+            if (newResource) {
+                await e.reply(`资源已添加: ID: ${newResource.ID}, 关键词: ${newResource.关键词}, 内容: ${newResource.内容}, 分类: ${newResource.分类}`, true);
+            } else {
+                await e.reply('该资源已存在，未添加。', true);
+            }
         } catch (error) {
             await e.reply(`添加资源时发生错误：${error.message}`, true);
+        }
+    }
+
+    async handleDeleteResource(e) {
+        if (!(e.isMaster || e.user_id == 382879217 || e.user_id == 1011303349)) {
+            return e.reply('你没有权限!', true);
+        }
+
+        const match = e.msg.match(/^#?资源删除\s*(\d+)$/);
+        if (!match) {
+            return e.reply('请按照格式输入: #资源删除 ID', true);
+        }
+
+        const id = match[1];
+
+        try {
+            const deleted = await deleteResource(id);
+            if (deleted) {
+                await e.reply(`资源 ID: ${id} 已成功删除。`, true);
+            } else {
+                await e.reply(`未找到 ID: ${id} 的资源。`, true);
+            }
+        } catch (error) {
+            await e.reply(`删除资源时发生错误：${error.message}`, true);
         }
     }
 }
