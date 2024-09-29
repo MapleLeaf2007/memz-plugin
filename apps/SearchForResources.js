@@ -1,6 +1,5 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
-
 // 数据库
 async function openDatabase() {
     return open({
@@ -8,7 +7,6 @@ async function openDatabase() {
         driver: sqlite3.Database
     });
 }
-
 // 搜索
 async function searchResources(keyword) {
     const db = await openDatabase();
@@ -16,7 +14,6 @@ async function searchResources(keyword) {
     await db.close();
     return results;
 }
-
 // 插件定义
 export class ResourceSearchPlugin extends plugin {
     constructor() {
@@ -33,7 +30,6 @@ export class ResourceSearchPlugin extends plugin {
             ]
         });
     }
-
     /**
      * 处理搜索命令
      * @param {Object} e - 事件对象
@@ -45,7 +41,6 @@ export class ResourceSearchPlugin extends plugin {
         if (!keyword) {
             return await e.reply('请输入关键词进行搜索！', true);
         }
-
         try {
             const results = await searchResources(keyword);
             if (results.length > 0) {
@@ -53,7 +48,7 @@ export class ResourceSearchPlugin extends plugin {
                     user_id: 382879217, // 示例用户 ID
                     nickname: 'ZSY11', // 示例昵称
                     message: [
-                        `ID: ${row.ID}, 关键词: ${row.关键词}, 内容: ${row.内容}, 分类: ${row.分类}`
+                        `ID: ${row.ID}\n名称: ${row.关键词}\n链接: ${row.内容}\n分类: ${row.分类}`
                     ]
                 }));
 
