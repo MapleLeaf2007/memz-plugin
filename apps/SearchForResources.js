@@ -32,7 +32,15 @@ async function deleteResource(id) {
     const db = await openDatabase();
     const result = await db.run('DELETE FROM 自定义词库 WHERE ID = ?', [id]);
     await db.close();
-    return result.changes > 0; // 返回是否删除成功
+    return result.changes > 0;
+}
+
+// 查看资源
+async function viewResource(id) {
+    const db = await openDatabase();
+    const resource = await db.get('SELECT * FROM 自定义词库 WHERE ID = ?', [id]);
+    await db.close();
+    return resource; // 返回资源信息
 }
 
 // 搜索资源
@@ -48,7 +56,7 @@ export class ResourceSearchPlugin extends plugin {
     constructor() {
         super({
             name: '资源搜索',
-            dsc: '根据关键词搜索自定义词库，或添加、删除资源',
+            dsc: '根据关键词搜索自定义词库，或添加、删除、查看资源',
             event: 'message',
             priority: 1,
             rule: [
@@ -63,6 +71,10 @@ export class ResourceSearchPlugin extends plugin {
                 {
                     reg: '^#?资源删除\\s*(\\d+)$',
                     fnc: 'handleDeleteResource'
+                },
+                {
+                    reg: '^#?查看资源\\s*(\\d+)$',
+                    fnc: 'handleViewResource'
                 }
             ]
         });
@@ -103,7 +115,7 @@ export class ResourceSearchPlugin extends plugin {
 
         const match = e.msg.match(/^#?资源添加\s*(\S+),\s*(\S+),\s*(\S+)$/);
         if (!match) {
-            return e.reply('请按照格式输入: \n#资源添加 关键词, 链接, 分类\n注意都是英文逗号', true);
+            return e.reply('请按照格式输入: #资源添加 关键词, 链接, 分类', true);
         }
 
         const keyword = match[1];
@@ -143,6 +155,26 @@ export class ResourceSearchPlugin extends plugin {
             }
         } catch (error) {
             await e.reply(`删除资源时发生错误：${error.message}`, true);
+        }
+    }
+
+    async handleViewResource(e) {
+        const match = e.msg.match(/^#?查看资源\s*(\d+)$/);
+        if (!match) {
+            return e.reply('请按照格式输入: #查看资源 ID', true);
+        }
+
+        const id = match[1];
+
+        try {
+            const resource = await viewResource(id);
+            if (resource) {
+                await e.reply(`ID: ${resource.ID}\n关键词: ${resource.关键词}\n内容: ${resource.内容}\n分类: ${resource.分类}`, true);
+            } else {
+                await e.reply(`未找到 ID: ${id} 的资源。`, true);
+            }
+        } catch (error) {
+            await e.reply(`查看资源时发生错误：${error.message}`, true);
         }
     }
 }
