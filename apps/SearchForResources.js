@@ -54,7 +54,7 @@ export class ResourceSearchPlugin extends plugin {
                     fnc: 'handleSearch'
                 },
                 {
-                    reg: '^#?添加资源\\s*(\\S+),\\s*(\\S+),\\s*(\\S+)$',
+                    reg: '^#?资源添加\\s*(\\S+),\\s*(\\S+),\\s*(\\S+)$',
                     fnc: 'handleAddResource'
                 }
             ]
@@ -83,9 +83,9 @@ export class ResourceSearchPlugin extends plugin {
                     ]
                 }));
 
-                const nmsg = await Bot.makeForwardMsg(forward);
-                const freeMessage = '本机器人全部免费，如果收费请退款。';
-                await e.reply(`${nmsg}\n\n${freeMessage}`);
+                const nmsg = await Bot.makeForwardMsg(`---点击查看搜索结果---`, forward);
+
+                await e.reply(nmsg);
             } else {
                 await e.reply('未找到匹配的结果。', true);
             }
@@ -100,7 +100,7 @@ export class ResourceSearchPlugin extends plugin {
      */
     async handleAddResource(e) {
         if (!(e.user_id == 382879217 || e.user_id == 1011303349)) return e.reply('你没有权限!', true);
-        const match = e.msg.match(/^#?添加资源\s*(\S+),\s*(\S+),\s*(\S+)$/);
+        const match = e.msg.match(/^#?资源添加\s*(\S+),\s*(\S+),\s*(\S+)$/);
         const keyword = match[1];
         const url = match[2];
         const category = match[3];
