@@ -3,7 +3,7 @@ import { open } from 'sqlite';
 // 数据库
 async function openDatabase() {
     return open({
-        filename: './plugins/fengye-plugin/data/本地搜索.db',
+        filename: './plugins/memz-plugin/data/本地搜索.db',
         driver: sqlite3.Database
     });
 }
