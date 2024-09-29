@@ -100,7 +100,7 @@ export class ResourceSearchPlugin extends plugin {
      */
     async handleAddResource(e) {
         if (!(e.user_id == 382879217 || e.user_id == 1011303349)) return e.reply('你没有权限!', true);
-        const match = e.msg.match(/^#?资源添加\s*(\S+),\s*(\S+),\s*(\S+)$/);
+        const match = e.msg.match(/^#?资源添加\s*(\S+)?,\s*(\S+)?,\s*(\S+)$/);
         const keyword = match[1];
         const url = match[2];
         const category = match[3];
