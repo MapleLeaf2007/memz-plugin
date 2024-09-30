@@ -127,7 +127,7 @@ export class ResourceSearchPlugin extends plugin {
             if (newResource) {
                 await e.reply(`资源已添加: ID: ${newResource.ID}, 关键词: ${newResource.关键词}, 内容: ${newResource.内容}, 分类: ${newResource.分类}`, true);
             } else {
-                await e.reply('该资源已存在，未添加。', true);
+                await e.reply('该资源已存在', true);
             }
         } catch (error) {
             await e.reply(`添加资源时发生错误：${error.message}`, true);

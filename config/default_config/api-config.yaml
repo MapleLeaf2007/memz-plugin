@@ -1,0 +1,29 @@
+TextApi:
+  - name: Memz
+    reg: "#FM电脑陈年发现的吧发个等会Z"
+    url: https://tenapi.cn/v2/yiyan
+    method: get
+  - name: Meme
+    reg: "#M再说如果打扰也是让他听暗色4个Z"
+    url: http://localhost:3000/api/memz
+    method: post
+ImageAPI:
+  - name: Mmz
+    reg: "#紫色v淘宝游戏都不这种啊二改MZ"
+    url: http://localhost:3000/api/memz/image
+    method: post
+VoiceAPI:
+  - name: Memz
+    reg: "#ME紫色C的vHDTV心电图哈哈是的MZ"
+    url: http://localhost:3000/api/memz/voice
+    method: get
+VideoAPI:
+  - name: Memz
+    reg: "#ME这是VR色租V人DV在输入MZ"
+    url: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    method: get
+MusicAPI:
+  - name: Memz
+    reg: "#ME安抚舒服俄文各种色vMZ"
+    url: Xxxxx
+    method: get

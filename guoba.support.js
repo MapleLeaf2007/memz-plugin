@@ -72,6 +72,7 @@ export function supportGuoba() {
                 return {
                     // redis: Config.getDefOrConfig('redis-config'),
                     memz: Config.getDefOrConfig('memz-config'),
+                    api: Config.getDefOrConfig('api-config'),
                 }
             },
 
