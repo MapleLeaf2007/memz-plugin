@@ -1,6 +1,6 @@
 import os from 'os';
 import si from 'systeminformation';
-const require = createRequire(import.meta.url)
+
 export class SystemStatus extends plugin {
     constructor() {
         super({
@@ -80,7 +80,7 @@ export class SystemStatus extends plugin {
         return `
 📊 **系统状态**
 ────────────────────────
-**适配器**: ${e.adapter_name ? `ICQQ v${require("icqq/package.json").version}` : `不知道`}
+**适配器**: ${e.adapter_name}
 **操作系统**: ${osInfo.platform}
 **系统架构**: ${systemArchitecture}
 **主机名**: ${os.hostname()}
