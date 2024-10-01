@@ -31,7 +31,7 @@ export class SystemStatus extends plugin {
             const basicInfo = await this.basicInfo(e);
             const additionalInfo = await this.getAdditionalSystemInfo();
             const message = `${basicInfo}\n${additionalInfo}`;
-            await e.reply(message);
+            await e.reply([segment.markdown(message)]);
         } catch (error) {
             await e.reply(`获取扩展系统信息时出错: ${error.message}`);
         }
