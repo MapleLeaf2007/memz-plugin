@@ -16,63 +16,87 @@ export class SystemStatus extends plugin {
     }
 
     async getSystemInfo(e) {
-        if (!(e.isMaster || e.user_id == 1011303349)) return await e.reply('就凭你也配?', true);
+        if (!e.isMaster) return await e.reply('就凭你也配?', true);
         try {
-            await e.reply(this.basicInfo());
+            const info = await this.basicInfo();
+            await e.reply(info);
         } catch (error) {
-            await e.reply(`Error fetching system info: ${error.message}`);
+            await e.reply(`获取系统信息时出错: ${error.message}`);
         }
     }
 
     async getExtendedSystemInfo(e) {
-        if (!(e.isMaster || e.user_id == 1011303349)) return await e.reply('就凭你也配?', true);
+        if (!e.isMaster) return await e.reply('就凭你也配?', true);
         try {
+            const basicInfo = await this.basicInfo();
             const additionalInfo = await this.getAdditionalSystemInfo();
-            const message = `${this.basicInfo()}\n${additionalInfo}`;
+            const message = `${basicInfo}\n${additionalInfo}`;
             await e.reply(message);
         } catch (error) {
-            await e.reply(`Error fetching extended system info: ${error.message}`);
+            await e.reply(`获取扩展系统信息时出错: ${error.message}`);
         }
     }
 
-    basicInfo() {
-        const stats = this.getSystemStats();
+    /**
+     * 获取基本系统信息
+     * @returns {Promise<string>} 格式化的基本系统信息
+     */
+    async basicInfo() {
+        const [
+            osInfo,
+            cpuInfo,
+            currentLoad,
+            memoryInfo
+        ] = await Promise.all([
+            si.osInfo(),
+            si.cpu(),
+            si.currentLoad(),
+            si.mem()
+        ]);
+
+        // 系统架构：内核版本 + 架构
+        const systemArchitecture = `${osInfo.distro} ${osInfo.release} ${osInfo.arch}`;
+
+        // CPU 使用率和频率
+        const cpuUsage = currentLoad.currentLoad.toFixed(2) + '%';
+        const cpuSpeed = cpuInfo.speed ? `${cpuInfo.speed} GHz` : 'N/A';
+
+        // CPU 信息：核心数 + 型号
+        const cpuDetails = `${cpuInfo.physicalCores}核 ${cpuInfo.brand}`;
+
+        // 内存使用情况
+        const usedMemoryGiB = (memoryInfo.active / 1024 / 1024 / 1024).toFixed(2);
+        const totalMemoryGiB = (memoryInfo.total / 1024 / 1024 / 1024).toFixed(2);
+        const memoryUsagePercent = ((memoryInfo.active / memoryInfo.total) * 100).toFixed(2) + '%';
+        const memoryUsage = `${usedMemoryGiB} GiB / ${totalMemoryGiB} GiB (${memoryUsagePercent})`;
+
+        // 内存交换（Swap）使用情况
+        const usedSwapGiB = (memoryInfo.swaptotal - memoryInfo.swapfree) / 1024 / 1024 / 1024;
+        const swapUsageGiB = usedSwapGiB.toFixed(2);
+        const totalSwapGiB = (memoryInfo.swaptotal / 1024 / 1024 / 1024).toFixed(2);
+        const swapUsagePercent = memoryInfo.swaptotal > 0 ? ((usedSwapGiB / memoryInfo.swaptotal) * 100).toFixed(2) + '%' : 'N/A';
+        const swapUsage = memoryInfo.swaptotal > 0 ? `${swapUsageGiB} GiB / ${totalSwapGiB} GiB (${swapUsagePercent})` : 'N/A';
+
         return `
 📊 **系统状态**
 ────────────────────────
-**操作系统**: ${stats.osType}
-**系统架构**: ${stats.arch}
-**主机名**: ${stats.hostname}
-**Node.js 版本**: ${stats.nodeVersion}
-**总内存**: ${stats.totalMem} MB
-**空闲内存**: ${stats.freeMem} MB
-**已用内存**: ${stats.usedMem} MB
-**系统运行时间**: ${stats.uptime} 天
-**CPU 数量**: ${stats.cpuCount}
-**CPU 负载**: ${stats.cpuLoad}
+**适配器**: ${this.e.adapter_name}
+**操作系统**: ${osInfo.platform}
+**系统架构**: ${systemArchitecture}
+**主机名**: ${os.hostname()}
+**Node.js 版本**: ${process.version}
+**CPU 信息**: ${cpuDetails}
+**CPU 使用率**: ${cpuUsage} (${cpuSpeed})
+**内存**: ${memoryUsage}
+**内存交换**: ${swapUsage}
+**系统运行时间**: ${(os.uptime() / 86400).toFixed(2)} 天
 `.trim();
     }
 
-    getSystemStats() {
-        const totalMem = (os.totalmem() / 1024 / 1024).toFixed(2);
-        const freeMem = (os.freemem() / 1024 / 1024).toFixed(2);
-        const usedMem = (totalMem - freeMem).toFixed(2);
-        const uptime = (os.uptime() / 86400).toFixed(2);
-        const cpuLoad = os.loadavg()[0].toFixed(2);
-        return {
-            osType: os.type(),
-            arch: os.arch(),
-            hostname: os.hostname(),
-            nodeVersion: process.version, // 获取 Node.js 版本
-            totalMem,
-            freeMem,
-            usedMem,
-            uptime,
-            cpuCount: os.cpus().length,
-            cpuLoad
-        };
-    }
-
+    /**
+     * 获取扩展系统信息
+     * @returns {Promise<string>} 格式化的扩展系统信息
+     */
     async getAdditionalSystemInfo() {
         try {
             const [diskInfo, cpuTemperature, networkStats, users, services] = await Promise.all([
@@ -149,15 +173,15 @@ ${serviceStatus}
             const stats2 = await si.networkStats();
 
             // 计算每个接口的上传和下载速度
-            const bandwidth = stats2.map((stat, index) => {
-                const correspondingStat1 = stats1.find(s => s.iface === stat.iface);
-                if (!correspondingStat1) return `• **${stat.iface}**: In: N/A, Out: N/A`;
+            const bandwidth = stats2.map(stat2 => {
+                const stat1 = stats1.find(s => s.iface === stat2.iface);
+                if (!stat1) return `• **${stat2.iface}**: In: N/A, Out: N/A`;
 
-                const rxBytes = stat.rx_bytes - correspondingStat1.rx_bytes;
-                const txBytes = stat.tx_bytes - correspondingStat1.tx_bytes;
+                const rxBytes = stat2.rx_bytes - stat1.rx_bytes;
+                const txBytes = stat2.tx_bytes - stat1.tx_bytes;
                 const rxSpeedMB = (rxBytes / 1024 / 1024).toFixed(2);
                 const txSpeedMB = (txBytes / 1024 / 1024).toFixed(2);
-                return `• **${stat.iface}**: In: ${rxSpeedMB} MB/s, Out: ${txSpeedMB} MB/s`;
+                return `• **${stat2.iface}**: In: ${rxSpeedMB} MB/s, Out: ${txSpeedMB} MB/s`;
             }).join('\n') || 'N/A';
 
             return bandwidth;
