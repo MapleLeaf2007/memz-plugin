@@ -1,5 +1,6 @@
 import os from 'os';
-import { exec } from 'child_process';
+
+import si from 'systeminformation';
 
 export class SystemStatus extends plugin {
     constructor() {
@@ -69,106 +70,28 @@ CPU 负载: ${stats.cpuLoad}`;
     }
 
     async getAdditionalSystemInfo() {
-        const isWindows = os.platform() === 'win32';
-        const diskTotal = await this.getDiskInfo('total');
-        const diskFree = await this.getDiskInfo('free');
-        const diskUsed = isWindows ? 'N/A' : await this.getDiskInfo('used');
-        const systemTemperature = isWindows ? 'N/A' : await this.getSystemTemperature();
-        const networkBandwidth = isWindows ? 'N/A' : await this.getNetworkBandwidth();
-        const fileSystemUsage = isWindows ? 'N/A' : await this.getFileSystemUsage();
-        const loadAvg = isWindows ? 'N/A' : os.loadavg().map(val => val.toFixed(2)).join(' ');
-        const loggedInUsers = isWindows ? await this.getLoggedInUsers() : await this.getLinuxLoggedInUsers();
-        const serviceStatus = isWindows ? await this.getServiceStatus() : await this.getLinuxServiceStatus();
+        const diskInfo = await si.fsSize(); // 获取磁盘信息
+        const cpuTemperature = await si.cpuTemperature(); // 获取 CPU 温度
+        const networkStats = await si.networkStats(); // 获取网络流量信息
+        const loadAvg = os.loadavg().map(val => val.toFixed(2)).join(' ');
+        const users = await si.users(); // 获取登录用户
+        const services = await si.services(['ssh', 'httpd']); // 获取服务状态
+
+        const diskTotal = (diskInfo[0]?.size / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+        const diskFree = (diskInfo[0]?.available / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+        const diskUsed = (diskInfo[0]?.used / 1024 / 1024 / 1024).toFixed(2) + ' GB';
+        const systemTemperature = cpuTemperature.main ? `${cpuTemperature.main} °C` : 'N/A';
+        const networkBandwidth = networkStats.map(stat => `Interface: ${stat.iface}, In: ${stat.rx_bytes} bytes, Out: ${stat.tx_bytes} bytes`).join('\n');
+        const loggedInUsers = users.map(user => user.user).join(', ') || 'N/A';
+        const serviceStatus = services.map(service => `${service.name}: ${service.running ? 'Active' : 'Inactive'}`).join(', ');
 
         return `磁盘总量: ${diskTotal}
 磁盘可用量: ${diskFree}
 磁盘已用量: ${diskUsed}
 系统温度: ${systemTemperature}
-今日网络使用情况: ${networkBandwidth}
-文件系统使用情况: ${fileSystemUsage}
+网络使用情况: ${networkBandwidth}
 系统负载平均值: ${loadAvg}
 登录用户: ${loggedInUsers}
 服务状态: ${serviceStatus}`;
-    }
-
-    async getDiskInfo(type) {
-        const isWindows = os.platform() === 'win32';
-        const command = isWindows
-            ? `wmic logicaldisk get ${type}`
-            : `df -h --total | awk 'END {print $${this.getDiskColumn(type)}}'`;
-        return this.executeCommand(command);
-    }
-
-    getDiskColumn(type) {
-        const columns = {
-            total: 2,
-            free: 4,
-            used: 3
-        };
-        return columns[type] || 2;
-    }
-
-    async executeCommand(command) {
-        return new Promise((resolve) => {
-            exec(command, (error, stdout) => {
-                if (error) {
-                    resolve('N/A');
-                } else {
-                    resolve(stdout.split('\n')[1]?.trim() || 'N/A');
-                }
-            });
-        });
-    }
-
-    async getSystemTemperature() {
-        return this.executeCommand('sensors | grep -E "°C|N/A" | sed "s/[[:space:]]//g"')
-            .catch(() => 'N/A');
-    }
-
-    async getNetworkBandwidth() {
-        try {
-            await this.executeCommand('apt install vnstat -y || yum install vnstat -y || pacman -S vnstat -y');
-            const [i, o, t] = await Promise.all([
-                this.executeCommand("vnstat --oneline | awk -F ';' '{print $4}'"),
-                this.executeCommand("vnstat --oneline | awk -F ';' '{print $5}'"),
-                this.executeCommand("vnstat --oneline | awk -F ';' '{print $6}'")
-            ]);
-            return `Inbound: ${i}\nOutbound: ${o}\nTotal: ${t}`;
-        } catch {
-            return '请自行安装vnstat或系统不支持';
-        }
-    }
-
-    async getFileSystemUsage() {
-        return this.executeCommand('df -h | awk \'{if (NR!=1) print $1 ": " $5 " used (" $3 " of " $2 ")"}\'')
-            .catch(() => 'N/A');
-    }
-
-    async getLoggedInUsers() {
-        return this.executeCommand('query user')
-            .then(result => result.trim().split('\n').map(line => line.split(' ')[0]).join(', '))
-            .catch(() => 'N/A');
-    }
-
-    async getServiceStatus() {
-        const services = ['ssh', 'w3svc'];
-        return Promise.all(services.map(service =>
-            this.executeCommand(`sc query ${service} | findstr /R /C:"STATE"`).then(status => `${service}: ${status}`)
-        )).then(statuses => statuses.join(', '))
-            .catch(() => 'N/A');
-    }
-
-    async getLinuxLoggedInUsers() {
-        return this.executeCommand('who | awk \'{print $1}\'')
-            .then(result => result.trim().split('\n').join(', '))
-            .catch(() => 'N/A');
-    }
-
-    async getLinuxServiceStatus() {
-        const services = ['ssh', 'httpd'];
-        return Promise.all(services.map(service =>
-            this.executeCommand(`systemctl is-active ${service}`).then(status => `${service}: ${status}`)
-        )).then(statuses => statuses.join(', '))
-            .catch(() => 'N/A');
     }
 }

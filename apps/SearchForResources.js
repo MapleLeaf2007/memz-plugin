@@ -14,7 +14,7 @@ async function addResource(keyword, url, category) {
     const db = await openDatabase();
     const existingResource = await db.get('SELECT * FROM 自定义词库 WHERE 内容 = ?', [url]);
     if (existingResource) {
-        console.log('该资源已存在，未添加。');
+        console.log('该资源已存在');
         await db.close();
         return null;
     }
