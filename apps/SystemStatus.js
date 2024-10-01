@@ -1,5 +1,5 @@
 import os from 'os';
-import si from 'systeminformation'; // 引入 'systeminformation' 获取系统详细信息
+import si from 'systeminformation';
 
 export class SystemStatus extends plugin {
     constructor() {
