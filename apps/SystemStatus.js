@@ -18,7 +18,7 @@ export class SystemStatus extends plugin {
     async getSystemInfo(e) {
         if (!e.isMaster) return await e.reply('就凭你也配?', true);
         try {
-            const info = await this.basicInfo();
+            const info = await this.basicInfo(e);
             await e.reply(info);
         } catch (error) {
             await e.reply(`获取系统信息时出错: ${error.message}`);
@@ -28,7 +28,7 @@ export class SystemStatus extends plugin {
     async getExtendedSystemInfo(e) {
         if (!e.isMaster) return await e.reply('就凭你也配?', true);
         try {
-            const basicInfo = await this.basicInfo();
+            const basicInfo = await this.basicInfo(e);
             const additionalInfo = await this.getAdditionalSystemInfo();
             const message = `${basicInfo}\n${additionalInfo}`;
             await e.reply(message);
@@ -41,7 +41,7 @@ export class SystemStatus extends plugin {
      * 获取基本系统信息
      * @returns {Promise<string>} 格式化的基本系统信息
      */
-    async basicInfo() {
+    async basicInfo(e) {
         const [
             osInfo,
             cpuInfo,
@@ -80,7 +80,7 @@ export class SystemStatus extends plugin {
         return `
 📊 **系统状态**
 ────────────────────────
-**适配器**: ${this.e.adapter_name}
+**适配器**: ${e.adapter_name}
 **操作系统**: ${osInfo.platform}
 **系统架构**: ${systemArchitecture}
 **主机名**: ${os.hostname()}
