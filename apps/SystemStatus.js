@@ -1,6 +1,6 @@
 import os from 'os';
 import si from 'systeminformation';
-
+const require = createRequire(import.meta.url)
 export class SystemStatus extends plugin {
     constructor() {
         super({
