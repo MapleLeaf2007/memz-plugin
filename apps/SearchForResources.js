@@ -1,10 +1,18 @@
 import sqlite3 from 'sqlite3';
 import { open } from 'sqlite';
+import path from 'node:path';
+import { fileURLToPath } from 'url';
+
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const Filename = path.join(__dirname, '..', 'data', '本地搜索.db');
 
 // 打开数据库
 async function openDatabase() {
     return open({
-        filename: './plugins/memz-plugin/data/本地搜索.db',
+        filename: Filename,
         driver: sqlite3.Database
     });
 }
