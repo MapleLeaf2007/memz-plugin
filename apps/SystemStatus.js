@@ -31,7 +31,7 @@ export class SystemStatus extends plugin {
             const basicInfo = await this.basicInfo(e);
             const additionalInfo = await this.getAdditionalSystemInfo();
             const message = `${basicInfo}\n${additionalInfo}`;
-            await e.reply([segment.markdown(message)]);
+            await e.reply(message);
         } catch (error) {
             await e.reply(`获取扩展系统信息时出错: ${error.message}`);
         }
@@ -80,16 +80,16 @@ export class SystemStatus extends plugin {
         return `
 📊 **系统状态**
 ------------------
-**适配器**: ${e.adapter_name}
-**操作系统**: ${osInfo.platform}
-**系统架构**: ${systemArchitecture}
-**主机名**: ${os.hostname()}
-**Node.js 版本**: ${process.version}
-**CPU 信息**: ${cpuDetails}
-**CPU 使用率**: ${cpuUsage} (${cpuSpeed})
-**内存**: ${memoryUsage}
-**内存交换**: ${swapUsage}
-**系统运行时间**: ${(os.uptime() / 86400).toFixed(2)} 天
+适配器: ${e.adapter_name}
+操作系统: ${osInfo.platform}
+系统架构: ${systemArchitecture}
+主机名: ${os.hostname()}
+Node.js 版本: ${process.version}
+CPU 信息: ${cpuDetails}
+CPU 使用率: ${cpuUsage} (${cpuSpeed})
+内存: ${memoryUsage}
+内存交换: ${swapUsage}
+系统运行时间: ${(os.uptime() / 86400).toFixed(2)} 天
 `.trim();
     }
 
@@ -129,28 +129,28 @@ export class SystemStatus extends plugin {
 
             // 服务状态
             const serviceStatus = services.length > 0
-                ? services.map(service => `• **${service.name}**: ${service.running ? '✅ Active' : '❌ Inactive'}`).join('\n')
+                ? services.map(service => `• ${service.name}: ${service.running ? '✅ Active' : '❌ Inactive'}`).join('\n')
                 : 'N/A';
 
             return `
-💾 **磁盘信息**
+💾 磁盘信息
 ------------------
-**磁盘总量**: ${diskTotal}
-**磁盘可用量**: ${diskFree}
-**磁盘已用量**: ${diskUsed}
-🌡️ **系统温度**
+磁盘总量 ${diskTotal}
+磁盘可用量 ${diskFree}
+磁盘已用量 ${diskUsed}
+🌡️ 系统温度
 ------------------
 ${systemTemperature}
-📡 **网络使用情况**
+📡 网络使用情况
 ------------------
 ${networkBandwidth}
-📈 **系统负载**
+📈 系统负载
 ------------------
 ${loadAvg}
-👥 **登录用户**
+👥 登录用户
 ------------------
 ${loggedInUsers}
-🛠️ **服务状态**
+🛠️ 服务状态
 ------------------
 ${serviceStatus}
 `.trim();
@@ -175,13 +175,13 @@ ${serviceStatus}
             // 计算每个接口的上传和下载速度
             const bandwidth = stats2.map(stat2 => {
                 const stat1 = stats1.find(s => s.iface === stat2.iface);
-                if (!stat1) return `• **${stat2.iface}**: In: N/A, Out: N/A`;
+                if (!stat1) return `• ${stat2.iface}: In: N/A, Out: N/A`;
 
                 const rxBytes = stat2.rx_bytes - stat1.rx_bytes;
                 const txBytes = stat2.tx_bytes - stat1.tx_bytes;
                 const rxSpeedMB = (rxBytes / 1024 / 1024).toFixed(2);
                 const txSpeedMB = (txBytes / 1024 / 1024).toFixed(2);
-                return `• **${stat2.iface}**: In: ${rxSpeedMB} MB/s, Out: ${txSpeedMB} MB/s`;
+                return `• ${stat2.iface}: In: ${rxSpeedMB} MB/s, Out: ${txSpeedMB} MB/s`;
             }).join('\n') || 'N/A';
 
             return bandwidth;
