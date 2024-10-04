@@ -17,7 +17,7 @@ export class SystemStatus extends plugin {
 
     async handleMasterCheck(e) {
         if (!e.isMaster) {
-            await e.reply('就凭你也配?', true);
+            await e.reply('你没有权限呐QAQ', true);
             return false;
         }
         return true;
