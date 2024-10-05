@@ -60,7 +60,6 @@ async function searchResources(keyword) {
     return results;
 }
 
-// **新增：获取每个分类的资源数量**
 async function getResourceCountsByCategory() {
     const db = await openDatabase();
     const counts = await db.all(`
@@ -99,7 +98,6 @@ export class ResourceSearchPlugin extends plugin {
                     reg: '^#?查看资源\\s*(\\d+)$',
                     fnc: 'handleViewResource'
                 },
-                // **新增：查看资源总数**
                 {
                     reg: '^#?资源总数$',
                     fnc: 'handleGetResourceCounts'
