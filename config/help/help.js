@@ -72,6 +72,11 @@ export const helpList = [
                 "desc": "(强制)更新MEMZ插件"
             },
             {
+                "icon": 59,
+                "title": "#MEMZ更新日志",
+                "desc": "查看MEMZ插件更新日志"
+            },
+            {
                 "icon": 40,
                 "title": "#Redis状态(pro)(文本)",
                 "desc": "(文本|图片)查看Redis状态"
