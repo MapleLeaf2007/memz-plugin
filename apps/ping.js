@@ -41,13 +41,19 @@ export class PingScreenshot extends plugin {
         const page = await browser.newPage();
 
         try {
+            // 导航到目标URL
             await page.goto(url, { waitUntil: 'networkidle2' });
+            logger.info('页面加载完成');
 
             // 等待“单次测试”按钮出现
             await page.waitForFunction(() => {
                 const buttons = Array.from(document.querySelectorAll('button'));
                 return buttons.some(btn => btn.textContent.includes('单次测试'));
             }, { timeout: 10000 });
+            logger.info('"单次测试"按钮已出现');
+
+            // 设置一个监听器，等待可能的导航
+            const navigationPromise = page.waitForNavigation({ waitUntil: 'networkidle2' }).catch(() => null);
 
             // 点击“单次测试”按钮
             await page.evaluate(() => {
@@ -55,31 +61,60 @@ export class PingScreenshot extends plugin {
                 const btn = buttons.find(button => button.textContent.includes('单次测试'));
                 if (btn) btn.click();
             });
+            logger.info('已点击"单次测试"按钮');
 
-            // 等待进度条达到100%
+            // 等待导航完成（如果发生）
+            const navigation = await navigationPromise;
+            if (navigation) {
+                logger.info('点击按钮后发生了导航');
+            } else {
+                logger.info('点击按钮后未发生导航');
+            }
+
+            // 等待加载进度条达到100%
             let progress = 0;
+            const progressSelector = '#complete_progress > div';
             while (progress < 100) {
-                progress = await page.evaluate(() => {
-                    const progressElement = document.querySelector('#complete_progress > div');
+                try {
+                    // 使用 CSS 选择器等待进度条元素出现
+                    await page.waitForSelector(progressSelector, { timeout: 5000 });
+                } catch (err) {
+                    logger.warn('进度条元素未找到，继续等待');
+                }
+
+                // 获取当前进度
+                progress = await page.evaluate((selector) => {
+                    const progressElement = document.querySelector(selector);
                     if (progressElement) {
                         const text = progressElement.textContent;
                         const num = parseInt(text.replace('%', ''), 10);
                         return isNaN(num) ? 0 : num;
                     }
                     return 0;
-                });
-                if (progress >= 100) break;
-                await new Promise(resolve => setTimeout(resolve, 500)); // 每半秒检查一次
+                }, progressSelector);
+                logger.info(`当前进度: ${progress}%`);
+
+                if (progress >= 100) {
+                    logger.info('进度已完成');
+                    break;
+                }
+
+                // 每半秒检查一次进度
+                await new Promise(resolve => setTimeout(resolve, 500));
             }
 
-            // 设置视口大小并截图
+            // 设置页面视口大小
             const viewportHeight = 1000;
             await page.setViewport({ width: 1420, height: viewportHeight });
+            logger.info('已设置视口大小');
 
+            // 计算截图区域
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
             const clipHeight = 1000;
-            const clipTop = (pageHeight - clipHeight) / 2;
+            const clipTop = Math.max((pageHeight - clipHeight) / 2, 0); // 防止负值
+            logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
+            // 截图中间部分
             const screenshot = await page.screenshot({
                 clip: {
                     x: 140,
@@ -88,11 +123,17 @@ export class PingScreenshot extends plugin {
                     height: clipHeight
                 }
             });
+            logger.info('已截取屏幕截图');
+
+            // 回复截图
             await this.reply(segment.image(screenshot), true);
+            logger.info('已发送截图');
         } catch (error) {
-            await e.reply(`无法获取网页截图: ${error.message}`);
+            logger.error(`Error in handlePing: ${error.stack}`);
+            await e.reply(`无法获取网页截图: ${error.message}`, true);
         } finally {
             await browser.close();
+            logger.info('已关闭浏览器');
         }
     }
 }
