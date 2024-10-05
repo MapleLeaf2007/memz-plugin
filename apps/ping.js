@@ -4,7 +4,7 @@ export class PingScreenshot extends plugin {
     constructor() {
         super({
             name: 'Ping 截图',
-            dsc: '发送#ping网站或#tcping网站, 截图对应页面中间部分',
+            dsc: '发送#ping网站或#tcping网站, 截图对应页面顶部部分',
             event: 'message',
             priority: 1,
             rule: [
@@ -17,12 +17,12 @@ export class PingScreenshot extends plugin {
     }
 
     /**
-     * 处理Ping/TCPing/dns命令
+     * 处理Ping/TCPing命令
      * @param {Object} e - 事件对象
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
-        e.reply('正在获取...请稍等......', true);
+        e.reply('正在获取Ping数据...请稍等......', true);
         const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {
             return await e.reply('?我怎么知道你要干嘛', true);
@@ -108,14 +108,12 @@ export class PingScreenshot extends plugin {
             await page.setViewport({ width: 1420, height: viewportHeight });
             logger.info('已设置视口大小');
 
-            // 计算截图区域
-            const pageHeight = await page.evaluate(() => document.body.scrollHeight);
+            // 计算截图区域，从顶部开始
             const clipHeight = 1000;
-            const offset = 2080; // 向上移动的像素值，根据需要调整
-            const clipTop = Math.max((pageHeight - clipHeight) / 2 - offset, 0); // 防止负值
+            const clipTop = 0; // 从页面顶部开始截图
             logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
-            // 截图中间部分
+            // 截取页面顶部
             const screenshot = await page.screenshot({
                 clip: {
                     x: 140,
