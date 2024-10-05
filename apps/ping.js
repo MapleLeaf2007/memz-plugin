@@ -111,7 +111,7 @@ export class PingScreenshot extends plugin {
             // 计算截图区域
             const pageHeight = await page.evaluate(() => document.body.scrollHeight);
             const clipHeight = 1000;
-            const offset = 2050; // 向上移动的像素值，根据需要调整
+            const offset = 2080; // 向上移动的像素值，根据需要调整
             const clipTop = Math.max((pageHeight - clipHeight) / 2 - offset, 0); // 防止负值
             logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
