@@ -110,7 +110,7 @@ export class PingScreenshot extends plugin {
 
             // 计算截图区域，从顶部开始
             const clipHeight = 1000;
-            const clipTop = 0; // 从页面顶部开始截图
+            const clipTop = 1500; // 从页面顶部开始截图
             logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
             // 截取页面顶部
