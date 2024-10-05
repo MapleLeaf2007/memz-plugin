@@ -9,7 +9,7 @@ export class PingScreenshot extends plugin {
             priority: 1,
             rule: [
                 {
-                    reg: `^#(ping|tcping|dns)\\s*(\\S+)$`,
+                    reg: `^#(ping|tcping)\\s*(\\S+)$`,
                     fnc: 'handlePing'
                 }
             ]
@@ -23,7 +23,7 @@ export class PingScreenshot extends plugin {
      */
     async handlePing(e) {
         e.reply('正在获取...请稍等......', true);
-        const match = e.msg.match(/^#(ping|tcping|dns)\s*(\S+)$/i);
+        const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {
             return await e.reply('?我怎么知道你要干嘛', true);
         }

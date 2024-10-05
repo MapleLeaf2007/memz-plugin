@@ -19,16 +19,11 @@ export const helpList = [
                 "title": "#whois+域名",
                 "desc": "查询域名信息"
             },
-            // {
-            //     "icon": 82,
-            //     "title": "#(tc)?ping+网站",
-            //     "desc": "(TC)Ping网站"
-            // },
-            // {
-            //     "icon": 83,
-            //     "title": "#dns+域名",
-            //     "desc": "DNS记录查询"
-            // },
+            {
+                "icon": 82,
+                "title": "#(tc)?ping+网站",
+                "desc": "(TC)Ping网站"
+            }
         ]
     },
     {
