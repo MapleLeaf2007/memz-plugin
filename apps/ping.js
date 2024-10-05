@@ -22,7 +22,7 @@ export class PingScreenshot extends plugin {
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
-        e.reply('正在获取Ping数据...请稍等......', true, { recallMsg: 10 });
+        e.reply('正在获取Ping数据...请稍等......', true);
         const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {
             return await e.reply('?我怎么知道你要干嘛!', true);
