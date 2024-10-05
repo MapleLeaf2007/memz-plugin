@@ -22,7 +22,7 @@ export class PingScreenshot extends plugin {
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
-        e.reply('正在获取Ping数据...请稍等......', true);
+        e.reply('正在获取Ping数据...请稍等......', true, { recallMsg: 10 });
         const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {
             return await e.reply('?我怎么知道你要干嘛', true);
@@ -110,7 +110,7 @@ export class PingScreenshot extends plugin {
 
             // 计算截图区域，从顶部开始
             const clipHeight = 1000;
-            const clipTop = 700; // 从页面顶部开始截图
+            const clipTop = 750; // 从页面顶部开始截图
             logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
             // 截取页面顶部
