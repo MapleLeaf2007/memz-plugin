@@ -49,7 +49,7 @@ async function viewResource(id) {
     const db = await openDatabase();
     const resource = await db.get('SELECT * FROM 自定义词库 WHERE ID = ?', [id]);
     await db.close();
-    return resource; // 返回资源信息
+    return resource;
 }
 
 // 搜索资源
