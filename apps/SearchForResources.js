@@ -99,7 +99,7 @@ export class ResourceSearchPlugin extends plugin {
                     fnc: 'handleViewResource'
                 },
                 {
-                    reg: '^#?资源总数$',
+                    reg: '^#?资源(数量|个数)?(总数|统计)$',
                     fnc: 'handleGetResourceCounts'
                 }
             ]
