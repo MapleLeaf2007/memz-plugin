@@ -3,10 +3,11 @@ import { open } from 'sqlite';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 
-
+// 获取当前文件名和目录名
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// 数据库文件路径
 const Filename = path.join(__dirname, '..', 'data', '本地搜索.db');
 
 // 打开数据库
@@ -59,12 +60,26 @@ async function searchResources(keyword) {
     return results;
 }
 
+// **新增：获取每个分类的资源数量**
+async function getResourceCountsByCategory() {
+    const db = await openDatabase();
+    const counts = await db.all(`
+        SELECT
+            COALESCE(分类, '未分类') AS 分类,
+            COUNT(*) AS 数量
+        FROM 自定义词库
+        GROUP BY 分类
+    `);
+    await db.close();
+    return counts;
+}
+
 // 插件定义
 export class ResourceSearchPlugin extends plugin {
     constructor() {
         super({
             name: '资源搜索',
-            dsc: '根据关键词搜索自定义词库，或添加、删除、查看资源',
+            dsc: '根据关键词搜索自定义词库，或添加、删除、查看资源，以及查看分类统计',
             event: 'message',
             priority: 1,
             rule: [
@@ -83,6 +98,11 @@ export class ResourceSearchPlugin extends plugin {
                 {
                     reg: '^#?查看资源\\s*(\\d+)$',
                     fnc: 'handleViewResource'
+                },
+                // **新增：查看资源总数**
+                {
+                    reg: '^#?资源总数$',
+                    fnc: 'handleGetResourceCounts'
                 }
             ]
         });
@@ -183,6 +203,23 @@ export class ResourceSearchPlugin extends plugin {
             }
         } catch (error) {
             await e.reply(`查看资源时发生错误：${error.message}`, true);
+        }
+    }
+
+    async handleGetResourceCounts(e) {
+        try {
+            const counts = await getResourceCountsByCategory();
+            if (counts.length > 0) {
+                let message = '资源分类总数统计：\n';
+                counts.forEach(row => {
+                    message += `分类: ${row.分类} - 数量: ${row.数量}\n`;
+                });
+                await e.reply(message, true);
+            } else {
+                await e.reply('没有找到任何资源。', true);
+            }
+        } catch (error) {
+            await e.reply(`获取资源总数时发生错误：${error.message}`, true);
         }
     }
 }
