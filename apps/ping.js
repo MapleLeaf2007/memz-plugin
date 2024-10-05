@@ -60,9 +60,6 @@ export class PingScreenshot extends plugin {
                 if (btn) btn.click();
             });
 
-            // 等待导航完成（如果发生）
-            const navigation = await navigationPromise;
-
             // 等待加载进度条达到100%
             let progress = 0;
             const progressSelector = '#complete_progress > div';
@@ -99,7 +96,7 @@ export class PingScreenshot extends plugin {
 
             // 计算截图区域
             const clipHeight = 1000;
-            const clipTop = 795;
+            const clipTop = 799;
             logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
             const screenshot = await page.screenshot({
