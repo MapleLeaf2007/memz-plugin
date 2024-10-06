@@ -51,6 +51,35 @@ export class SystemStatus extends plugin {
         }
     }
 
+    async getExtendedSystemInfo(e) {
+        if (!(await this.handleMasterCheck(e))) return;
+        try {
+            const [
+                basicInfo,
+                additionalInfo,
+                gpuInfo,
+                batteryInfo,
+                processInfo,
+                networkConnections
+            ] = await Promise.all([
+                this.basicInfo(e),
+                this.getAdditionalSystemInfo(),
+                this.getGPUInfo(),
+                this.getBatteryInfo(),
+                this.getProcessInfo(),
+                this.getNetworkConnections()
+            ]);
+
+            // 过滤掉返回N/A的项
+            const responses = [basicInfo, additionalInfo, gpuInfo, batteryInfo, processInfo, networkConnections]
+                .filter(info => !info.includes('N/A'));
+
+            await e.reply(responses.join('\n'));
+        } catch (error) {
+            await e.reply(`获取扩展系统信息时出错: ${error.message}`);
+        }
+    }
+
     async getMaxExtendedSystemInfo(e) {
         if (!(await this.handleMasterCheck(e))) return;
         try {
@@ -63,9 +92,9 @@ export class SystemStatus extends plugin {
                 networkConnections,
                 diskDetailedInfo,
                 serviceDetails,
-                environmentInfo,
-                installedSoftware,
-                openPorts,
+                //environmentInfo,
+                //installedSoftware,
+                //openPorts,
                 motherboardInfo,
                 ramInfo
             ] = await Promise.all([
@@ -78,16 +107,35 @@ export class SystemStatus extends plugin {
                 this.getDiskDetailedInfo(),
                 this.getServiceDetails(),
                 //this.getEnvironmentInfo(),
-                this.getInstalledSoftware(),
+                //this.getInstalledSoftware(),
                 //this.getOpenPorts(),
                 this.getMotherboardInfo(),
                 this.getRamInfo()
             ]);
-            await e.reply(`${basicInfo}\n${additionalInfo}\n${gpuInfo}\n${batteryInfo}\n${processInfo}\n${networkConnections}\n${diskDetailedInfo}\n${serviceDetails}\n${environmentInfo}\n${installedSoftware}\n${openPorts}\n${motherboardInfo}\n${ramInfo}`);
+
+            // 过滤掉返回N/A的项
+            const responses = [
+                basicInfo,
+                additionalInfo,
+                gpuInfo,
+                batteryInfo,
+                processInfo,
+                networkConnections,
+                diskDetailedInfo,
+                serviceDetails,
+                //environmentInfo,
+                //installedSoftware,
+                //openPorts,
+                motherboardInfo,
+                ramInfo
+            ].filter(info => !info.includes('N/A'));
+
+            await e.reply(responses.join('\n'));
         } catch (error) {
             await e.reply(`获取最大扩展系统信息时出错: ${error.message}`);
         }
     }
+
 
     async basicInfo(e) {
         try {
