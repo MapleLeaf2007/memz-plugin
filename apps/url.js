@@ -51,7 +51,7 @@ export class UrlPlugin extends plugin {
     let msg = e.msg.match(/^#?url解码\s*(.+)/)[1].trim();
     const decodedMsg = decodeFromUrl(msg);
     try {
-      await e.reply(`解码结果: ${decodedMsg}`);
+      await e.reply(`解码结果: ${decodedMsg}`, true);
     } catch (error) {
       await e.reply(`Error: ${error.message}`);
     }
