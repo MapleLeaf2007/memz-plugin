@@ -307,23 +307,28 @@ ${info}
 
     async getRamInfo() {
         try {
-            const memory = await si.memLayout();
-            if (!memory || memory.length === 0) {
-                return '💾 RAM 信息: N/A';
+            const memoryData = await si.mem();
+            const ramData = await si.memLayout();
+
+            // 检查是否有内存条信息
+            if (ramData.length === 0) {
+                return '💾 RAM 信息: 无内存条信息';
             }
 
-            const ramDetails = memory.map((mem, index) => {
-                return `• 内存条 ${index + 1}: ${mem.type || 'N/A'}, ${mem.size / (1024 ** 3)} GB, ${mem.clock} MHz`;
+            // 构建内存条信息
+            const memoryDetails = ramData.map((ram, index) => {
+                // 处理内存条速度
+                const speed = ram.speed ? `${ram.speed} MHz` : '未知频率';
+                return `• 内存条 ${index + 1}: ${ram.type}, ${ram.size / 1024 / 1024 / 1024} GB, ${speed}`;
             }).join('\n');
 
-            return `
-    💾 RAM 信息
-${ramDetails}
-            `.trim();
+            // 返回内存信息
+            return `💾 RAM 信息\n${memoryDetails}`;
         } catch (error) {
             return `获取 RAM 信息时出错: ${error.message}`;
         }
     }
+
 
     async getGPUInfo() {
         try {
