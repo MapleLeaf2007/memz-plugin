@@ -200,7 +200,7 @@ ${loadAvg}
             `.trim();
 
             if (systemTemperature) output += `\n🌡️ 系统温度: ${systemTemperature}`;
-            if (networkBandwidth) output += `\n📡 网络使用情况: ${networkBandwidth}`;
+            if (networkBandwidth) output += `\n${networkBandwidth}`;
             if (loggedInUsers) output += `\n👥 登录用户:\n${loggedInUsers}`;
             if (serviceStatus) output += `\n🛠️ 服务状态:\n${serviceStatus}`;
 
