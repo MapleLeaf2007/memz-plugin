@@ -50,6 +50,8 @@ export class PingScreenshot extends plugin {
                 return buttons.some(btn => btn.textContent.includes(btnText));
             }, { timeout: 10000 }, buttonText);
 
+            const navigationPromise = page.waitForNavigation({ waitUntil: 'networkidle2' }).catch(() => null);
+
             await page.evaluate((btnText) => {
                 const buttons = Array.from(document.querySelectorAll('button'));
                 const btn = buttons.find(button => button.textContent.includes(btnText));
