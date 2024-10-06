@@ -1,5 +1,9 @@
 import os from 'os';
 import si from 'systeminformation';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 export class SystemStatus extends plugin {
     constructor() {
@@ -37,23 +41,6 @@ export class SystemStatus extends plugin {
     async getExtendedSystemInfo(e) {
         if (!(await this.handleMasterCheck(e))) return;
         try {
-            const [basicInfo, additionalInfo, gpuInfo, batteryInfo, processInfo, networkConnections] = await Promise.all([
-                this.basicInfo(e),
-                this.getAdditionalSystemInfo(),
-                this.getGPUInfo(),
-                this.getBatteryInfo(),
-                this.getProcessInfo(),
-                this.getNetworkConnections()
-            ]);
-            await e.reply(`${basicInfo}\n${additionalInfo}\n${gpuInfo}\n${batteryInfo}\n${processInfo}\n${networkConnections}`);
-        } catch (error) {
-            await e.reply(`获取扩展系统信息时出错: ${error.message}`);
-        }
-    }
-
-    async getExtendedSystemInfo(e) {
-        if (!(await this.handleMasterCheck(e))) return;
-        try {
             const [
                 basicInfo,
                 additionalInfo,
@@ -70,9 +57,15 @@ export class SystemStatus extends plugin {
                 this.getNetworkConnections()
             ]);
 
-            // 过滤掉返回N/A的项
-            const responses = [basicInfo, additionalInfo, gpuInfo, batteryInfo, processInfo, networkConnections]
-                .filter(info => !info.includes('N/A'));
+            // 过滤掉空字符串
+            const responses = [
+                basicInfo,
+                additionalInfo,
+                gpuInfo,
+                batteryInfo,
+                processInfo,
+                networkConnections
+            ].filter(info => info && info.trim() !== '');
 
             await e.reply(responses.join('\n'));
         } catch (error) {
@@ -89,12 +82,10 @@ export class SystemStatus extends plugin {
                 gpuInfo,
                 batteryInfo,
                 processInfo,
-                //networkConnections,
+                networkConnections,
                 diskDetailedInfo,
                 serviceDetails,
-                //environmentInfo,
                 //installedSoftware,
-                //openPorts,
                 motherboardInfo,
                 ramInfo
             ] = await Promise.all([
@@ -103,39 +94,34 @@ export class SystemStatus extends plugin {
                 this.getGPUInfo(),
                 this.getBatteryInfo(),
                 this.getProcessInfo(),
-                //this.getNetworkConnections(),
+                this.getNetworkConnections(),
                 this.getDiskDetailedInfo(),
                 this.getServiceDetails(),
-                //this.getEnvironmentInfo(),
                 //this.getInstalledSoftware(),
-                //this.getOpenPorts(),
                 this.getMotherboardInfo(),
                 this.getRamInfo()
             ]);
 
-            // 过滤掉返回N/A的项
+            // 过滤掉空字符串
             const responses = [
                 basicInfo,
                 additionalInfo,
                 gpuInfo,
                 batteryInfo,
                 processInfo,
-                //networkConnections,
+                networkConnections,
                 diskDetailedInfo,
                 serviceDetails,
-                //environmentInfo,
                 //installedSoftware,
-                //openPorts,
                 motherboardInfo,
                 ramInfo
-            ].filter(info => !info.includes('N/A'));
+            ].filter(info => info && info.trim() !== '');
 
             await e.reply(responses.join('\n'));
         } catch (error) {
             await e.reply(`获取最大扩展系统信息时出错: ${error.message}`);
         }
     }
-
 
     async basicInfo(e) {
         try {
@@ -146,20 +132,20 @@ export class SystemStatus extends plugin {
             ]);
 
             const systemArchitecture = `${osInfo.distro} ${osInfo.release} ${osInfo.arch}`;
-            const cpuUsage = currentLoad.currentLoad.toFixed(2) + '%';
-            const cpuSpeed = cpuInfo.speed ? `${cpuInfo.speed} GHz` : 'N/A';
+            const cpuUsage = `${currentLoad.currentLoad.toFixed(2)}%`;
+            const cpuSpeed = cpuInfo.speed ? `${cpuInfo.speed} GHz` : null;
             const cpuDetails = `${cpuInfo.physicalCores}核 ${cpuInfo.brand}`;
             const usedMemoryGiB = (memoryInfo.active / 1024 / 1024 / 1024).toFixed(2);
             const totalMemoryGiB = (memoryInfo.total / 1024 / 1024 / 1024).toFixed(2);
-            const memoryUsagePercent = ((memoryInfo.active / memoryInfo.total) * 100).toFixed(2) + '%';
+            const memoryUsagePercent = `${((memoryInfo.active / memoryInfo.total) * 100).toFixed(2)}%`;
             const memoryUsage = `${usedMemoryGiB} GiB / ${totalMemoryGiB} GiB (${memoryUsagePercent})`;
 
-            const swapUsage = memoryInfo.swaptotal > 0 ?
-                `${((memoryInfo.swaptotal - memoryInfo.swapfree) / 1024 / 1024 / 1024).toFixed(2)} GiB / ${(memoryInfo.swaptotal / 1024 / 1024 / 1024).toFixed(2)} GiB` :
-                'N/A';
+            const swapUsage = memoryInfo.swaptotal > 0
+                ? `${((memoryInfo.swaptotal - memoryInfo.swapfree) / 1024 / 1024 / 1024).toFixed(2)} GiB / ${(memoryInfo.swaptotal / 1024 / 1024 / 1024).toFixed(2)} GiB`
+                : null;
 
-            return `
-    📊 系统状态
+            let output = `
+📊 系统状态
 
 适配器: ${e.adapter_name}
 操作系统: ${osInfo.platform}
@@ -167,11 +153,15 @@ export class SystemStatus extends plugin {
 主机名: ${os.hostname()}
 Node.js 版本: ${process.version}
 CPU 信息: ${cpuDetails}
-CPU 使用率: ${cpuUsage} (${cpuSpeed})
+CPU 使用率: ${cpuUsage}
 内存: ${memoryUsage}
-内存交换: ${swapUsage}
 系统运行时间: ${(os.uptime() / 86400).toFixed(2)} 天
             `.trim();
+
+            if (cpuSpeed) output += `\nCPU 频率: ${cpuSpeed}`;
+            if (swapUsage) output += `\n内存交换: ${swapUsage}`;
+
+            return output;
         } catch (error) {
             return `获取基本系统信息时出错: ${error.message}`;
         }
@@ -184,34 +174,37 @@ CPU 使用率: ${cpuUsage} (${cpuSpeed})
             ]);
 
             const diskDetails = diskInfo.map(disk => {
-                const total = disk.size ? `${(disk.size / 1024 / 1024 / 1024).toFixed(2)} GB` : 'N/A';
-                const free = disk.available ? `${(disk.available / 1024 / 1024 / 1024).toFixed(2)} GB` : 'N/A';
-                const used = disk.used ? `${(disk.used / 1024 / 1024 / 1024).toFixed(2)} GB` : 'N/A';
-                return `• ${disk.fs} (${disk.type}): 总量 ${total}, 可用 ${free}, 已用 ${used}`;
-            }).join('\n') || 'N/A';
+                const total = disk.size ? `${(disk.size / 1024 / 1024 / 1024).toFixed(2)} GB` : null;
+                const free = disk.available ? `${(disk.available / 1024 / 1024 / 1024).toFixed(2)} GB` : null;
+                const used = disk.used ? `${(disk.used / 1024 / 1024 / 1024).toFixed(2)} GB` : null;
+                let diskLine = `• ${disk.fs} (${disk.type})`;
+                if (total) diskLine += `: 总量 ${total}`;
+                if (free) diskLine += `, 可用 ${free}`;
+                if (used) diskLine += `, 已用 ${used}`;
+                return diskLine;
+            }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-            const systemTemperature = cpuTemperature.main ? `${cpuTemperature.main} °C` : 'N/A';
-            const networkBandwidth = networkStats || 'N/A';
+            const systemTemperature = cpuTemperature.main ? `${cpuTemperature.main} °C` : null;
+            const networkBandwidth = networkStats || null;
             const loadAvg = os.loadavg().map(val => val.toFixed(2)).join(' ');
-            const loggedInUsers = users.length > 0 ? users.map(user => `• ${user.user}`).join('\n') : 'N/A';
-            const serviceStatus = services.length > 0 ?
-                services.map(service => `• ${service.name}: ${service.running ? '✅ Active' : '❌ Inactive'}`).join('\n') :
-                'N/A';
+            const loggedInUsers = users.length > 0 ? users.map(user => `• ${user.user}`).join('\n') : null;
+            const serviceStatus = services.length > 0
+                ? services.map(service => `• ${service.name}: ${service.running ? '✅ Active' : '❌ Inactive'}`).join('\n')
+                : null;
 
-            return `
-    💾 磁盘信息
+            let output = `
+💾 磁盘信息
 ${diskDetails}
-    🌡️ 系统温度
-${systemTemperature}
-    📡 网络使用情况
-${networkBandwidth}
-    📈 系统负载
+📈 系统负载
 ${loadAvg}
-    👥 登录用户
-${loggedInUsers}
-    🛠️ 服务状态
-${serviceStatus}
             `.trim();
+
+            if (systemTemperature) output += `\n🌡️ 系统温度: ${systemTemperature}`;
+            if (networkBandwidth) output += `\n📡 网络使用情况: ${networkBandwidth}`;
+            if (loggedInUsers) output += `\n👥 登录用户:\n${loggedInUsers}`;
+            if (serviceStatus) output += `\n🛠️ 服务状态:\n${serviceStatus}`;
+
+            return output;
         } catch (error) {
             return `获取扩展系统信息时出错: ${error.message}`;
         }
@@ -221,17 +214,21 @@ ${serviceStatus}
         try {
             const diskPartitions = await si.diskLayout();
             if (!diskPartitions || diskPartitions.length === 0) {
-                return '📂 磁盘分区详情: N/A';
+                return null;
             }
 
             const partitionsInfo = diskPartitions.map(partition => {
-                return `• ${partition.device} - ${partition.type} - ${partition.size ? (partition.size / (1024 ** 3)).toFixed(2) + ' GB' : 'N/A'} - ${partition.name || 'N/A'}`;
-            }).join('\n');
+                const size = partition.size ? `${(partition.size / (1024 ** 3)).toFixed(2)} GB` : null;
+                const name = partition.name || null;
+                let partitionLine = `• ${partition.device} - ${partition.type}`;
+                if (size) partitionLine += ` - ${size}`;
+                if (name) partitionLine += ` - ${name}`;
+                return partitionLine;
+            }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-            return `
-    📂 磁盘分区详情
-${partitionsInfo}
-            `.trim();
+            return partitionsInfo
+                ? `📂 磁盘分区详情\n${partitionsInfo}`
+                : null;
         } catch (error) {
             return `获取磁盘分区信息时出错: ${error.message}`;
         }
@@ -241,92 +238,53 @@ ${partitionsInfo}
         try {
             const services = await si.services();
             if (!services || services.length === 0) {
-                return '🛠️ 系统服务详情: N/A';
+                return null;
             }
 
             const serviceDetails = services.map(service => {
-                return `• ${service.name}: ${service.running ? '✅ Active' : '❌ Inactive'}`;
-            }).join('\n');
+                const status = service.running ? '✅ Active' : '❌ Inactive';
+                return `• ${service.name}: ${status}`;
+            }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-            return `
-    🛠️ 系统服务详情
-${serviceDetails}
-            `.trim();
+            return serviceDetails
+                ? `🛠️ 系统服务详情\n${serviceDetails}`
+                : null;
         } catch (error) {
             return `获取系统服务详情时出错: ${error.message}`;
         }
     }
 
-    async getEnvironmentInfo() {
-        try {
-            const envVars = process.env;
-            const envInfo = Object.keys(envVars).map(key => `• ${key}: ${envVars[key]}`).join('\n') || 'N/A';
-
-            return `
-    🛢️ 环境变量信息
-${envInfo}
-            `.trim();
-        } catch (error) {
-            return `获取环境变量信息时出错: ${error.message}`;
-        }
-    }
-
     async getInstalledSoftware() {
         try {
-            const { exec } = require('child_process');
-            const execAsync = (cmd) => new Promise((resolve, reject) => {
-                exec(cmd, (error, stdout, stderr) => {
-                    if (error) reject(error);
-                    else resolve(stdout);
-                });
-            });
-
             if (os.platform() === 'win32') {
-                const stdout = await execAsync('wmic product get name,version');
+                const { stdout } = await execAsync('wmic product get name,version');
                 const lines = stdout.split('\n').slice(1).filter(line => line.trim() !== '');
                 const softwareList = lines.slice(0, 10).map(line => {
                     const [name, version] = line.trim().split(/\s{2,}/);
                     return `• ${name || '未知软件'} - 版本: ${version || 'N/A'}`;
-                }).join('\n') || 'N/A';
+                }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-                return `🖥️ 已安装的软件列表 (Windows，仅显示前10项)\n\n${softwareList}`;
+                return softwareList
+                    ? `🖥️ 已安装的软件列表 (Windows，仅显示前10项)\n\n${softwareList}`
+                    : null;
 
             } else if (os.platform() === 'linux') {
-                const stdout = await execAsync('dpkg --get-selections');
+                const { stdout } = await execAsync('dpkg --get-selections');
                 const lines = stdout.split('\n').filter(line => line.trim() !== '');
                 const softwareList = lines.slice(0, 10).map(line => {
                     const [name, status] = line.trim().split(/\s+/);
                     return `• ${name} - 状态: ${status}`;
-                }).join('\n') || 'N/A';
+                }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-                return `🖥️ 已安装的软件列表 (Linux，仅显示前10项)\n\n${softwareList}`;
+                return softwareList
+                    ? `🖥️ 已安装的软件列表 (Linux，仅显示前10项)\n\n${softwareList}`
+                    : null;
 
             } else {
-                return '🖥️ 已安装的软件列表: 不支持的平台或功能';
+                return null;
             }
         } catch (error) {
             return `获取已安装的软件列表时出错: ${error.message}`;
-        }
-    }
-
-
-    async getOpenPorts() {
-        try {
-            const connections = await si.networkConnections();
-            if (!connections || connections.length === 0) {
-                return '🔓 开放端口: 无开放端口';
-            }
-
-            const openPorts = connections.filter(conn => conn.state === 'LISTEN').slice(0, 10).map(conn => {
-                return `• ${conn.protocol.toUpperCase()} ${conn.localaddress}:${conn.localport} (${conn.pid ? 'PID: ' + conn.pid : 'N/A'})`;
-            }).join('\n') || 'N/A';
-
-            return `
-    🔓 开放端口
-${openPorts}
-            `.trim();
-        } catch (error) {
-            return `获取开放端口信息时出错: ${error.message}`;
         }
     }
 
@@ -334,20 +292,23 @@ ${openPorts}
         try {
             const motherboard = await si.baseboard();
             if (!motherboard || Object.keys(motherboard).length === 0) {
-                return '🖥️ 主板信息: N/A';
+                return null;
             }
 
-            const info = `
-• 生产商: ${motherboard.manufacturer || 'N/A'}
-• 产品: ${motherboard.product || '不知道'}
-• 版本: ${motherboard.version || '不知道'}
-• 序列号: ${motherboard.serial || '不知道'}
-            `.trim();
+            const manufacturer = motherboard.manufacturer || null;
+            const product = motherboard.product || null;
+            const version = motherboard.version || null;
+            const serial = motherboard.serial || null;
 
-            return `
-    🖥️ 主板信息
-${info}
-            `.trim();
+            let info = '';
+            if (manufacturer) info += `• 生产商: ${manufacturer}\n`;
+            if (product) info += `• 产品: ${product}\n`;
+            if (version) info += `• 版本: ${version}\n`;
+            if (serial) info += `• 序列号: ${serial}\n`;
+
+            return info
+                ? `🖥️ 主板信息\n${info.trim()}`
+                : null;
         } catch (error) {
             return `获取主板信息时出错: ${error.message}`;
         }
@@ -355,44 +316,63 @@ ${info}
 
     async getRamInfo() {
         try {
-            const memoryData = await si.mem();
             const ramData = await si.memLayout();
 
-            // 检查是否有内存条信息
             if (ramData.length === 0) {
-                return '💾 RAM 信息: 无内存条信息';
+                return null;
             }
 
-            // 构建内存条信息
             const memoryDetails = ramData.map((ram, index) => {
-                // 处理内存条速度
+                const type = ram.type || '未知类型';
+                const size = ram.size ? `${(ram.size / 1024 / 1024 / 1024).toFixed(2)} GB` : '未知大小';
                 const speed = ram.speed ? `${ram.speed} MHz` : '未知频率';
-                return `• 内存条 ${index + 1}: ${ram.type}, ${ram.size / 1024 / 1024 / 1024} GB, ${speed}`;
-            }).join('\n');
+                return `• 内存条 ${index + 1}: ${type}, ${size}, ${speed}`;
+            }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-            // 返回内存信息
-            return `💾 RAM 信息\n${memoryDetails}`;
+            return memoryDetails
+                ? `💾 RAM 信息\n${memoryDetails}`
+                : null;
         } catch (error) {
             return `获取 RAM 信息时出错: ${error.message}`;
         }
     }
 
-
     async getGPUInfo() {
         try {
             const gpuData = await si.graphics();
+
             if (!gpuData || !gpuData.controllers || gpuData.controllers.length === 0) {
-                return '🎮 GPU 信息: N/A';
+                return null;
             }
 
             const gpuDetails = gpuData.controllers.map(gpu => {
-                return `• ${gpu.model} - ${gpu.vendor} - ${gpu.memoryTotal} MB`;
-            }).join('\n');
+                const model = gpu.model || '未知型号';
+                const vendor = gpu.vendor || '未知供应商';
+                const memoryTotal = gpu.memoryTotal ? `${gpu.memoryTotal} MB` : '未知显存';
+                return `• ${model} - ${vendor} - ${memoryTotal}`;
+            }).filter(line => !line.includes('N/A')).join('\n') || null;
 
-            return `
-    🎮 GPU 信息
-${gpuDetails}
-            `.trim();
+            // 获取 GPU 负载（仅适用于 NVIDIA GPU）
+            let gpuLoadInfo = '';
+            if (os.platform() === 'linux') {
+                try {
+                    const { stdout } = await execAsync('nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits');
+                    const loads = stdout.split('\n').filter(line => line.trim() !== '');
+                    if (loads.length > 0) {
+                        const loadDetails = loads.map((load, index) => `• GPU ${index + 1} 负载: ${load}%`).join('\n');
+                        gpuLoadInfo = loadDetails;
+                    }
+                } catch (error) {
+                    // 如果执行 nvidia-smi 失败，忽略 GPU 负载信息
+                    gpuLoadInfo = null;
+                }
+            }
+
+            let output = '';
+            if (gpuDetails) output += `🎮 GPU 信息\n${gpuDetails}`;
+            if (gpuLoadInfo) output += `\n${gpuLoadInfo}`;
+
+            return output.trim() || null;
         } catch (error) {
             return `获取 GPU 信息时出错: ${error.message}`;
         }
@@ -402,19 +382,19 @@ ${gpuDetails}
         try {
             const battery = await si.battery();
             if (!battery || battery.hasBattery === false) {
-                return '🔋 电池状态: 不适用';
+                return null;
             }
 
             const status = battery.isCharging ? '充电中' : '未充电';
-            const capacity = battery.percent ? `${battery.percent}%` : 'N/A';
-            const timeRemaining = battery.timeRemaining !== -1 ? `${battery.timeRemaining} 分钟` : 'N/A';
+            const capacity = battery.percent ? `${battery.percent}%` : null;
+            const timeRemaining = battery.timeRemaining !== -1 ? `${battery.timeRemaining} 分钟` : null;
 
-            return `
-    🔋 电池状态
-状态: ${status}
-容量: ${capacity}
-剩余时间: ${timeRemaining}
-            `.trim();
+            let output = '🔋 电池状态';
+            output += `\n状态: ${status}`;
+            if (capacity) output += `\n容量: ${capacity}`;
+            if (timeRemaining) output += `\n剩余时间: ${timeRemaining}`;
+
+            return output;
         } catch (error) {
             return `获取电池信息时出错: ${error.message}`;
         }
@@ -426,16 +406,14 @@ ${gpuDetails}
             const sortedByCpu = processes.list.sort((a, b) => b.cpu - a.cpu).slice(0, 5);
             const sortedByMemory = processes.list.sort((a, b) => b.mem - a.mem).slice(0, 5);
 
-            const topCpu = sortedByCpu.map(proc => `• ${proc.name} (PID: ${proc.pid}) - CPU: ${proc.cpu.toFixed(2)}%`).join('\n') || 'N/A';
-            const topMemory = sortedByMemory.map(proc => `• ${proc.name} (PID: ${proc.pid}) - 内存: ${(proc.mem / 1024).toFixed(2)} MB`).join('\n') || 'N/A';
+            const topCpu = sortedByCpu.map(proc => `• ${proc.name} (PID: ${proc.pid}) - CPU: ${proc.cpu.toFixed(2)}%`).join('\n') || null;
+            const topMemory = sortedByMemory.map(proc => `• ${proc.name} (PID: ${proc.pid}) - 内存: ${(proc.mem / 1024).toFixed(2)} MB`).join('\n') || null;
 
-            return `
-    📋 进程信息
-🔼 CPU 使用率最高的进程:
-${topCpu}
-🔼 内存使用率最高的进程:
-${topMemory}
-            `.trim();
+            let output = '📋 进程信息';
+            if (topCpu) output += `\n🔼 CPU 使用率最高的进程:\n${topCpu}`;
+            if (topMemory) output += `\n🔼 内存使用率最高的进程:\n${topMemory}`;
+
+            return output.trim() || null;
         } catch (error) {
             return `获取进程信息时出错: ${error.message}`;
         }
@@ -445,7 +423,7 @@ ${topMemory}
         try {
             const connections = await si.networkConnections();
             if (!connections || connections.length === 0) {
-                return '🌐 网络连接: 无活动连接';
+                return null;
             }
 
             const activeConnections = connections.slice(0, 5).map(conn => {
@@ -457,12 +435,11 @@ ${topMemory}
                 const state = conn.state || 'UNKNOWN';
 
                 return `• ${protocol} ${localAddress}:${localPort} -> ${peerAddress}:${peerPort} (${state})`;
-            }).join('\n') || 'N/A';
+            }).filter(line => !line.includes('undefined')).join('\n') || null;
 
-            return `
-    🌐 网络连接
-${activeConnections}
-            `.trim();
+            return activeConnections
+                ? `🌐 网络连接\n${activeConnections}`
+                : null;
         } catch (error) {
             return `获取网络连接信息时出错: ${error.message}`;
         }
@@ -475,16 +452,20 @@ ${activeConnections}
                 new Promise(resolve => setTimeout(resolve, 1000)).then(() => si.networkStats())
             ]);
 
-            return stats2.map(stat2 => {
+            const bandwidthInfo = stats2.map(stat2 => {
                 const stat1 = stats1.find(s => s.iface === stat2.iface);
-                if (!stat1) return `• ${stat2.iface}: In: N/A, Out: N/A`;
+                if (!stat1) return null;
 
                 const rxSpeedMB = ((stat2.rx_bytes - stat1.rx_bytes) / 1024 / 1024).toFixed(2);
                 const txSpeedMB = ((stat2.tx_bytes - stat1.tx_bytes) / 1024 / 1024).toFixed(2);
                 return `• ${stat2.iface}: In: ${rxSpeedMB} MB/s, Out: ${txSpeedMB} MB/s`;
-            }).join('\n') || 'N/A';
+            }).filter(line => line !== null).join('\n') || null;
+
+            return bandwidthInfo
+                ? `📡 网络使用情况\n${bandwidthInfo}`
+                : null;
         } catch {
-            return 'N/A';
+            return null;
         }
     }
 }
