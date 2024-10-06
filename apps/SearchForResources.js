@@ -86,14 +86,14 @@ export class ResourceSearchPlugin extends plugin {
                     reg: '^#?搜资源\\s*(\\S+)$',
                     fnc: 'handleSearch'
                 },
-                {
-                    reg: '^#?资源添加\\s*(\\S+),\\s*(\\S+),\\s*(\\S+)$',
-                    fnc: 'handleAddResource'
-                },
-                {
-                    reg: '^#?资源删除\\s*(\\d+)$',
-                    fnc: 'handleDeleteResource'
-                },
+                // {
+                //     reg: '^#?资源添加\\s*(\\S+),\\s*(\\S+),\\s*(\\S+)$',
+                //     fnc: 'handleAddResource'
+                // },
+                // {
+                //     reg: '^#?资源删除\\s*(\\d+)$',
+                //     fnc: 'handleDeleteResource'
+                // },
                 {
                     reg: '^#?查看资源\\s*(\\d+)$',
                     fnc: 'handleViewResource'
