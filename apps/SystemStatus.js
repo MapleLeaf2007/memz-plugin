@@ -339,9 +339,9 @@ ${openPorts}
 
             const info = `
 • 生产商: ${motherboard.manufacturer || 'N/A'}
-• 产品: ${motherboard.product || 'N/A'}
-• 版本: ${motherboard.version || 'N/A'}
-• 序列号: ${motherboard.serial || 'N/A'}
+• 产品: ${motherboard.product || '不知道'}
+• 版本: ${motherboard.version || '不知道'}
+• 序列号: ${motherboard.serial || '不知道'}
             `.trim();
 
             return `
