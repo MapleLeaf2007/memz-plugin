@@ -21,9 +21,14 @@ export const helpList = [
             },
             {
                 "icon": 82,
-                "title": "#(tc)?ping+网站",
+                "title": "#(tc)?ping+域名",
                 "desc": "(TC)Ping网站"
-            }
+            },
+            {
+                "icon": 83,
+                "title": "#dns+域名",
+                "desc": "DNS记录查询"
+            },
         ]
     },
     {
