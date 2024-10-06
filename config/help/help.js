@@ -78,7 +78,7 @@ export const helpList = [
             },
             {
                 "icon": 48,
-                "title": "#(memz)系统状态(pro)",
+                "title": "#(memz)系统状态(pro)(max)",
                 "desc": "查看系统状态"
             },
         ]
