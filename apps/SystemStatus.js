@@ -111,7 +111,7 @@ export class SystemStatus extends plugin {
                 'N/A';
 
             return `
-📊 系统状态
+    📊 系统状态
 
 适配器: ${e.adapter_name}
 操作系统: ${osInfo.platform}
@@ -151,23 +151,17 @@ CPU 使用率: ${cpuUsage} (${cpuSpeed})
                 'N/A';
 
             return `
-💾 磁盘信息
-
+    💾 磁盘信息
 ${diskDetails}
-🌡️ 系统温度
-
+    🌡️ 系统温度
 ${systemTemperature}
-📡 网络使用情况
-
+    📡 网络使用情况
 ${networkBandwidth}
-📈 系统负载
-
+    📈 系统负载
 ${loadAvg}
-👥 登录用户
-
+    👥 登录用户
 ${loggedInUsers}
-🛠️ 服务状态
-
+    🛠️ 服务状态
 ${serviceStatus}
             `.trim();
         } catch (error) {
@@ -187,8 +181,7 @@ ${serviceStatus}
             }).join('\n');
 
             return `
-📂 磁盘分区详情
-
+    📂 磁盘分区详情
 ${partitionsInfo}
             `.trim();
         } catch (error) {
@@ -208,8 +201,7 @@ ${partitionsInfo}
             }).join('\n');
 
             return `
-🛠️ 系统服务详情
-
+    🛠️ 系统服务详情
 ${serviceDetails}
             `.trim();
         } catch (error) {
@@ -223,8 +215,7 @@ ${serviceDetails}
             const envInfo = Object.keys(envVars).map(key => `• ${key}: ${envVars[key]}`).join('\n') || 'N/A';
 
             return `
-🛢️ 环境变量信息
-
+    🛢️ 环境变量信息
 ${envInfo}
             `.trim();
         } catch (error) {
@@ -283,8 +274,7 @@ ${envInfo}
             }).join('\n') || 'N/A';
 
             return `
-🔓 开放端口
-
+    🔓 开放端口
 ${openPorts}
             `.trim();
         } catch (error) {
@@ -307,8 +297,7 @@ ${openPorts}
             `.trim();
 
             return `
-🖥️ 主板信息
-
+    🖥️ 主板信息
 ${info}
             `.trim();
         } catch (error) {
@@ -328,8 +317,7 @@ ${info}
             }).join('\n');
 
             return `
-💾 RAM 信息
-
+    💾 RAM 信息
 ${ramDetails}
             `.trim();
         } catch (error) {
@@ -349,8 +337,7 @@ ${ramDetails}
             }).join('\n');
 
             return `
-🎮 GPU 信息
-
+    🎮 GPU 信息
 ${gpuDetails}
             `.trim();
         } catch (error) {
@@ -370,8 +357,7 @@ ${gpuDetails}
             const timeRemaining = battery.timeRemaining !== -1 ? `${battery.timeRemaining} 分钟` : 'N/A';
 
             return `
-🔋 电池状态
-
+    🔋 电池状态
 状态: ${status}
 容量: ${capacity}
 剩余时间: ${timeRemaining}
@@ -391,11 +377,9 @@ ${gpuDetails}
             const topMemory = sortedByMemory.map(proc => `• ${proc.name} (PID: ${proc.pid}) - 内存: ${(proc.mem / 1024).toFixed(2)} MB`).join('\n') || 'N/A';
 
             return `
-📋 进程信息
-
+    📋 进程信息
 🔼 CPU 使用率最高的进程:
 ${topCpu}
-
 🔼 内存使用率最高的进程:
 ${topMemory}
             `.trim();
@@ -423,8 +407,7 @@ ${topMemory}
             }).join('\n') || 'N/A';
 
             return `
-🌐 网络连接
-
+    🌐 网络连接
 ${activeConnections}
             `.trim();
         } catch (error) {
