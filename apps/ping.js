@@ -3,29 +3,29 @@ import puppeteer from 'puppeteer';
 export class PingScreenshot extends plugin {
     constructor() {
         super({
-            name: '网络工具截图',
-            dsc: '发送#ping网站、#tcping网站或#dns网站，截图对应页面顶部部分',
+            name: 'Ping 截图',
+            dsc: '发送#ping网站或#tcping网站, 截图对应页面顶部部分',
             event: 'message',
             priority: 1,
             rule: [
                 {
-                    reg: `^#(ping|tcping|dns)\\s*(\\S+)$`,
-                    fnc: 'handleNetworkTest'
+                    reg: `^#(ping|tcping)\\s*(\\S+)$`,
+                    fnc: 'handlePing'
                 }
             ]
         });
     }
 
     /**
-     * 处理 Ping/TCPing/DNS 命令
+     * 处理Ping/TCPing命令
      * @param {Object} e - 事件对象
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
-    async handleNetworkTest(e) {
-        e.reply('正在获取数据...请稍等......', true);
-        const match = e.msg.match(/^#(ping|tcping|dns)\s*(\S+)$/i);
+    async handlePing(e) {
+        e.reply('正在获取Ping数据...请稍等......', true);
+        const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {
-            return await e.reply('我怎么知道你要干嘛!', true);
+            return await e.reply('?我怎么知道你要干嘛!', true);
         }
         const [, type, siteName] = match;
 
@@ -41,27 +41,31 @@ export class PingScreenshot extends plugin {
         const page = await browser.newPage();
 
         try {
+            // 导航到目标URL
             await page.goto(url, { waitUntil: 'networkidle2' });
 
-            const buttonText = type === 'dns' ? '开始测试' : '单次测试';
-
-            await page.waitForFunction((btnText) => {
+            // 等待“单次测试”按钮出现
+            await page.waitForFunction(() => {
                 const buttons = Array.from(document.querySelectorAll('button'));
-                return buttons.some(btn => btn.textContent.includes(btnText));
-            }, { timeout: 10000 }, buttonText);
+                return buttons.some(btn => btn.textContent.includes('单次测试'));
+            }, { timeout: 10000 });
+
 
             const navigationPromise = page.waitForNavigation({ waitUntil: 'networkidle2' }).catch(() => null);
 
-            await page.evaluate((btnText) => {
+            // 点击“单次测试”按钮
+            await page.evaluate(() => {
                 const buttons = Array.from(document.querySelectorAll('button'));
-                const btn = buttons.find(button => button.textContent.includes(btnText));
+                const btn = buttons.find(button => button.textContent.includes('单次测试'));
                 if (btn) btn.click();
-            }, buttonText);
+            });
 
+            // 等待加载进度条达到100%
             let progress = 0;
             const progressSelector = '#complete_progress > div';
             while (progress < 100) {
                 try {
+                    // 使用 CSS 选择器等待进度条元素出现
                     await page.waitForSelector(progressSelector, { timeout: 5000 });
                 } catch (err) {
                     logger.warn('进度条元素未找到，继续等待');
@@ -81,6 +85,7 @@ export class PingScreenshot extends plugin {
                     break;
                 }
 
+                // 每半秒检查一次进度
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
 
@@ -105,7 +110,7 @@ export class PingScreenshot extends plugin {
 
             await this.reply(segment.image(screenshot), true);
         } catch (error) {
-            logger.error(`Error in handleNetworkTest: ${error.stack}`);
+            logger.error(`Error in handlePing: ${error.stack}`);
             await e.reply(`无法获取网页截图: ${error.message}`, true);
         } finally {
             await browser.close();
