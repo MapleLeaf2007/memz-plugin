@@ -10,7 +10,7 @@ export class SteamGamesPlugin extends plugin {
             priority: 6,
             rule: [
                 {
-                    reg: '^#获取Steam今日免费游戏$',
+                    reg: /^#?(获取)?Steam今日免费游戏$/i,
                     fnc: 'fetchTodayFreeGamesHandler'
                 },
                 {
@@ -83,7 +83,7 @@ export class SteamGamesPlugin extends plugin {
                     user_id: 382879217,
                     nickname: 'ZSY11',
                     message: [
-                        `标题: ${game.title}\n价格: ${game.price}\n链接: ${game.link}\n图片: ${game.imgSrc}`
+                        `标题: ${game.title}\n价格: ${game.price}\n链接: ${game.link}\n图片:`, segment.image(game.imgSrc)
                     ]
                 }));
 
