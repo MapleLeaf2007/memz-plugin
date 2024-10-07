@@ -5,12 +5,13 @@
     "type": "module",
     "dependencies": {
         "axios": "^0.24.0",
+        "cheerio": "^1.0.0",
         "ioredis": "*",
-        "systeminformation": "*",
-        "whois-json": "*",
-        "yaml": "^2.2.2",
+        "js-yaml": "^4.1.0",
         "sqlite": "^5.1.1",
         "sqlite3": "^5.1.7",
-        "js-yaml": "^4.1.0"
+        "systeminformation": "*",
+        "whois-json": "*",
+        "yaml": "^2.2.2"
     }
 }
