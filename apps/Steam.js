@@ -1,6 +1,6 @@
 import { load } from 'cheerio';
 import axios from 'axios';
-import https from 'https'; // 导入 https 模块
+import https from 'https';
 
 export class SteamGamesPlugin extends plugin {
     constructor() {
@@ -22,10 +22,9 @@ export class SteamGamesPlugin extends plugin {
         });
     }
 
-    // 通用的游戏解析函数
+    // 游戏解析函数
     async fetchGames(url, priceLimit = null) {
         try {
-            // 忽略 SSL 证书验证
             const httpsAgent = new https.Agent({
                 rejectUnauthorized: false
             });
