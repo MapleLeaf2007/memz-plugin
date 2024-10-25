@@ -8,8 +8,6 @@
         "cheerio": "^1.0.0",
         "ioredis": "*",
         "js-yaml": "^4.1.0",
-        "sqlite": "^5.1.1",
-        "sqlite3": "^5.1.7",
         "systeminformation": "*",
         "whois-json": "*",
         "yaml": "^2.2.2"
