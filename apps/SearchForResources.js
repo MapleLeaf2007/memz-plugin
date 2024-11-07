@@ -110,7 +110,7 @@ export class ResourceSearchPlugin extends plugin {
     async handleCategoryCount(e) {
         try {
             const categoryCount = countCategories(this.data);
-            let message = '资源分类统计：\n';
+            let message = '----资源分类统计----\n';
 
             for (const category in categoryCount) {
                 message += `${category}: ${categoryCount[category]} 个资源\n`;
