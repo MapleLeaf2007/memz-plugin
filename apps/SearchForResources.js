@@ -62,7 +62,7 @@ export class ResourceSearchPlugin extends plugin {
                     fnc: 'handleSearch'
                 },
                 {
-                    reg: '^#?资源(分类|类别)(统计|数量|总数|总计)$',
+                    reg: '^#?资源(分类|类别)?(统计|数量|总数|总计)$',
                     fnc: 'handleCategoryCount'
                 }
             ]
