@@ -1,12 +1,10 @@
 import Redis from 'ioredis';
 
-// 获取当前北京时间
 const getTime = () => {
     const now = new Date();
     return now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false }).replace(',', '');
 };
 
-// 初始化Redis
 const redis = new Redis
 
 export class Game extends plugin {
@@ -30,7 +28,7 @@ export class Game extends plugin {
                     fnc: 'listMyApplications'
                 },
                 {
-                    reg: /^#查看所有游戏申请$/, //仅管理员可用
+                    reg: /^#查看所有游戏申请$/,
                     fnc: 'listAllApplications'
                 }
             ]
@@ -44,7 +42,7 @@ export class Game extends plugin {
             return;
         }
 
-        const gameName = match[1].trim(); // 使用 gameName
+        const gameName = match[1].trim();
         const userId = e.user_id;
         const beijingTime = getTime();
         const userKey = `User:${userId}:Games`;
@@ -64,12 +62,12 @@ export class Game extends plugin {
             }
 
             const data = {
-                gameId: gameName, // 确保这里使用正确的字段
+                gameId: gameName,
                 userId: userId,
                 timestamp: beijingTime,
             };
 
-            await redis.sadd(userKey, gameName); // 使用Set存储游戏名称
+            await redis.sadd(userKey, gameName);
             await redis.hset('GameApplications', `${userId}:${gameName}`, JSON.stringify(data)); // 使用Hash存储详细信息
             e.reply(`游戏(${gameName})申请成功，请等待审核。`, true);
         } catch (error) {
