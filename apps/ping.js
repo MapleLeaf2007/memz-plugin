@@ -25,13 +25,13 @@ export class PingScreenshot extends plugin {
         e.reply('正在获取Ping数据...请稍等......', true);
         const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {
-            return await e.reply('?我怎么知道你要干嘛!', true);
+            return await e.reply('请输入正确的Ping命令', true);
         }
         const [, type, siteName] = match;
 
         const url = `https://www.itdog.cn/${type}/${siteName}`;
 
-        logger.info(`[MEMZ-Plugin]${type}:${url}`);
+        logger.debug(`[MEMZ-Plugin]${type}:${url}`);
 
         const browser = await puppeteer.launch({
             headless: true,
@@ -68,7 +68,7 @@ export class PingScreenshot extends plugin {
                     // 使用 CSS 选择器等待进度条元素出现
                     await page.waitForSelector(progressSelector, { timeout: 5000 });
                 } catch (err) {
-                    logger.warn('进度条元素未找到，继续等待');
+                    logger.debug('进度条元素未找到，继续等待');
                 }
 
                 progress = await page.evaluate((selector) => {
@@ -92,12 +92,12 @@ export class PingScreenshot extends plugin {
             // 页面视口大小
             const viewportHeight = 1000;
             await page.setViewport({ width: 1420, height: viewportHeight });
-            logger.info('已设置视口大小');
+            logger.debug('已设置视口大小');
 
             // 计算截图区域
             const clipHeight = 1000;
             const clipTop = 799;
-            logger.info(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
+            logger.debug(`截图区域 - x: 140, y: ${clipTop}, width: 1245, height: ${clipHeight}`);
 
             const screenshot = await page.screenshot({
                 clip: {
