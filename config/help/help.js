@@ -24,6 +24,11 @@ export const helpList = [
                 "title": "#(tc)?ping+域名",
                 "desc": "(TC)Ping网站"
             },
+            {
+                "icon": 83,
+                "title": "#seo+域名",
+                "desc": "查询域名的SEO信息"
+            }
         ]
     },
     {
