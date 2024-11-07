@@ -6,14 +6,8 @@ const getTime = () => {
     return now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false }).replace(',', '');
 };
 
-
-
 // 初始化Redis
-const redis = new Redis({
-    port: 6379,
-    host: '127.0.0.1',
-    db: 2,
-});
+const redis = new Redis
 
 export class Game extends plugin {
     constructor() {
@@ -52,7 +46,7 @@ export class Game extends plugin {
 
         const gameName = match[1].trim(); // 使用 gameName
         const userId = e.user_id;
-        const beijingTime = getTime ();
+        const beijingTime = getTime();
         const userKey = `User:${userId}:Games`;
         const maxApplications = 5;
 
@@ -144,13 +138,6 @@ export class Game extends plugin {
     }
 
     async listAllApplications(e) {
-        const userId = e.user_id;
-
-        if (userId !== 1011303349) {
-            e.reply(`您没有权限执行此操作。`, true);
-            return;
-        }
-
         try {
             const applications = await redis.hgetall('GameApplications');
             const applicationArray = Object.values(applications).map(app => JSON.parse(app));
