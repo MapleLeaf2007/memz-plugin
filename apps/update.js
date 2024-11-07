@@ -20,7 +20,7 @@ export class Updates extends plugin {
             ]
         })
     }
-    async update(e = this.e, isauto = false) {
+    async update(e) {
         if (!(e.isMaster || e.user_id == 1011303349)) return;
         e.isMaster = true
         if (e.at && !e.atme) return;
