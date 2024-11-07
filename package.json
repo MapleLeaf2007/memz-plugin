@@ -10,6 +10,7 @@
         "js-yaml": "^4.1.0",
         "systeminformation": "*",
         "whois-json": "*",
+        "xlsx": "^0.18.5",
         "yaml": "^2.2.2"
     }
 }
