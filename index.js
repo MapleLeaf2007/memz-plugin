@@ -28,7 +28,7 @@ try {
             const moduleExports = await import(filePath);
             const defaultExport = moduleExports?.default || moduleExports[Object.keys(moduleExports)[0]];
             apps[name] = defaultExport;
-            logger.info(`MEMZ插件成功载入：${chalk.green(name)}`);
+            logger.debug(`MEMZ插件成功载入：${chalk.green(name)}`);
             successCount++;
         } catch (error) {
             logger.error(`MEMZ插件载入错误：${chalk.red(name)}`);
