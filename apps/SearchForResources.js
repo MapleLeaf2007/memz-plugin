@@ -86,7 +86,7 @@ export class ResourceSearchPlugin extends plugin {
                     user_id: 382879217,
                     nickname: 'ZSY11',
                     message: [
-                        `ID: ${row.ID}\n名称: ${row.关键词}\n内容: ${row.内容}\n分类: ${row.分类}`
+                        `名称: ${row.关键词}\n内容: ${row.内容}\n分类: ${row.分类}`
                     ]
                 }));
                 forward.push({
