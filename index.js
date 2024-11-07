@@ -44,13 +44,13 @@ try {
 }
 
 const endTime = Date.now();
-const elapsedTime = ((endTime - startTime) / 1000).toFixed(2);
+const elapsedTime = (endTime - startTime);
 
 logger.info(`${chalk.cyan('-------------------')}`);
 logger.info(`${chalk.green('MEMZ插件载入完成')}`);
 logger.info(`成功加载：${chalk.green(successCount)} 个`);
 logger.info(`加载失败：${chalk.red(failureCount)} 个`);
-logger.info(`总耗时：${chalk.yellow(elapsedTime)} 秒`);
+logger.info(`总耗时：${chalk.yellow(elapsedTime)} 毫秒`);
 logger.info(`${chalk.cyan('-------------------')}`);
 
 export { apps };
