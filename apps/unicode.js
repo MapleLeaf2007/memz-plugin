@@ -1,14 +1,7 @@
-<<<<<<< HEAD
 process.noDeprecation = true;
 import punycode from "punycode";
 import { Config } from "../components/index.js";
 const { UnicodeAll } = Config.getYaml("config", "memz-config");
-=======
-import punycode from 'punycode';
-import { Config } from '../components/index.js';
-const { UnicodeAll } = Config.getYaml('config', 'memz-config');
-process.noDeprecation = true;
->>>>>>> parent of 9bdd461 (fix(apps): 修复系统状态和 Unicode 插件的问题)
 
 export function encodeToPunycode(msg) {
   return `xn--${punycode.encode(msg)}`;
