@@ -23,7 +23,7 @@ export class SystemStatus extends plugin {
     }
 
     async handleMasterCheck(e) {
-        if (!SystemStatusAll) {
+        if (!SystemStatusAll && !e.isMaster) {
             logger.warn('[memz-plugin]系统状态当前为仅主人可用');
             return false;
         }

@@ -1,7 +1,8 @@
+process.noDeprecation = true;
 import punycode from 'punycode';
 import { Config } from '../components/index.js';
 const { UnicodeAll } = Config.getYaml('config', 'memz-config');
-process.noDeprecation = true;
+
 
 export function encodeToPunycode(msg) {
   return `xn--${punycode.encode(msg)}`;
