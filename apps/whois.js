@@ -1,42 +1,41 @@
-import whois from 'whois-json';
-import fs from 'fs';
-import { Config, Plugin_Path } from '../components/index.js';
-import { generateScreenshot } from '../model/generateScreenshot.js';
-const { WhoisAll } = Config.getYaml('config', 'memz-config');
-
+import whois from "whois-json";
+import fs from "fs";
+import { Config, Plugin_Path } from "../components/index.js";
+import { generateScreenshot } from "../model/generateScreenshot.js";
+const { WhoisAll } = Config.getYaml("config", "memz-config");
 
 const whoisFieldsMap = {
-  domainName: '域名',
-  roid: '注册号',
-  domainStatus: '域名状态',
-  registrant: '注册人信息',
-  registrantContactEmail: '注册人邮箱',
-  sponsoringRegistrar: '注册商',
-  nameServer: 'DNS 服务器',
-  registrationTime: '注册时间',
-  expirationTime: '过期时间',
-  dnssec: 'DNSSEC',
-  domain: '域名',
-  registrar: '注册商',
-  whois_server: 'WHOIS 服务器',
-  referral_url: '推荐 URL',
-  updated_date: '更新日期',
-  creation_date: '创建日期',
-  expiration_date: '过期日期',
-  status: '状态',
-  nameservers: 'DNS 服务器',
-  admin: '管理员信息',
-  tech: '技术联系人信息',
-  name: '姓名',
-  organization: '组织',
-  street: '街道',
-  city: '城市',
-  state: '省/州',
-  postal_code: '邮政编码',
-  country: '国家',
-  phone: '电话',
-  fax: '传真',
-  email: '电子邮件'
+  domainName: "域名",
+  roid: "注册号",
+  domainStatus: "域名状态",
+  registrant: "注册人信息",
+  registrantContactEmail: "注册人邮箱",
+  sponsoringRegistrar: "注册商",
+  nameServer: "DNS 服务器",
+  registrationTime: "注册时间",
+  expirationTime: "过期时间",
+  dnssec: "DNSSEC",
+  domain: "域名",
+  registrar: "注册商",
+  whois_server: "WHOIS 服务器",
+  referral_url: "推荐 URL",
+  updated_date: "更新日期",
+  creation_date: "创建日期",
+  expiration_date: "过期日期",
+  status: "状态",
+  nameservers: "DNS 服务器",
+  admin: "管理员信息",
+  tech: "技术联系人信息",
+  name: "姓名",
+  organization: "组织",
+  street: "街道",
+  city: "城市",
+  state: "省/州",
+  postal_code: "邮政编码",
+  country: "国家",
+  phone: "电话",
+  fax: "传真",
+  email: "电子邮件",
 };
 
 /**
@@ -53,7 +52,6 @@ async function getDetailedWhoisData(domain) {
   }
 }
 
-
 /**
  * 将 Whois 数据进行翻译
  * @param {Object} data - 要翻译的 Whois 数据对象
@@ -62,25 +60,27 @@ async function getDetailedWhoisData(domain) {
 function translateWhoisData(data) {
   return Object.entries(data).reduce((acc, [key, value]) => {
     const translatedKey = whoisFieldsMap[key] || key;
-    acc[translatedKey] = typeof value === 'object' && !Array.isArray(value) ? translateWhoisData(value) : value;
+    acc[translatedKey] =
+      typeof value === "object" && !Array.isArray(value)
+        ? translateWhoisData(value)
+        : value;
     return acc;
   }, {});
 }
 
-
 class Whois extends plugin {
   constructor() {
     super({
-      name: 'Whois',
-      dsc: 'Whois',
-      event: 'message',
+      name: "Whois",
+      dsc: "Whois",
+      event: "message",
       priority: 6,
       rule: [
         {
-          reg: '^#?whois\\s*(.+)',
-          fnc: 'whois'
-        }
-      ]
+          reg: "^#?whois\\s*(.+)",
+          fnc: "whois",
+        },
+      ],
     });
   }
 
@@ -92,7 +92,8 @@ class Whois extends plugin {
    * @description 获取给定域名的详细 WHOIS 数据，翻译数据，生成 HTML 报告，对报告进行截图，并作为回复发送。
    */
   async whois(e) {
-    if (!WhoisAll && !e.isMaster) return logger.warn('[memz-plugin]Whois状态当前为仅主人可用');
+    if (!WhoisAll && !e.isMaster)
+      return logger.warn("[memz-plugin]Whois状态当前为仅主人可用");
     const domain = e.msg.match(/#?whois\s*(.+)/)[1].trim();
     try {
       const data = await getDetailedWhoisData(domain);
@@ -100,15 +101,17 @@ class Whois extends plugin {
 
       const whoisDataHtml = Object.entries(translatedData)
         .map(([key, value]) => `${key}: ${value}`)
-        .join('<br>');
+        .join("<br>");
 
-      const htmlTemplate = fs.readFileSync(`${Plugin_Path}/resources/html/whois/whois.html`, 'utf8');
-      const html = htmlTemplate.replace('{{whoisdata}}', whoisDataHtml);
+      const htmlTemplate = fs.readFileSync(
+        `${Plugin_Path}/resources/html/whois/whois.html`,
+        "utf8",
+      );
+      const html = htmlTemplate.replace("{{whoisdata}}", whoisDataHtml);
 
       const screenshotBuffer = await generateScreenshot(html);
 
       await this.reply(segment.image(screenshotBuffer), true);
-
     } catch (error) {
       await this.reply(`错误: ${error.message}`, true);
     }
