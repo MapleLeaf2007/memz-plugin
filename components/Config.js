@@ -3,9 +3,7 @@ import chokidar from 'chokidar'
 import fs from 'node:fs'
 import YamlReader from './YamlReader.js'
 import _ from 'lodash'
-const Path = process.cwd()
-const Plugin_Name = 'memz-plugin'
-const Plugin_Path = `${Path}/plugins/${Plugin_Name}`
+import { Plugin_Path } from "./Path.js";
 class Config {
     constructor() {
         this.config = {}

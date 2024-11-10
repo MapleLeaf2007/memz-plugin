@@ -1,6 +1,9 @@
 import whois from 'whois-json';
-import puppeteer from 'puppeteer';
 import fs from 'fs';
+import { Config, Plugin_Path } from '../components/index.js';
+import { generateScreenshot } from '../model/generateScreenshot.js';
+const { WhoisAll } = Config.getYaml('config', 'memz-config');
+
 
 const whoisFieldsMap = {
   domainName: '域名',
@@ -89,39 +92,25 @@ class Whois extends plugin {
    * @description 获取给定域名的详细 WHOIS 数据，翻译数据，生成 HTML 报告，对报告进行截图，并作为回复发送。
    */
   async whois(e) {
+    if (!WhoisAll && !e.isMaster) return logger.warn('[memz-plugin]Whois状态当前为仅主人可用');
     const domain = e.msg.match(/#?whois\s*(.+)/)[1].trim();
     try {
       const data = await getDetailedWhoisData(domain);
       const translatedData = translateWhoisData(data);
+
       const whoisDataHtml = Object.entries(translatedData)
         .map(([key, value]) => `${key}: ${value}`)
         .join('<br>');
 
-      const htmlTemplate = fs.readFileSync('plugins/memz-plugin/resources/html/whois/whois.html', 'utf8');
+      const htmlTemplate = fs.readFileSync(`${Plugin_Path}/resources/html/whois/whois.html`, 'utf8');
       const html = htmlTemplate.replace('{{whoisdata}}', whoisDataHtml);
 
-      const browser = await puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+      const screenshotBuffer = await generateScreenshot(html);
 
-      const page = await browser.newPage();
+      await this.reply(segment.image(screenshotBuffer), true);
 
-      await page.goto(`data:text/html;charset=UTF-8,${encodeURIComponent(html)}`, {
-        waitUntil: 'networkidle0'
-      });
-
-      const contentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-      await page.setViewport({ width: 800, height: contentHeight });
-
-      const buffer = await page.screenshot();
-      await browser.close();
-
-      await this.reply(segment.image(buffer), true);
     } catch (error) {
       await this.reply(`错误: ${error.message}`, true);
     }
   }
 }
-
-export { Whois, getDetailedWhoisData, translateWhoisData };

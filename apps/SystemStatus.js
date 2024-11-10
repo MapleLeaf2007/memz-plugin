@@ -2,7 +2,8 @@ import os from 'os';
 import si from 'systeminformation';
 import { exec } from 'child_process';
 import { promisify } from 'util';
-
+import { Config } from '../components/index.js';
+const { SystemStatusAll } = Config.getYaml('config', 'memz-config');
 const execAsync = promisify(exec);
 
 export class SystemStatus extends plugin {
@@ -22,8 +23,8 @@ export class SystemStatus extends plugin {
     }
 
     async handleMasterCheck(e) {
-        if (!e.isMaster) {
-            await e.reply('你没有权限呐QAQ', true);
+        if (!SystemStatusAll) {
+            logger.warn('[memz-plugin]系统状态当前为仅主人可用');
             return false;
         }
         return true;

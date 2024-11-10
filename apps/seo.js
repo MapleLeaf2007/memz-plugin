@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
-
+import { Config } from '../components/index.js';
+const { SeoAll } = Config.getYaml('config', 'memz-config');
 /**
  * 抓取页面 HTML 并提取 SEO 信息
  * @param {string} url - 要抓取的页面 URL
@@ -38,6 +39,7 @@ export class SeoPlugin extends plugin {
     }
 
     async fetchSeoInfoHandler(e) {
+        if (!SeoAll && !e.isMaster) return logger.warn('[memz-plugin]Seo状态当前为仅主人可用');
         let url = e.msg.match(/^#?seo\s*(.+)/)[1].trim();
         if (!url.startsWith('http')) {
             url = `https://${url}`;

@@ -2,7 +2,8 @@ import xlsx from 'xlsx';
 import path from 'node:path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
-
+import { Config } from '../components/index.js';
+const { search_resource } = Config.getYaml('config', 'memz-config');
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -73,6 +74,7 @@ export class ResourceSearchPlugin extends plugin {
     }
 
     async handleSearch(e) {
+        if (!search_resource) return logger.warn('[memz-plugin]搜资源状态当前为关闭');
         const match = e.msg.match(/^#?搜资源\s*(\S+)$/);
         const keyword = match ? match[1] : null;
 

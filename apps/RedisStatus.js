@@ -1,6 +1,8 @@
 import fs from 'fs';
-import puppeteer from 'puppeteer';
 import Redis from 'ioredis';
+import { Config, Plugin_Path } from '../components/index.js';
+const { RedisStatusAll } = Config.getYaml('config', 'memz-config');
+import { generateScreenshot } from '../model/generateScreenshot.js';
 
 export class RedisStatus extends plugin {
   constructor() {
@@ -19,7 +21,7 @@ export class RedisStatus extends plugin {
   }
 
   async getRedisInfo(e) {
-    if (!e.isMaster) return await e.reply('就凭你也配?', true);
+    if (!RedisStatusAll && !e.isMaster) return logger.warn('[memz-plugin]Redis状态当前为仅主人可用');
 
     let qw = e.msg.match(/^#?redis(状态|统计)(\s*pro)?(\s*文本)?(\s*;?\s*([^;]*);\s*([^;]*);\s*([^;]*))?/i);
 
@@ -48,15 +50,15 @@ export class RedisStatus extends plugin {
 
       if (textMode) {
         const textResponse = isPro
-          ? this.generateProTextResponse(stats, hitRate, dbStats, redisConfig)
-          : this.generateBasicTextResponse(stats, hitRate, dbStats, redisConfig);
+          ? this.generateProTextResponse(stats, hitRate, dbStats)
+          : this.generateBasicTextResponse(stats, hitRate, dbStats);
         await e.reply(textResponse, true);
       } else {
         const html = isPro
-          ? this.generateProHtml(stats, hitRate, dbStats, redisConfig)
-          : this.generateBasicHtml(stats, hitRate, dbStats, redisConfig);
-        const screenshotBuffer = await this.generateScreenshot(html);
-        await this.reply(segment.image(screenshotBuffer), true);
+          ? this.generateProHtml(stats, hitRate, dbStats)
+          : this.generateBasicHtml(stats, hitRate, dbStats);
+        const screenshotBuffer = await generateScreenshot(html);
+        await e.reply(segment.image(`base64://${screenshotBuffer}`), true);
       }
     } catch (error) {
       await e.reply(`Error fetching Redis info: ${error.message}`);
@@ -190,8 +192,8 @@ Pub/Sub 模式数量: ${stats.pubsub_patterns}
 ${dbStats.databaseStats}`;
   }
 
-  generateBasicHtml(stats, hitRate, dbStats, redisConfig) {
-    let htmlTemplate = fs.readFileSync('plugins/memz-plugin/resources/html/redis/redis-basic.html', 'utf-8');
+  generateBasicHtml(stats, hitRate, dbStats) {
+    let htmlTemplate = fs.readFileSync(`${Plugin_Path}/resources/html/redis/redis-basic.html`, 'utf-8');
     htmlTemplate = htmlTemplate.replace('{{uptime_in_days}}', stats.uptime_in_days)
       .replace('{{tcp_port}}', stats.tcp_port)
       .replace('{{connected_clients}}', stats.connected_clients)
@@ -206,8 +208,8 @@ ${dbStats.databaseStats}`;
     return htmlTemplate;
   }
 
-  generateProHtml(stats, hitRate, dbStats, redisConfig) {
-    let htmlTemplate = fs.readFileSync('plugins/memz-plugin/resources/html/redis/redis-pro.html', 'utf-8');
+  generateProHtml(stats, hitRate, dbStats) {
+    let htmlTemplate = fs.readFileSync(`${Plugin_Path}/resources/html/redis/redis-pro.html`, 'utf-8');
     htmlTemplate = htmlTemplate.replace('{{uptime_in_days}}', stats.uptime_in_days)
       .replace('{{tcp_port}}', stats.tcp_port)
       .replace('{{connected_clients}}', stats.connected_clients)
@@ -241,47 +243,4 @@ ${dbStats.databaseStats}`;
       .replace('{{db_stats}}', dbStats.databaseStats);
     return htmlTemplate;
   }
-
-  /**
-   * 生成网页截图
-   * @param {string} html - 要生成截图的 HTML 内容
-   * @returns {Promise<Buffer>} - 返回一个 Promise，包含生成的截图数据的 Buffer
-   */
-  async generateScreenshot(html) {
-    /**
-     * 启动 Puppeteer 浏览器实例
-     * @type {import('puppeteer').Browser}
-     */
-    const browser = await puppeteer.launch({
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-gpu',
-        '--disable-dev-shm-usage'
-      ]
-    });
-
-    let buffer;
-
-    try {
-      // 创建新的页面实例
-      const page = await browser.newPage();
-      // 设置页面内容并等待网络空闲
-      await page.setContent(html, { waitUntil: 'networkidle0' });
-      // 获取页面内容的高度
-      const contentHeight = await page.evaluate(() => document.documentElement.scrollHeight);
-      // 设置页面视口大小
-      await page.setViewport({ width: 800, height: contentHeight });
-      // 生成截图并将结果保存到 buffer
-      buffer = await page.screenshot();
-    } catch (error) {
-      throw new Error(`Puppeteer 截图生成失败：${error.message}`);
-    } finally {
-      // 关闭浏览器实例
-      await browser.close();
-    }
-
-    return buffer;
-  }
-
 }

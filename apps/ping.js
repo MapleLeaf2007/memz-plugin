@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer';
-
+import { Config } from '../components/index.js';
+const { PingAll } = Config.getYaml('config', 'memz-config');
 export class PingScreenshot extends plugin {
     constructor() {
         super({
@@ -22,6 +23,7 @@ export class PingScreenshot extends plugin {
      * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
      */
     async handlePing(e) {
+        if (!PingAll && !e.isMaster) return logger.warn('[memz-plugin]Ping功能当前为仅主人可用');
         e.reply('正在获取Ping数据...请稍等......', true);
         const match = e.msg.match(/^#(ping|tcping)\s*(\S+)$/i);
         if (!match) {

@@ -1,5 +1,6 @@
 import Redis from 'ioredis';
-
+import { Config } from '../components/index.js';
+const { apply_game } = Config.getYaml('config', 'memz-config');
 const getTime = () => {
     const now = new Date();
     return now.toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai', hour12: false }).replace(',', '');
@@ -36,6 +37,7 @@ export class Game extends plugin {
     }
 
     async applyGame(e) {
+        if (!apply_game && !e.isMaster) return logger.warn('[memz-plugin]申请游戏状态当前为关闭');
         const match = e.msg.match(/^#申请游戏\s*(.+)$/);
         if (!match || match.length < 2) {
             e.reply(`命令格式错误，请使用#申请游戏 <游戏名称>。`, true);

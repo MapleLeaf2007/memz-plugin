@@ -1,3 +1,5 @@
+import { Config } from '../components/index.js';
+const { UrlAll } = Config.getYaml('config', 'memz-config');
 /**
  * 将字符串编码为 URL 格式
  * @param {string} msg - 要编码的字符串
@@ -16,7 +18,6 @@ export function decodeFromUrl(urlStr) {
   return decodeURIComponent(urlStr);
 }
 
-
 export class UrlPlugin extends plugin {
   constructor() {
     super({
@@ -26,34 +27,34 @@ export class UrlPlugin extends plugin {
       priority: 6,
       rule: [
         {
-          reg: '^#?url编码\\s*(.+)',
-          fnc: 'encodeToUrlHandler'
-        },
-        {
-          reg: '^#?url解码\\s*(.+)',
-          fnc: 'decodeFromUrlHandler'
+          reg: /^(#?)(url)(编码|解码)\s*(.+)/,
+          fnc: 'handleUrlEncodingDecoding'
         }
       ]
     });
   }
 
-  async encodeToUrlHandler(e) {
-    let msg = e.msg.match(/^#?url编码\s*(.+)/)[1].trim();
-    const encodedMsg = encodeToUrl(msg);
-    try {
-      await e.reply(`编码结果: ${encodedMsg}`, true);
-    } catch (error) {
-      await e.reply(`Error: ${error.message}`, true);
-    }
-  }
+  async handleReply(e, handler) {
+    const msg = e.msg.match(handler.reg);
+    const operation = msg[2];  // 'url'
+    const action = msg[3];     // '编码' or '解码'
+    const input = msg[4].trim();
 
-  async decodeFromUrlHandler(e) {
-    let msg = e.msg.match(/^#?url解码\s*(.+)/)[1].trim();
-    const decodedMsg = decodeFromUrl(msg);
+    let result;
     try {
-      await e.reply(`解码结果: ${decodedMsg}`, true);
+      // 根据操作类型选择相应的函数进行编码或解码
+      if (operation === 'url') {
+        result = action === '编码' ? encodeToUrl(input) : decodeFromUrl(input);
+      }
+
+      await e.reply(`结果: ${result}`, true);
     } catch (error) {
       await e.reply(`Error: ${error.message}`);
     }
+  }
+
+  async handleUrlEncodingDecoding(e) {
+    if (!UrlAll && !e.isMaster) return logger.warn('[memz-plugin]URL状态当前为仅主人可用');
+    await this.handleReply(e, { reg: /^(#?)(url)(编码|解码)\s*(.+)/, fn: this.handleReply });
   }
 }

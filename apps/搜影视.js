@@ -1,3 +1,5 @@
+import { Config } from '../components/index.js';
+const { search_movie } = Config.getYaml('config', 'memz-config');
 export class VideoAPI extends plugin {
     constructor() {
         super({
@@ -15,6 +17,7 @@ export class VideoAPI extends plugin {
     }
 
     async preview(e) {
+        if (!search_movie) return logger.warn('[memz-plugin]搜影视功能已禁用');
         const match = e.msg.match(/^#?搜影视\s*(\S+)$/);
         const keyword = match ? match[1] : null;
 
