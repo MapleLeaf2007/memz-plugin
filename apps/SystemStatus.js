@@ -30,6 +30,7 @@ export class SystemStatus extends plugin {
     return true;
   }
 
+<<<<<<< HEAD
   async getSystemStatus(e) {
     if (!(await this.handleMasterCheck(e))) return;
 
@@ -58,6 +59,14 @@ export class SystemStatus extends plugin {
       }
     } catch (error) {
       await e.reply(`获取系统状态信息时出错: ${error.message}`);
+=======
+    async handleMasterCheck(e) {
+        if (!SystemStatusAll) {
+            logger.warn('[memz-plugin]系统状态当前为仅主人可用');
+            return false;
+        }
+        return true;
+>>>>>>> parent of 9bdd461 (fix(apps): 修复系统状态和 Unicode 插件的问题)
     }
   }
 
