@@ -3,6 +3,9 @@
     "version": "V 1.0.2",
     "author": "@MEMZJS",
     "type": "module",
+    "scripts": {
+        "fix": "npx prettier --write **/*.js && npx prettier --write *.js"
+    },
     "dependencies": {
         "axios": "^0.24.0",
         "cheerio": "^1.0.0",
