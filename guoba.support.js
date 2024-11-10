@@ -4,10 +4,10 @@ export function supportGuoba() {
   let groupList = Array.from(Bot.gl.values());
   groupList = groupList.map(
     (item) =>
-      (item = {
-        label: `${item.group_name}-${item.group_id}`,
-        value: item.group_id,
-      }),
+    (item = {
+      label: `${item.group_name}-${item.group_id}`,
+      value: item.group_id,
+    }),
   );
   return {
     pluginInfo: {
@@ -23,7 +23,99 @@ export function supportGuoba() {
       iconColor: "rgb(241,212,152)",
     },
     configInfo: {
-      schemas: [],
+      schemas: [
+        {
+          component: "Divider",
+          label: "插件设置"
+        },
+        {
+          field: "memz.autoupdate",
+          label: "插件自动更新",
+          bottomHelpMessage: "插件更新时自动更新插件",
+          bottomHelpMessage: "",
+          component: "Switch"
+        },
+        {
+          field: "memz.checkupdate",
+          label: "自动检查插件更新",
+          bottomHelpMessage: "检查插件更新并推送到主人",
+          component: "Switch"
+        },
+        {
+          field: "memz.SystemStatusAll",
+          label: "系统状态所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch",
+        },
+        {
+          field: "memz.RedisStatusAll",
+          label: "Redis状态所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch",
+        },
+        {
+          component: "Divider",
+          label: "工具设置"
+        },
+        {
+          field: "memz.WhoisAll",
+          label: "Whois功能所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.SeoAll",
+          label: "SEO所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.PingAll",
+          label: "Ping功能所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.UnicodeAll",
+          label: "Unicode功能所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.UrlAll",
+          label: "Url功能所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.BaseConversionAll",
+          label: "进制转换功能所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch"
+        },
+        {
+          component: "Divider",
+          label: "网络搜索设置"
+        },
+        {
+          field: "memz.search_movie",
+          label: "是否开启搜影视",
+          bottomHelpMessage: "关闭时所有人不可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.search_resource",
+          label: "是否开启搜资源",
+          bottomHelpMessage: "关闭时所有人不可用",
+          component: "Switch"
+        },
+        {
+          field: "memz.apply_game",
+          label: "是否开启申请游戏",
+          bottomHelpMessage: "关闭时所有人不可用",
+          component: "Switch"
+        }
+      ],
       /**
        * 获取配置数据
        * @returns {Object} - 返回包含redis和memz配置数据的对象
