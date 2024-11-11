@@ -98,6 +98,11 @@ export const helpList = [
         title: "#(memz)系统状态(pro)(max)",
         desc: "查看系统状态",
       },
+      {
+        icon: 49,
+        title: "#(memz)检查更新",
+        desc: "Gitee仓库检查更新",
+      },
     ],
   },
 ];

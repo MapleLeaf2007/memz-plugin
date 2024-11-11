@@ -22,16 +22,10 @@ export function supportGuoba() {
           label: "插件设置",
         },
         {
-          field: "memz.autoupdate",
+          field: "update.autoupdate",
           label: "插件自动更新",
           bottomHelpMessage: "插件更新时自动更新插件",
           bottomHelpMessage: "",
-          component: "Switch",
-        },
-        {
-          field: "memz.checkupdate",
-          label: "自动检查插件更新",
-          bottomHelpMessage: "检查插件更新并推送到主人",
           component: "Switch",
         },
         {
@@ -88,6 +82,36 @@ export function supportGuoba() {
         },
         {
           component: "Divider",
+          label: "仓库更新推送设置",
+        },
+        {
+          field: "update.checkupdate",
+          label: "自动检查仓库更新",
+          bottomHelpMessage: "检查插件更新并推送到主人",
+          component: "Switch",
+        },
+        {
+          field: "update.CUSTOM_REPOSITORY",
+          label: "Gitee仓库链接",
+          bottomHelpMessage: "填入Gitee仓库链接,如https://gitee.com/memzjs/memz-plugin",
+          component: "GTags",
+          componentProps: {
+            allowAdd: true,
+            allowDel: true
+          }
+        },
+        {
+          field: "update.cron",
+          label: "自动检查定时表达式",
+          helpMessage: "修改后重启生效",
+          bottomHelpMessage: "自动检查仓库更新Cron表达式",
+          component: "EasyCron",
+          componentProps: {
+            placeholder: "请输入Cron表达式"
+          }
+        },
+        {
+          component: "Divider",
           label: "网络搜索设置",
         },
         {
@@ -112,6 +136,7 @@ export function supportGuoba() {
       getConfigData() {
         return {
           memz: Config.getDefOrConfig("memz-config"),
+          update: Config.getDefOrConfig("update-config"),
         };
       },
       setConfigData(data, { Result }) {
