@@ -37,7 +37,8 @@ export class Updates extends plugin {
     return up.update();
   }
   async Autoupdate(e = this.e) {
-    if (!autoupdate) return;
+    if (!autoupdate) return logger.warn(`[memz-plugin]自动更新已关闭`);
+    logger.info(`[memz-plugin]开始自动更新插件`);
     e.isMaster = true;
     e.msg = `#更新${Plugin_Name}`;
     const up = new Update(e);
