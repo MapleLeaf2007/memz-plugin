@@ -3,7 +3,7 @@ import si from "systeminformation";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { Config } from "../components/index.js";
-const { SystemStatusAll } = Config.getConfig("memz-config");
+const { SystemStatusAll } = Config.getConfig("memz");
 const execAsync = promisify(exec);
 
 export class SystemStatus extends plugin {

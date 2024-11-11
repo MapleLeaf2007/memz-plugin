@@ -2,7 +2,7 @@ import xlsx from "xlsx";
 import path from "node:path";
 import fs from "fs";
 import { Config, Plugin_Data } from "../components/index.js";
-const { search_resource } = Config.getConfig("memz-config");
+const { search_resource } = Config.getConfig("memz");
 const folderPath = path.join(Plugin_Data, "xlsx");
 
 function loadDataFromExcelFiles() {

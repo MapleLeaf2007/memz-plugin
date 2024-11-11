@@ -2,7 +2,7 @@ import whois from "whois-json";
 import fs from "fs";
 import { Config, Plugin_Path } from "../components/index.js";
 import { generateScreenshot } from "../model/generateScreenshot.js";
-const { WhoisAll } = Config.getConfig("memz-config");
+const { WhoisAll } = Config.getConfig("memz");
 
 const whoisFieldsMap = {
   domainName: "域名",

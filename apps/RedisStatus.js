@@ -1,7 +1,7 @@
 import fs from "fs";
 import Redis from "ioredis";
 import { Config, Plugin_Path } from "../components/index.js";
-const { RedisStatusAll } = Config.getConfig("memz-config");
+const { RedisStatusAll } = Config.getConfig("memz");
 import { generateScreenshot } from "../model/generateScreenshot.js";
 
 export class RedisStatus extends plugin {

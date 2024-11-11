@@ -1,7 +1,7 @@
 import _ from "lodash";
 import { update as Update } from "../../other/update.js";
 import { Plugin_Name, Config } from "../components/index.js";
-const { autoupdate, updatecron } = Config.getConfig("update-config");
+const { autoupdate, updatecron } = Config.getConfig("update");
 export class Updates extends plugin {
   constructor() {
     super({

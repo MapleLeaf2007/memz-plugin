@@ -1,6 +1,6 @@
 import puppeteer from "puppeteer";
 import { Config } from "../components/index.js";
-const { PingAll } = Config.getConfig("memz-config");
+const { PingAll } = Config.getConfig("memz");
 export class PingScreenshot extends plugin {
   constructor() {
     super({

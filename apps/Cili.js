@@ -1,5 +1,5 @@
 import { Config } from "../components/index.js";
-const { search_magnet } = Config.getConfig("memz-config");
+const { search_magnet } = Config.getConfig("memz");
 export class Cili extends plugin {
     constructor() {
         super({

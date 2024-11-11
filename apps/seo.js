@@ -1,5 +1,5 @@
 import { Config } from "../components/index.js";
-const { SeoAll } = Config.getConfig("memz-config");
+const { SeoAll } = Config.getConfig("memz");
 
 export async function fetchSeoFromHtml(url) {
   const response = await fetch(url);

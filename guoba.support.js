@@ -151,8 +151,8 @@ export function supportGuoba() {
       ],
       getConfigData() {
         return {
-          memz: Config.getDefOrConfig("memz-config"),
-          update: Config.getDefOrConfig("update-config"),
+          memz: Config.getDefOrConfig("memz"),
+          update: Config.getDefOrConfig("update"),
         };
       },
       setConfigData(data, { Result }) {
@@ -161,7 +161,7 @@ export function supportGuoba() {
         for (const key in data) {
           let split = key.split(".");
           if (lodash.isEqual(config[split[1]], data[key])) continue;
-          Config.modify(split[0] + "-config", split[1], data[key]);
+          Config.modify(split[0], split[1], data[key]);
         }
         return Result.ok({}, "𝑪𝒊𝒂𝒍𝒍𝒐～(∠・ω< )⌒★");
       },

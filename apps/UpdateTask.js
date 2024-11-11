@@ -2,7 +2,7 @@ import fetch from "node-fetch";
 import cfg from "../../../lib/config/config.js";
 import moment from "moment";
 import { Config } from "../components/index.js";
-const { checkupdate, CUSTOM_REPOSITORY, cron } = Config.getConfig("update-config");
+const { checkupdate, CUSTOM_REPOSITORY, cron } = Config.getConfig("update");
 
 const prefix = "bubble:codeUpdateTask:";
 let REPOSITORY_LIST = [];

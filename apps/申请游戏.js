@@ -1,6 +1,6 @@
 import Redis from "ioredis";
 import { Config } from "../components/index.js";
-const { apply_game } = Config.getConfig("memz-config");
+const { apply_game } = Config.getConfig("memz");
 const getTime = () => {
   const now = new Date();
   return now
