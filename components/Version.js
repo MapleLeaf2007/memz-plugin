@@ -1,6 +1,6 @@
 import fs from "fs";
 import lodash from "lodash";
-
+import { Plugin_Path } from "./Path.js";
 let packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
 const getLine = function (line) {
@@ -13,35 +13,29 @@ const getLine = function (line) {
   return line;
 };
 
-const readLogFile = function (root, versionCount = 5) {
-  let logPath = `${root}/CHANGELOG.md`;
-  let logs = {};
-  let changelogs = [];
+const readLogFile = function (root) {
+  const logPath = `${root}/CHANGELOG.md`;
+  const changelogs = [];
   let currentVersion;
 
   try {
     if (fs.existsSync(logPath)) {
-      logs = fs.readFileSync(logPath, "utf8") || "";
+      let logs = fs.readFileSync(logPath, "utf8") || "";
       logs = logs.split("\n");
 
       let temp = {};
       let lastLine = {};
+
       lodash.forEach(logs, (line) => {
-        if (versionCount <= -1) {
-          return false;
-        }
-        let versionRet = /^#\s*([0-9a-zA-Z\\.~\s]+?)\s*$/.exec(line);
+        // 匹配版本行
+        const versionRet = /^#\s*([0-9a-zA-Z\\.~\s]+?)\s*$/.exec(line);
         if (versionRet && versionRet[1]) {
-          let v = versionRet[1].trim();
+          const v = versionRet[1].trim();
+
           if (!currentVersion) {
             currentVersion = v;
           } else {
-            changelogs.push(temp);
-            if (/0\s*$/.test(v) && versionCount > 0) {
-              versionCount = 0;
-            } else {
-              versionCount--;
-            }
+            changelogs.push(temp); // 保存上一个版本的日志
           }
 
           temp = {
@@ -49,40 +43,42 @@ const readLogFile = function (root, versionCount = 5) {
             logs: [],
           };
         } else {
-          if (!line.trim()) {
-            return;
-          }
-          if (/^\*/.test(line)) {
+          // 如果不是版本行，处理日志内容
+          if (!line.trim()) return;
+
+          if (/^\*/.test(line)) { // 主条目
             lastLine = {
               title: getLine(line),
               logs: [],
             };
             temp.logs.push(lastLine);
-          } else if (/^\s{2,}\*/.test(line)) {
+          } else if (/^\s{2,}\*/.test(line)) { // 子条目
             lastLine.logs.push(getLine(line));
           }
         }
       });
+
+      // 处理最后一个版本的日志
+      if (Object.keys(temp).length) {
+        changelogs.push(temp);
+      }
     }
   } catch (e) {
-    // do nth
+    logger.error("Error reading log file:", e);
   }
+
   return { changelogs, currentVersion };
 };
 
-const { changelogs, currentVersion } = readLogFile(
-  `${process.cwd()}/plugins/memz-plugin/`,
-);
+const { changelogs, currentVersion } = readLogFile(`${Plugin_Path}/`);
 
 const yunzaiVersion = packageJson.version;
 const isMiao = !!packageJson.dependencies.sequelize;
 const isTrss = !!Array.isArray(Bot.uin);
-const protocol = ["chronocat", "ICQQ"];
 
 let Version = {
   isMiao,
   isTrss,
-  protocol,
   get version() {
     return currentVersion;
   },
