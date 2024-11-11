@@ -35,11 +35,6 @@ export class VideoAPI extends plugin {
             `名称: ${row.name}\n链接: ${row.link}\n分类: ${row.category}`,
           ],
         }));
-        forward.push({
-          user_id: 382879217,
-          nickname: "ZSY11",
-          message: [`来源：十一实验室(QQ群632226555)\n官网：https://zsy11.com`],
-        });
         const nmsg = await Bot.makeForwardMsg(forward);
         await e.reply(nmsg);
       } else {
