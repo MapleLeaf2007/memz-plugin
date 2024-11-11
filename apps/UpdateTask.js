@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import cfg from "../../../lib/config/config.js";
 import moment from "moment";
 import { Config } from "../components/index.js";
