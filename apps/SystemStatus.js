@@ -244,11 +244,11 @@ CPU 使用率: ${cpuUsage}
       const serviceStatus =
         services.length > 0
           ? services
-            .map(
-              (service) =>
-                `• ${service.name}: ${service.running ? "✅ Active" : "❌ Inactive"}`,
-            )
-            .join("\n")
+              .map(
+                (service) =>
+                  `• ${service.name}: ${service.running ? "✅ Active" : "❌ Inactive"}`,
+              )
+              .join("\n")
           : null;
 
       let output = `
