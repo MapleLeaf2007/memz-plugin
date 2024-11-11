@@ -73,9 +73,8 @@ export class UpdateTask extends plugin {
         }
 
         if (content.length > 0) {
-            // 更新为根据来源显示 GitHub 或 Gitee
             const msg =
-                `检测到${content[0].source}仓库更新...\n` + // 动态显示 Gitee 或 GitHub
+                `检测到${content[0].source}仓库更新...\n` +
                 content
                     .map(
                         (i) =>
@@ -93,8 +92,6 @@ export class UpdateTask extends plugin {
             logger.info("未检测到任何仓库更新");
         }
     }
-
-    // 根据来源获取最新的提交数据
     async getRepositoryLatestCommit(source, owner, repo) {
         if (source === "Gitee") {
             return await this.getGiteeLatestCommit(owner, repo);
@@ -104,8 +101,6 @@ export class UpdateTask extends plugin {
             return { error: "未知的仓库来源" };
         }
     }
-
-    // 获取 Gitee 的最新提交
     async getGiteeLatestCommit(owner, repo) {
         const apiUrl = `https://gitee.com/api/v5/repos/${owner}/${repo}/commits`;
 
@@ -135,7 +130,7 @@ export class UpdateTask extends plugin {
         }
     }
 
-    // 获取 GitHub 的最新提交
+    // 获取 GitHub 的提交
     async getGithubLatestCommit(owner, repo) {
         const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
 
@@ -180,7 +175,7 @@ function init() {
         if (urlMatch) {
             const owner = urlMatch[1];
             const repo = urlMatch[2].replace(".git", "");
-            const source = remoteUrl.includes("gitee") ? "Gitee" : "GitHub"; // 自动判断来源
+            const source = remoteUrl.includes("gitee") ? "Gitee" : "GitHub";
             REPOSITORY_LIST.push({
                 source,
                 owner,
@@ -190,7 +185,7 @@ function init() {
         } else if (sshUrlMatch) {
             const owner = sshUrlMatch[2];
             const repo = sshUrlMatch[3];
-            const source = remoteUrl.includes("gitee") ? "Gitee" : "GitHub"; // 自动判断来源
+            const source = remoteUrl.includes("gitee") ? "Gitee" : "GitHub";
             REPOSITORY_LIST.push({
                 source,
                 owner,
