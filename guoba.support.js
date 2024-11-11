@@ -109,21 +109,11 @@ export function supportGuoba() {
           component: "Switch"
         }
       ],
-      /**
-       * 获取配置数据
-       * @returns {Object} - 返回包含redis和memz配置数据的对象
-       */
       getConfigData() {
         return {
           memz: Config.getDefOrConfig("memz-config"),
         };
       },
-      /**
-       * 设置配置数据
-       * @param {Object} data - 要设置的数据对象
-       * @param {Object} Result - 结果对象
-       * @returns {Object} - 返回保存成功的结果对象
-       */
       setConfigData(data, { Result }) {
         let config = Config.getCfg();
 

@@ -20,6 +20,6 @@ export async function generateScreenshot(html) {
 
     return buffer;
   } catch (error) {
-    throw new Error(`Puppeteer 截图生成失败：${error.message}`);
+    logger.error(`[memz-plugin]Puppeteer图片生成失败：${error.message}`);
   }
 }
