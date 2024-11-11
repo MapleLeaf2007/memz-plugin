@@ -6,8 +6,8 @@ import _ from "lodash";
 export class setting extends plugin {
   constructor() {
     super({
-      name: "[memz-plugin] 帮助",
-      dsc: "[memz-plugin] 帮助",
+      name: "[memz-plugin]帮助",
+      dsc: "[memz-plugin]帮助",
       event: "message",
       priority: 1,
       rule: [
@@ -16,7 +16,7 @@ export class setting extends plugin {
           fnc: "version",
         },
         {
-          reg: /^#?(memz)(帮助|help|菜单)$/i,
+          reg: /^#?memz(帮助|help|菜单)$/i,
           fnc: "help",
         },
       ],
@@ -35,34 +35,37 @@ export class setting extends plugin {
   }
 
   async help(e) {
-    let helpGroup = [];
-    _.forEach(helpList, (group) => {
-      _.forEach(group.list, (help) => {
-        let icon = help.icon * 1;
-        if (!icon) {
-          help.css = "display:none";
-        } else {
-          let x = (icon - 1) % 10;
-          let y = (icon - x - 1) / 10;
-          help.css = `background-position:-${x * 50}px -${y * 50}px`;
-        }
-      });
-
-      helpGroup.push(group);
+    await getHelp(e, helpList)
+  }
+}
+async function getHelp(e, helpList) {
+  let helpGroup = [];
+  _.forEach(helpList, (group) => {
+    _.forEach(group.list, (help) => {
+      let icon = help.icon * 1;
+      if (!icon) {
+        help.css = "display:none";
+      } else {
+        let x = (icon - 1) % 10;
+        let y = (icon - x - 1) / 10;
+        help.css = `background-position:-${x * 50}px -${y * 50}px`;
+      }
     });
 
-    let themeData = await getThemeData(helpCfg, helpCfg);
-    return await Render.render(
-      "help/index",
-      {
-        helpCfg,
-        helpGroup,
-        ...themeData,
-        element: "default",
-      },
-      { e, scale: 1.6 },
-    );
-  }
+    helpGroup.push(group);
+  });
+
+  let themeData = await getThemeData(helpCfg, helpCfg);
+  return await Render.render(
+    "help/index",
+    {
+      helpCfg,
+      helpGroup,
+      ...themeData,
+      element: "default",
+    },
+    { e, scale: 1.6 },
+  );
 }
 
 async function getThemeCfg() {
