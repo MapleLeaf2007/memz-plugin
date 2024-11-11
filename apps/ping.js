@@ -4,8 +4,8 @@ const { PingAll } = Config.getConfig("memz-config");
 export class PingScreenshot extends plugin {
   constructor() {
     super({
-      name: "Ping 截图",
-      dsc: "发送#ping网站或#tcping网站, 截图对应页面顶部部分",
+      name: "[memz-plugin]Ping截图",
+      dsc: "发送#ping网站或#tcping网站,截图对应页面顶部部分",
       event: "message",
       priority: 1,
       rule: [
@@ -16,12 +16,6 @@ export class PingScreenshot extends plugin {
       ],
     });
   }
-
-  /**
-   * 处理Ping/TCPing命令
-   * @param {Object} e - 事件对象
-   * @returns {Promise<void>} - 返回一个 Promise，表示操作的异步结果
-   */
   async handlePing(e) {
     if (!PingAll && !e.isMaster)
       return logger.warn("[memz-plugin]Ping功能当前为仅主人可用");
