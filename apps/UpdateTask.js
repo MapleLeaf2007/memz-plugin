@@ -74,7 +74,7 @@ export class UpdateTask extends plugin {
 
         if (content.length > 0) {
             const msg =
-                `检测到仓库更新...\n` +
+                `检测到Gitee仓库更新...\n` +
                 content
                     .map(
                         (i) =>
