@@ -190,7 +190,7 @@ function init() {
                 owner,
                 repo,
             });
-            logger.debug(`已添加仓库：${source}://${owner}/${repo}`);
+            logger.debug(`[memz-plugin]已添加仓库：${source}://${owner}/${repo}`);
         } else if (sshUrlMatch) {
             const owner = sshUrlMatch[2];
             const repo = sshUrlMatch[3];
@@ -200,9 +200,9 @@ function init() {
                 owner,
                 repo,
             });
-            logger.debug(`已添加仓库：${source}://${owner}/${repo}`);
+            logger.debug(`[memz-plugin]已添加仓库：${source}://${owner}/${repo}`);
         } else {
-            logger.debug(`未识别的仓库地址格式：${remoteUrl}`);
+            logger.debug(`[memz-plugin]未识别的仓库地址格式：${remoteUrl}`);
         }
     }
 
@@ -211,7 +211,7 @@ function init() {
             gitRemoteUrl(item);
         });
     } else {
-        logger.debug("CUSTOM_REPOSITORY 配置为空或未正确读取");
+        logger.debug("[memz-plugin]CUSTOM_REPOSITORY 配置为空或未正确读取");
     }
 
     logger.debug(`[memz-plugin]仓库更新推送初始化完成：${JSON.stringify(REPOSITORY_LIST)}`);

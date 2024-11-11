@@ -1,11 +1,7 @@
 import fetch from "node-fetch";
 import { Config } from "../components/index.js";
 const { SeoAll } = Config.getConfig("memz-config");
-/**
- * 抓取页面 HTML 并提取 SEO 信息
- * @param {string} url - 要抓取的页面 URL
- * @returns {Promise<object>} - 返回包含 SEO 信息的对象
- */
+
 export async function fetchSeoFromHtml(url) {
   const response = await fetch(url);
   const html = await response.text();
