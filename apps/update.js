@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { update as Update } from "../../other/update.js";
-const Plugin_Name = "memz-plugin";
+import { Plugin_Name } from "../components/index.js";
 export class Updates extends plugin {
   constructor() {
     super({
@@ -10,7 +10,7 @@ export class Updates extends plugin {
       priority: -10,
       rule: [
         {
-          reg: /^#*(memz)(插件)?(强制|強制)?更新$/i,
+          reg: /^#*(memz)(插件)?(强制)?更新$/i,
           fnc: "update",
         },
         {
