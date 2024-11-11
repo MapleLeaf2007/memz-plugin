@@ -17,7 +17,7 @@ export class UpdateTask extends plugin {
             priority: 1000,
             rule: [
                 {
-                    reg: /^#?(memz)(插件)?检查(仓库|gitee)?更新$/i,
+                    reg: /^#?(memz)(插件)?检查(仓库)?更新$/i,
                     fnc: "UpdateTask",
                 },
             ],
@@ -53,7 +53,7 @@ export class UpdateTask extends plugin {
             }
 
             logger.info(`开始检查仓库更新：${item.owner}/${item.repo}`);
-            let repositoryData = await this.getGiteeLatestCommit(item.owner, item.repo);
+            let repositoryData = await this.getRepositoryLatestCommit(item.source, item.owner, item.repo);
             if (!repositoryData?.sha) {
                 logger.warn(`未能获取到提交信息：${item.owner}/${item.repo}`);
                 continue;
@@ -73,8 +73,9 @@ export class UpdateTask extends plugin {
         }
 
         if (content.length > 0) {
+            // 更新为根据来源显示 GitHub 或 Gitee
             const msg =
-                `检测到Gitee仓库更新...\n` +
+                `检测到${content[0].source}仓库更新...\n` + // 动态显示 Gitee 或 GitHub
                 content
                     .map(
                         (i) =>
@@ -93,7 +94,18 @@ export class UpdateTask extends plugin {
         }
     }
 
+    // 根据来源获取最新的提交数据
+    async getRepositoryLatestCommit(source, owner, repo) {
+        if (source === "Gitee") {
+            return await this.getGiteeLatestCommit(owner, repo);
+        } else if (source === "GitHub") {
+            return await this.getGithubLatestCommit(owner, repo);
+        } else {
+            return { error: "未知的仓库来源" };
+        }
+    }
 
+    // 获取 Gitee 的最新提交
     async getGiteeLatestCommit(owner, repo) {
         const apiUrl = `https://gitee.com/api/v5/repos/${owner}/${repo}/commits`;
 
@@ -104,6 +116,37 @@ export class UpdateTask extends plugin {
             if (commits.length > 0) {
                 const latestCommit = commits[0];
                 return {
+                    source: "Gitee",
+                    owner,
+                    repo,
+                    sha: latestCommit.sha,
+                    author: latestCommit.commit.author.name,
+                    email: latestCommit.commit.author.email,
+                    date: moment(latestCommit.commit.author.date).format(
+                        "YYYY-MM-DD HH:mm:ss",
+                    ),
+                    message: latestCommit.commit.message.trim(),
+                };
+            } else {
+                return { error: "该仓库没有提交记录。" };
+            }
+        } catch (error) {
+            return { error: "查询出错：" + error.message };
+        }
+    }
+
+    // 获取 GitHub 的最新提交
+    async getGithubLatestCommit(owner, repo) {
+        const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
+
+        try {
+            const response = await fetch(apiUrl);
+            const commits = await response.json();
+
+            if (commits.length > 0) {
+                const latestCommit = commits[0];
+                return {
+                    source: "GitHub",
                     owner,
                     repo,
                     sha: latestCommit.sha,
@@ -137,21 +180,23 @@ function init() {
         if (urlMatch) {
             const owner = urlMatch[1];
             const repo = urlMatch[2].replace(".git", "");
+            const source = remoteUrl.includes("gitee") ? "Gitee" : "GitHub"; // 自动判断来源
             REPOSITORY_LIST.push({
-                source: "Gitee",
+                source,
                 owner,
                 repo,
             });
-            logger.debug(`已添加仓库：https://${owner}/${repo}`);
+            logger.debug(`已添加仓库：${source}://${owner}/${repo}`);
         } else if (sshUrlMatch) {
             const owner = sshUrlMatch[2];
             const repo = sshUrlMatch[3];
+            const source = remoteUrl.includes("gitee") ? "Gitee" : "GitHub"; // 自动判断来源
             REPOSITORY_LIST.push({
-                source: "Gitee",
+                source,
                 owner,
                 repo,
             });
-            logger.debug(`已添加SSH仓库：https://${owner}/${repo}`);
+            logger.debug(`已添加仓库：${source}://${owner}/${repo}`);
         } else {
             logger.debug(`未识别的仓库地址格式：${remoteUrl}`);
         }

@@ -62,8 +62,8 @@ export function supportGuoba() {
         },
         {
           field: "update.CUSTOM_REPOSITORY",
-          label: "Gitee仓库链接",
-          bottomHelpMessage: "填入Gitee仓库链接,如https://gitee.com/memzjs/memz-plugin",
+          label: "仓库链接",
+          bottomHelpMessage: "填入Gitee仓库链接,如https://gitee.com/memzjs/memz-plugin,支持Gitee/Github",
           component: "GTags",
           componentProps: {
             allowAdd: true,
