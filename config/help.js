@@ -95,18 +95,18 @@ export const helpList = [
       },
       {
         icon: 40,
-        title: "#Redis状态(pro)(文本)",
-        desc: "(文本|图片)查看Redis状态",
+        title: "#Redis状态(pro)",
+        desc: "(文|图)查看Redis状态",
       },
       {
         icon: 48,
-        title: "#(memz)系统状态(pro)(max)",
+        title: "#系统状态(pro)",
         desc: "查看系统状态",
       },
       {
         icon: 49,
         title: "#memz检查仓库更新",
-        desc: "Gitee仓库检查更新",
+        desc: "检查仓库更新",
       },
     ],
   },
