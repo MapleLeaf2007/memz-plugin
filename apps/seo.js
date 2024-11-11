@@ -1,6 +1,6 @@
 import fetch from "node-fetch";
 import { Config } from "../components/index.js";
-const { SeoAll } = Config.getYaml("config", "memz-config");
+const { SeoAll } = Config.getConfig("memz-config");
 /**
  * 抓取页面 HTML 并提取 SEO 信息
  * @param {string} url - 要抓取的页面 URL

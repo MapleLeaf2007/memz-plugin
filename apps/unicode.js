@@ -1,5 +1,5 @@
 import { Config } from "../components/index.js";
-const { UnicodeAll } = Config.getYaml("config", "memz-config");
+const { UnicodeAll } = Config.getConfig("memz-config");
 
 
 export function encodeToUnicode(msg) {

@@ -1,5 +1,5 @@
 import { Config } from "../components/index.js";
-const { UrlAll } = Config.getYaml("config", "memz-config");
+const { UrlAll } = Config.getConfig("memz-config");
 /**
  * 将字符串编码为 URL 格式
  * @param {string} msg - 要编码的字符串

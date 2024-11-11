@@ -1,7 +1,7 @@
 import fs from "fs";
 import Redis from "ioredis";
 import { Config, Plugin_Path } from "../components/index.js";
-const { RedisStatusAll } = Config.getYaml("config", "memz-config");
+const { RedisStatusAll } = Config.getConfig("memz-config");
 import { generateScreenshot } from "../model/generateScreenshot.js";
 
 export class RedisStatus extends plugin {
@@ -124,19 +124,7 @@ export class RedisStatus extends plugin {
 
     return this.formatDbStats(categories, textMode);
   }
-
-  /**
-   * 格式化数据库统计信息
-   * @param {Object} categories - 包含不同类别统计信息的对象
-   * @param {boolean} textMode - 是否以纯文本模式输出
-   * @returns {Object} - 返回一个包含格式化后的数据库统计信息的对象
-   */
   formatDbStats(categories, textMode) {
-    /**
-     * 格式化单个类别的统计信息
-     * @param {Array} category - 类别统计信息数组
-     * @returns {string} - 返回格式化后的类别统计信息字符串
-     */
     const formatCategory = (category) => {
       return category
         .map(({ key, value }) =>

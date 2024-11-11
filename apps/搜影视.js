@@ -1,5 +1,5 @@
 import { Config } from "../components/index.js";
-const { search_movie } = Config.getYaml("config", "memz-config");
+const { search_movie } = Config.getConfig("memz-config");
 export class VideoAPI extends plugin {
   constructor() {
     super({

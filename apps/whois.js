@@ -2,7 +2,7 @@ import whois from "whois-json";
 import fs from "fs";
 import { Config, Plugin_Path } from "../components/index.js";
 import { generateScreenshot } from "../model/generateScreenshot.js";
-const { WhoisAll } = Config.getYaml("config", "memz-config");
+const { WhoisAll } = Config.getConfig("memz-config");
 
 const whoisFieldsMap = {
   domainName: "域名",
@@ -37,13 +37,6 @@ const whoisFieldsMap = {
   fax: "传真",
   email: "电子邮件",
 };
-
-/**
- * 获取详细的 Whois 数据
- * @param {string} domain - 要查询的域名
- * @returns {Promise<Object>} - 返回一个 Promise，包含获取到的 Whois 数据对象
- * @throws {Error} - 如果获取 Whois 数据时出错，将抛出一个错误
- */
 async function getDetailedWhoisData(domain) {
   try {
     return await whois(domain, { timeout: 10000 });
@@ -51,12 +44,6 @@ async function getDetailedWhoisData(domain) {
     throw new Error(`获取 WHOIS 数据时出错: ${error.message}`);
   }
 }
-
-/**
- * 将 Whois 数据进行翻译
- * @param {Object} data - 要翻译的 Whois 数据对象
- * @returns {Object} - 返回翻译后的 Whois 数据对象
- */
 function translateWhoisData(data) {
   return Object.entries(data).reduce((acc, [key, value]) => {
     const translatedKey = whoisFieldsMap[key] || key;
@@ -68,7 +55,7 @@ function translateWhoisData(data) {
   }, {});
 }
 
-class Whois extends plugin {
+export class Whois extends plugin {
   constructor() {
     super({
       name: "Whois",
@@ -83,14 +70,6 @@ class Whois extends plugin {
       ],
     });
   }
-
-  /**
-   * @async
-   * @function whois
-   * @param {Object} e - 事件对象，包含消息信息。
-   * @returns {Promise<void>} - 一个在函数完成时解析的 Promise。
-   * @description 获取给定域名的详细 WHOIS 数据，翻译数据，生成 HTML 报告，对报告进行截图，并作为回复发送。
-   */
   async whois(e) {
     if (!WhoisAll && !e.isMaster)
       return logger.warn("[memz-plugin]Whois状态当前为仅主人可用");
