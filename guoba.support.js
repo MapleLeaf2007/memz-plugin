@@ -1,14 +1,7 @@
 import lodash from "lodash";
 import { Config } from "./components/index.js";
+
 export function supportGuoba() {
-  let groupList = Array.from(Bot.gl.values());
-  groupList = groupList.map(
-    (item) =>
-    (item = {
-      label: `${item.group_name}-${item.group_id}`,
-      value: item.group_id,
-    }),
-  );
   return {
     pluginInfo: {
       name: "memz-plugin",
@@ -139,7 +132,7 @@ export function supportGuoba() {
           if (lodash.isEqual(config[split[1]], data[key])) continue;
           Config.modify(split[0] + "-config", split[1], data[key]);
         }
-        return Result.ok({}, "保存成功~");
+        return Result.ok({}, "𝑪𝒊𝒂𝒍𝒍𝒐～(∠・ω< )⌒★");
       },
     },
   };
