@@ -1,15 +1,6 @@
-process.noDeprecation = true;
-import punycode from "punycode";
 import { Config } from "../components/index.js";
 const { UnicodeAll } = Config.getYaml("config", "memz-config");
 
-export function encodeToPunycode(msg) {
-  return `xn--${punycode.encode(msg)}`;
-}
-
-export function decodeFromPunycode(punycodeStr) {
-  return punycode.decode(punycodeStr.replace(/^xn--/, ""));
-}
 
 export function encodeToUnicode(msg) {
   return msg
@@ -52,7 +43,7 @@ export class Unicode extends plugin {
       priority: 6,
       rule: [
         {
-          reg: /^(#?)(unicode|ascii|punycode)(编码|解码)\s*(.+)/,
+          reg: /^(#?)(unicode|ascii)(编码|解码)\s*(.+)/,
           fnc: "handleEncodingDecoding",
         },
       ],
@@ -73,11 +64,6 @@ export class Unicode extends plugin {
       } else if (operation === "ascii") {
         result =
           action === "编码" ? encodeToAscii(input) : decodeFromAscii(input);
-      } else if (operation === "punycode") {
-        result =
-          action === "编码"
-            ? encodeToPunycode(input)
-            : decodeFromPunycode(input);
       }
 
       await e.reply(`结果:${result}`, true);
@@ -90,7 +76,7 @@ export class Unicode extends plugin {
     if (!UnicodeAll && !e.isMaster)
       return logger.warn("[memz-plugin]Unicode功能当前为仅主人可用");
     await this.handleReply(e, {
-      reg: /^(#?)(unicode|ascii|punycode)(编码|解码)\s*(.+)/,
+      reg: /^(#?)(unicode|ascii)(编码|解码)\s*(.+)/,
       fn: this.handleReply,
     });
   }
