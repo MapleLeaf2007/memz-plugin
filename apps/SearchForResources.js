@@ -1,16 +1,10 @@
 import xlsx from "xlsx";
 import path from "node:path";
-import { fileURLToPath } from "url";
 import fs from "fs";
-import { Config } from "../components/index.js";
+import { Config, Plugin_Data } from "../components/index.js";
 const { search_resource } = Config.getYaml("config", "memz-config");
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const folderPath = path.join(Plugin_Data, "xlsx");
 
-// 设置 Excel 文件夹路径
-const folderPath = path.join(__dirname, "..", "data", "xlsx");
-
-// 从 Excel 文件夹中读取所有文件的数据
 function loadDataFromExcelFiles() {
   const files = fs.readdirSync(folderPath);
   const data = [];
@@ -25,14 +19,13 @@ function loadDataFromExcelFiles() {
         defval: "",
         range: 1,
       });
-      data.push(...sheetData); // 合并所有文件的数据
+      data.push(...sheetData);
     }
   });
 
   return data;
 }
 
-// 在 Excel 数据中搜索资源
 function searchResources(keyword, data) {
   const results = data.filter((row) => row.关键词.includes(keyword));
   return results;
@@ -72,9 +65,7 @@ export class ResourceSearchPlugin extends plugin {
         },
       ],
     });
-
-    // 加载所有 Excel 文件
-    this.data = loadDataFromExcelFiles();
+    this.data = loadDataFromExcelFiles();//加载
   }
 
   async handleSearch(e) {
@@ -111,7 +102,7 @@ export class ResourceSearchPlugin extends plugin {
     }
   }
 
-  // 统计分类数量
+  // 统计
   async handleCategoryCount(e) {
     try {
       const categoryCount = countCategories(this.data);
