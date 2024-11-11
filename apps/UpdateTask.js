@@ -176,9 +176,9 @@ export class UpdateTask extends plugin {
 function init() {
     function gitRemoteUrl(remoteUrl) {
         const urlMatch = remoteUrl.match(
-            /^(?:https?:\/\/)?(?:[^/]+\/)+([^/]+)\/([^/]+)(?:\.git)?$/,
+            /^(?:https?:\/\/)?(?:[^/]+\/)+([^/]+)\/([^/]+)(?:\.git)?$/i,
         );
-        const sshUrlMatch = remoteUrl.match(/^.+@(.+):([^/]+)\/([^/]+)\.git$/);
+        const sshUrlMatch = remoteUrl.match(/^.+@(.+):([^/]+)\/([^/]+)\.git$/i);
 
         if (urlMatch) {
             const owner = urlMatch[1];
@@ -189,7 +189,7 @@ function init() {
                 owner,
                 repo,
             });
-            logger.debug(`[memz-plugin]已添加仓库：${source}://${owner}/${repo}`);
+            logger.debug(`[memz-plugin]已添加仓库：${source}:${owner}/${repo}`);
         } else if (sshUrlMatch) {
             const owner = sshUrlMatch[2];
             const repo = sshUrlMatch[3];
@@ -199,7 +199,7 @@ function init() {
                 owner,
                 repo,
             });
-            logger.debug(`[memz-plugin]已添加仓库：${source}://${owner}/${repo}`);
+            logger.debug(`[memz-plugin]已添加仓库：${source}:${owner}/${repo}`);
         } else {
             logger.debug(`[memz-plugin]未识别的仓库地址格式：${remoteUrl}`);
         }
