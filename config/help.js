@@ -72,6 +72,11 @@ export const helpList = [
         title: "#搜影视+名称",
         desc: "搜索影视资源",
       },
+      {
+        icon: 26,
+        title: "#磁力搜索+名称",
+        desc: "搜索磁力资源,违规",
+      },
     ],
   },
   {
