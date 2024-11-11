@@ -7,13 +7,10 @@
         "fix": "npx prettier --write **/*.js && npx prettier --write *.js"
     },
     "dependencies": {
-        "axios": "^0.24.0",
-        "cheerio": "^1.0.0",
         "ioredis": "*",
-        "js-yaml": "^4.1.0",
         "systeminformation": "*",
         "whois-json": "*",
-        "xlsx": "^0.18.5",
+        "xlsx": "*",
         "yaml": "^2.2.2"
     }
 }
