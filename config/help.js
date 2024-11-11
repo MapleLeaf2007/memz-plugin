@@ -100,7 +100,7 @@ export const helpList = [
       },
       {
         icon: 49,
-        title: "#(memz)检查更新",
+        title: "#memz检查更新",
         desc: "Gitee仓库检查更新",
       },
     ],
