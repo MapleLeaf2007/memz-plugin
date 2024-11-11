@@ -17,7 +17,7 @@ export class UpdateTask extends plugin {
             priority: 1000,
             rule: [
                 {
-                    reg: /^#?(memz)(插件)?检查更新$/i,
+                    reg: /^#?(memz)(插件)?检查(仓库|gitee)?更新$/i,
                     fnc: "UpdateTask",
                 },
             ],
