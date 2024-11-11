@@ -17,7 +17,7 @@ export class UpdateTask extends plugin {
             priority: 1000,
             rule: [
                 {
-                    reg: /^#?(memz)(插件)?检查(仓库|gitee|github)?更新$/i,
+                    reg: /^#?(memz)(插件)?检查(仓库)?更新$/i,
                     fnc: "UpdateTask",
                 },
             ],
@@ -89,6 +89,7 @@ export class UpdateTask extends plugin {
 
             const masters = cfg.masterQQ;
             for (const master of masters) {
+                // 判断是否为QQBot,暂定
                 if (master.toString().length > 11) continue;
                 await Bot.pickFriend(master).sendMsg(msg);
                 await this.sleep(2000);
@@ -213,5 +214,5 @@ function init() {
         logger.debug("CUSTOM_REPOSITORY 配置为空或未正确读取");
     }
 
-    logger.debug(`[memz-plugin] 初始化完成，仓库列表：${JSON.stringify(REPOSITORY_LIST)}`);
+    logger.debug(`[memz-plugin]仓库更新推送初始化完成：${JSON.stringify(REPOSITORY_LIST)}`);
 }
