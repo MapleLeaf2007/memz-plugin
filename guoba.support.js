@@ -29,6 +29,16 @@ export function supportGuoba() {
           component: "Switch",
         },
         {
+          field: "update.updatecron",
+          label: "自动更新",
+          helpMessage: "修改后重启生效",
+          bottomHelpMessage: "自动更新插件",
+          component: "EasyCron",
+          componentProps: {
+            placeholder: "请输入Cron表达式"
+          }
+        },
+        {
           field: "memz.SystemStatusAll",
           label: "系统状态所有人可用",
           bottomHelpMessage: "关闭时仅主人可用",

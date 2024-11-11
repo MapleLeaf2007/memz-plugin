@@ -1,6 +1,7 @@
 import _ from "lodash";
 import { update as Update } from "../../other/update.js";
-import { Plugin_Name } from "../components/index.js";
+import { Plugin_Name, Config } from "../components/index.js";
+const { autoupdate, updatecron } = Config.getConfig("update-config");
 export class Updates extends plugin {
   constructor() {
     super({
@@ -16,16 +17,29 @@ export class Updates extends plugin {
         {
           reg: /^#*(memz)(插件)?更新(日志|记录)$/i,
           fnc: "update_log",
-        },
+        }
       ],
     });
+    this.task = {
+      cron: updatecron,
+      name: "[memz-plugin]定时自动更新",
+      log: false,
+      fnc: () => this.Autoupdate(),
+    };
   }
   async update(e) {
     if (!(e.isMaster || e.user_id == 1011303349)) return;
     e.isMaster = true;
     if (e.at && !e.atme) return;
-    e.msg = `#${e.msg.includes("强制") ? "强制" : ""}更新memz-plugin`;
-
+    e.msg = `#${e.msg.includes("强制") ? "强制" : ""}更新${Plugin_Name}`;
+    const up = new Update(e);
+    up.e = e;
+    return up.update();
+  }
+  async Autoupdate(e = this.e) {
+    if (!autoupdate) return;
+    e.isMaster = true;
+    e.msg = `#更新${Plugin_Name}`;
     const up = new Update(e);
     up.e = e;
     return up.update();
