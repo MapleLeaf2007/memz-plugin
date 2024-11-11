@@ -38,7 +38,7 @@ export class UpdateTask extends plugin {
         // 去重
         REPOSITORY_LIST = Array.from(new Set(REPOSITORY_LIST));
         if (REPOSITORY_LIST.length === 0) {
-            logger.warn("未检测到有效的仓库地址");
+            logger.warn("[memz-plugin]未检测到有效的仓库地址");
             return false;
         }
 
@@ -51,19 +51,19 @@ export class UpdateTask extends plugin {
                 await this.sleep(1000);
             }
 
-            logger.info(`开始检查仓库更新：${item.owner}/${item.repo}`);
+            logger.info(`[memz-plugin]开始检查仓库更新：${item.owner}/${item.repo}`);
             let repositoryData = await this.getRepositoryLatestCommit(item.source, item.owner, item.repo);
             if (!repositoryData?.sha) {
-                logger.warn(`未能获取到提交信息：${item.owner}/${item.repo}`);
+                logger.warn(`[memz-plugin]未能获取到提交信息：${item.owner}/${item.repo}`);
                 continue;
             }
 
             const redisKey = `${prefix}${item.owner}/${item.repo}`;
             let redisSha = await redis.get(redisKey);
-            logger.debug(`Redis中缓存的SHA值：${redisSha}，最新的SHA值：${repositoryData.sha}`);
+            logger.debug(`[memz-plugin]Redis中缓存的SHA值：${redisSha}，最新的SHA值：${repositoryData.sha}`);
 
             if (redisSha && String(redisSha) === String(repositoryData.sha)) {
-                logger.info(`仓库 ${item.owner}/${item.repo} 没有新更新`);
+                logger.info(`[memz-plugin]仓库 ${item.owner}/${item.repo} 没有新更新`);
                 continue;
             }
 
@@ -94,7 +94,7 @@ export class UpdateTask extends plugin {
                 await this.sleep(2000);
             }
         } else {
-            logger.info("未检测到任何仓库更新");
+            logger.info("[memz-plugin]未检测到任何仓库更新");
         }
     }
 
