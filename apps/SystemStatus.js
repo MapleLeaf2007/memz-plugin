@@ -101,7 +101,7 @@ export class SystemStatus extends plugin {
 
       await e.reply(responses.join("\n"));
     } catch (error) {
-      await e.reply(`获取扩展系统信息时出错: ${error.message}`);
+      await e.reply(`获取扩展系统信息时出错: ${error.message}`, true);
     }
   }
 
@@ -147,7 +147,7 @@ export class SystemStatus extends plugin {
 
       await e.reply(responses.join("\n"));
     } catch (error) {
-      await e.reply(`获取最大扩展系统信息时出错: ${error.message}`);
+      await e.reply(`获取最大扩展系统信息时出错: ${error.message}`), true;
     }
   }
 

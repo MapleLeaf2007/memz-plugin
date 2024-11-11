@@ -1,4 +1,4 @@
-import puppeteer from "../../../lib/puppeteer/puppeteer.js"; // 根据你的项目结构调整路径
+import puppeteer from "../../../lib/puppeteer/puppeteer.js";
 
 export async function generateScreenshot(html) {
   try {
