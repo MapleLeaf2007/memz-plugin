@@ -127,13 +127,19 @@ export function supportGuoba() {
         {
           field: "memz.search_movie",
           label: "是否开启搜影视",
-          bottomHelpMessage: "关闭时所有人不可用",
+          bottomHelpMessage: "使用API搜索影视资源,关闭时所有人不可用",
           component: "Switch",
         },
         {
           field: "memz.search_resource",
           label: "是否开启搜资源",
-          bottomHelpMessage: "关闭时所有人不可用",
+          bottomHelpMessage: "搜索本地xlsx文件的游戏,关闭时所有人不可用",
+          component: "Switch",
+        },
+        {
+          field: "memz.search_magnet",
+          label: "是否开启磁力搜索",
+          bottomHelpMessage: "由于内容涉及违规, 不建议开启,关闭时仅主人可用",
           component: "Switch",
         },
         {

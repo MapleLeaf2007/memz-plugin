@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { Config } from "../components/index.js";
 const { SeoAll } = Config.getConfig("memz-config");
 
