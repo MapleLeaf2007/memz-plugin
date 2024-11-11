@@ -1,28 +1,30 @@
 # MEMZ-Plugin
 
-## 介绍
+## 📋介绍
 
-Yunzai系列Bot插件
+Yunzai系列Bot插件,本插件基于TRSS-Yunzai作为开发环境,其他框架可能有不支持的地方,可提issue适配
 
 ## 安装插件
 
 ### 安装本体命令
 
-```
+```bash
 git clone --depth=1 https://gitee.com/memzjs/memz-plugin.git ./plugins/memz-plugin/
 ```
 
 ### 安装依赖命令
-```
+
+```bash
 pnpm install -P #or npm install -P
 ```
+
 ## 使用
 
-发送`#MEMZ帮助`查看插件部分功能
+发送 `#MEMZ帮助`查看插件部分功能
 
 ## 交流与反馈
 
-QQ群 423710046
+直接提issue或者PR都行
 
 ## 免责声明
 
