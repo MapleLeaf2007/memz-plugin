@@ -17,7 +17,7 @@ export class UpdateTask extends plugin {
             priority: 1000,
             rule: [
                 {
-                    reg: /^#?(memz)(插件)?检查(仓库)?更新$/i,
+                    reg: /^#?(memz)(插件)?检查(仓库|gitee|github)?更新$/i,
                     fnc: "UpdateTask",
                 },
             ],
@@ -74,11 +74,16 @@ export class UpdateTask extends plugin {
 
         if (content.length > 0) {
             const msg =
-                `检测到${content[0].source}仓库更新...\n` +
+                `检测到仓库更新...\n` +
                 content
                     .map(
                         (i) =>
-                            `项目名称：${i.owner}/${i.repo}\n开发者名称：${i.author}\n开发者邮箱：${i.email}\n更新信息：${i.message}\n更新时间：${i.date}\n`,
+                            `项目名称：${i.owner}/${i.repo}\n` +
+                            `来源：${i.source}\n` +
+                            `开发者名称：${i.author}\n` +
+                            `开发者邮箱：${i.email}\n` +
+                            `更新信息：${i.message}\n` +
+                            `更新时间：${i.date}\n`,
                     )
                     .join("\n");
 
@@ -92,6 +97,7 @@ export class UpdateTask extends plugin {
             logger.info("未检测到任何仓库更新");
         }
     }
+
     async getRepositoryLatestCommit(source, owner, repo) {
         if (source === "Gitee") {
             return await this.getGiteeLatestCommit(owner, repo);
@@ -101,6 +107,8 @@ export class UpdateTask extends plugin {
             return { error: "未知的仓库来源" };
         }
     }
+
+    // 获取 Gitee 提交
     async getGiteeLatestCommit(owner, repo) {
         const apiUrl = `https://gitee.com/api/v5/repos/${owner}/${repo}/commits`;
 
@@ -130,7 +138,7 @@ export class UpdateTask extends plugin {
         }
     }
 
-    // 获取 GitHub 的提交
+    // 获取 GitHub 提交
     async getGithubLatestCommit(owner, repo) {
         const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`;
 
