@@ -1,6 +1,7 @@
 {{extend defaultLayout}}
 {{block 'css'}}
 <link rel="stylesheet" type="text/css" href="{{_res_path}}/admin/index.css"/>
+{{@style}}
 {{/block}}
 {{block 'main'}}
 
@@ -16,7 +17,7 @@
       <div class="cfg-line">
         系统状态所有人可用
         <span class="cfg-hint">#memz设置系统状态开启/关闭</span>
-        {{@系统状态}}
+        {{@cfg.memz.SystemStatusAll}}
       </div>
       <div class="cfg-desc">系统状态是否所有人可用</div>
     </li>

@@ -1,6 +1,6 @@
 import { Config, Render } from "../components/index.js";
 
-const CfgReg = /^#memz设置\s*([^\s]+)\s*(开启|关闭|添加仓库|删除仓库)?\s*(.*)$/i;
+const CfgReg = /^#memz设置\s*([^\s]+)\s*(开启|关闭)?\s*(.*)$/i;
 
 const cfgMap = {
     "系统状态": "memz.SystemStatusAll",
@@ -16,25 +16,8 @@ const cfgMap = {
     "申请游戏": "memz.apply_game",
     "磁力搜索": "memz.search_magnet",
     "自动更新": "update.autoupdate",
-    "更新检查": "update.checkupdate",
-    "添加仓库": "update.CUSTOM_REPOSITORY.add",
-    "删除仓库": "update.CUSTOM_REPOSITORY.remove"
+    "更新检查": "update.checkupdate"
 };
-
-function addRepository(url) {
-    let config = Config.getConfig("update") || {};
-    if (!config.CUSTOM_REPOSITORY) config.CUSTOM_REPOSITORY = [];
-    if (!config.CUSTOM_REPOSITORY.includes(url)) {
-        config.CUSTOM_REPOSITORY.push(url);
-        Config.save("config", "update", config);
-    }
-}
-
-function removeRepository(url) {
-    let config = Config.getConfig("update") || {};
-    config.CUSTOM_REPOSITORY = (config.CUSTOM_REPOSITORY || []).filter(repo => repo !== url);
-    Config.save("config", "update", config);
-}
 
 export class memz_admin extends plugin {
     constructor() {
@@ -73,12 +56,6 @@ async function set(e) {
                 setCfg(cfgKey, boolValue);
             }
         }
-        else if (action === "添加仓库" && value) {
-            addRepository(value);
-        }
-        else if (action === "删除仓库" && value) {
-            removeRepository(value);
-        }
     }
 
     let cfg = {};
@@ -86,9 +63,8 @@ async function set(e) {
         let key = cfgMap[name];
         cfg[key] = await getStatus(key);
     }
-    return await Render.render("admin/index", {
-        ...cfg
-    }, { e, scale: 1.2 });
+    logger.warn(`cfg: ${JSON.stringify(cfg)}`);
+    return await Render.render("admin/index", { ...cfg }, { e, scale: 1.2 });
 }
 
 // 设置配置项
@@ -110,17 +86,11 @@ async function getStatus(rote, def = false) {
     if (arr.length > 1) {
         let type = arr[0];
         let name = arr[1];
-        logger.warn(`type: ${type}, name: ${name}`);
         let data = Config.getConfig(type) || {};
-        logger.warn(`data: ${JSON.stringify(data)}`);
 
         if (data && data[name] !== undefined) {
             if (data[name] === true || data[name] === false) {
                 _class = data[name] === false ? `${_class} status-off` : _class;
-                value = data[name] === true ? "已开启" : "已关闭";
-            } else if (Array.isArray(data[name]) && rote.includes("CUSTOM_REPOSITORY")) {
-                value = data[name].length > 0 ? "已添加仓库" : "无仓库";
-                _class = `${_class} status-off`;
             } else {
                 value = data[name] || "未设置";
             }
@@ -132,14 +102,12 @@ async function getStatus(rote, def = false) {
     if (!value) {
         if (rote === "mz.botname") {
             value = "";
-            logger.warn(`value: ${value}`);
         } else {
             _class = `${_class} status-off`;
             value = "已关闭";
-            logger.warn(`value: ${value}`);
         }
     }
 
-    logger.warn(`<div class="${_class}">${value}</div>`);
+    //logger.warn(`<div class="${_class}">${value}</div>`);
     return `<div class="${_class}">${value}</div>`;
 }
