@@ -1,0 +1,94 @@
+{{extend defaultLayout}}
+{{block 'css'}}
+<link rel="stylesheet" type="text/css" href="{{_res_path}}/admin/index.css"/>
+{{/block}}
+{{block 'main'}}
+
+<div class="info_box">
+  <div class="head-box type{{bgType}}">
+    <div class="title">MEMZ-Plugin设置</div>
+  </div>
+</div>
+<div class="cfg-box">
+  <div class="cfg-group">插件设置</div>
+  <ul class="cfg-ul">
+    <li class="cfg-li">
+      <div class="cfg-line">
+        系统状态所有人可用
+        <span class="cfg-hint">#memz设置系统状态开启/关闭</span>
+        {{@系统状态}}
+      </div>
+      <div class="cfg-desc">系统状态是否所有人可用</div>
+    </li>
+    <li class="cfg-li">
+        <div class="cfg-line">
+          Redis状态所有人可用
+          <span class="cfg-hint">#memz设置Redis状态开启/关闭</span>
+          {{@RedisStatusAll}}
+        </div>
+        <div class="cfg-desc">Redis状态是否所有人可用</div>
+      </li>
+    </ul>
+ </div>
+
+
+<div class="cfg-box">
+  <div class="cfg-group">工具设置</div>
+  <ul class="cfg-ul">
+    <li class="cfg-li">
+    <div class="cfg-line">
+        Whois
+        <span class="cfg-hint">#memz设置whois开启/关闭</span>
+        {{@WhoisAll}}
+    </div>
+    <div class="cfg-desc">Whois是否所有人可用</div>
+    </li>
+
+    <li class="cfg-li">
+    <div class="cfg-line">
+    SEO
+    <span class="cfg-hint">#memz设置SEO开启/关闭</span>
+    {{@SeoAll}}
+    </div>
+    <div class="cfg-desc">SEO是否所有人可用</div>
+    </li>
+
+    <li class="cfg-li">
+      <div class="cfg-line">
+        (TC)Ping
+        <span class="cfg-hint">#memz设置Ping开启/关闭</span>
+        {{@PingAll}}
+      </div>
+      <div class="cfg-desc">(TC)Ping是否所有人可用</div>
+    </li>
+    
+    <li class="cfg-li">
+    <div class="cfg-line">
+        unicode编码解码
+    <span class="cfg-hint">#memz设置unicode编码解码开启/关闭</span>
+        {{@UnicodeAll}}
+    </div>
+    <div class="cfg-desc">unicode编码解码是否所有人可用</div>
+    </li>
+	
+    <li class="cfg-li">
+      <div class="cfg-line">
+        URL编码解码
+        <span class="cfg-hint">#memz设置URL编码解码开启/关闭</span>
+        {{@UrlAll}}
+      </div>
+      <div class="cfg-desc">URL编码解码是否所有人可用</div>
+    </li>
+
+    <li class="cfg-li">
+      <div class="cfg-line">
+        进制转换
+        <span class="cfg-hint">#memz设置进制转换开启/关闭</span>
+        {{@BaseConversionAll}}
+      </div>
+      <div class="cfg-desc">进制转换是否所有人可用</div>
+    </li>
+
+  </ul>
+</div>
+{{/block}}
