@@ -56,12 +56,12 @@ async function set(e) {
     //         }
     //     }
     // }
-
     let cfg = {};
     for (let name in cfgMap) {
         let key = cfgMap[name];
         cfg[key] = await getStatus(key);
     }
+
     logger.warn(`cfg: ${JSON.stringify(cfg)}`);
     return await Render.render("admin/index", { ...cfg }, { e, scale: 1.6 });
 }

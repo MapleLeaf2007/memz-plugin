@@ -4,7 +4,6 @@
 {{@style}}
 {{/block}}
 {{block 'main'}}
-
 <div class="info_box">
   <div class="head-box type{{bgType}}">
     <div class="title">MEMZ-Plugin设置</div>
@@ -13,24 +12,18 @@
 <div class="cfg-box">
   <div class="cfg-group">插件设置</div>
   <ul class="cfg-ul">
+    {{each cfg value, key}}
     <li class="cfg-li">
       <div class="cfg-line">
-        系统状态所有人可用
-        <span class="cfg-hint">#memz设置系统状态开启/关闭</span>
-        {{SystemStatusAll}}
+        {{key}}
+        <span class="cfg-hint">#memz设置{{key}}开启/关闭</span>
+        {{value}}
       </div>
-      <div class="cfg-desc">系统状态是否所有人可用</div>
+      <div class="cfg-desc">配置项描述</div>
     </li>
-    <li class="cfg-li">
-        <div class="cfg-line">
-          Redis状态所有人可用
-          <span class="cfg-hint">#memz设置Redis状态开启/关闭</span>
-          {{RedisStatusAll}}
-        </div>
-        <div class="cfg-desc">Redis状态是否所有人可用</div>
-      </li>
-    </ul>
- </div>
+    {{/each}}
+  </ul>
+</div>
 
 
 <div class="cfg-box">
@@ -62,7 +55,7 @@
       </div>
       <div class="cfg-desc">(TC)Ping是否所有人可用</div>
     </li>
-    
+
     <li class="cfg-li">
     <div class="cfg-line">
         unicode编码解码
@@ -71,7 +64,7 @@
     </div>
     <div class="cfg-desc">unicode编码解码是否所有人可用</div>
     </li>
-	
+
     <li class="cfg-li">
       <div class="cfg-line">
         URL编码解码
