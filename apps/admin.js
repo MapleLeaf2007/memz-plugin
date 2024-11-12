@@ -42,21 +42,20 @@ export class memz_admin extends plugin {
 }
 
 async function set(e) {
-    let reg = CfgReg.exec(e.msg);
-    if (reg && reg[1]) {
-        let option = reg[1];
-        let action = reg[2] || "";
-        let value = reg[3] || "";
+    // let reg = CfgReg.exec(e.msg);
+    // if (reg && reg[1]) {
+    //     let option = reg[1];
+    //     let action = reg[2] || "";
 
-        let cfgKey = cfgMap[option];
+    //     let cfgKey = cfgMap[option];
 
-        if (action === "开启" || action === "关闭") {
-            let boolValue = action === "开启";
-            if (cfgKey) {
-                setCfg(cfgKey, boolValue);
-            }
-        }
-    }
+    //     if (action === "开启" || action === "关闭") {
+    //         let boolValue = action === "开启";
+    //         if (cfgKey) {
+    //             setCfg(cfgKey, boolValue);
+    //         }
+    //     }
+    // }
 
     let cfg = {};
     for (let name in cfgMap) {
@@ -64,21 +63,22 @@ async function set(e) {
         cfg[key] = await getStatus(key);
     }
     logger.warn(`cfg: ${JSON.stringify(cfg)}`);
-    return await Render.render("admin/index", { ...cfg }, { e, scale: 1.2 });
+    return await Render.render("admin/index", { ...cfg }, { e, scale: 1.6 });
 }
 
 // 设置配置项
-function setCfg(rote, value, def = false) {
+function setCfg(rote, value) {
     let arr = rote?.split(".") || [];
     if (arr.length > 1) {
         let type = arr[0];
         let name = arr[1];
-        let data = Config.getYaml("config", type, def ? "defSet" : "config") || {};
+        let data = Config.getConfig(type) || {};
         data[name] = value;
-        Config.save("config", type, def ? "defSet" : "config", data);
+        Config.save(type, "config", data);
     }
 }
-async function getStatus(rote, def = false) {
+
+async function getStatus(rote) {
     let _class = "cfg-status";
     let value = "";
     let arr = rote?.split(".") || [];
@@ -86,28 +86,42 @@ async function getStatus(rote, def = false) {
     if (arr.length > 1) {
         let type = arr[0];
         let name = arr[1];
-        let data = Config.getConfig(type) || {};
+
+        // 获取配置并确保其为对象
+        let data = Config.getConfig(type);
+        logger.warn(`获取到的数据: ${JSON.stringify(data)}`);
 
         if (data && data[name] !== undefined) {
-            if (data[name] === true || data[name] === false) {
-                _class = data[name] === false ? `${_class} status-off` : _class;
+            logger.warn(`data[${name}]: ${data[name]}`);
+            // 其他处理逻辑...
+        } else {
+            logger.warn(`未找到配置项: ${name}`);
+        }
+
+        if (data) {
+            if (data[name] !== undefined) {
+                if (data[name] === true) {
+                    _class = _class;
+                    value = "已开启";
+                } else if (data[name] === false) {
+                    _class = `${_class} status-off`;
+                    value = "已关闭";
+                } else {
+                    value = data[name] || "未设置";
+                }
             } else {
-                value = data[name] || "未设置";
+                value = "未设置";
+                _class = `${_class} status-off`;
             }
         } else {
-            value = "未设置";
-        }
-    }
-
-    if (!value) {
-        if (rote === "mz.botname") {
-            value = "";
-        } else {
+            logger.warn(`未找到配置文件: ${type}`);
             _class = `${_class} status-off`;
             value = "已关闭";
         }
+    } else {
+        _class = `${_class} status-off`;
+        value = "已关闭";
     }
 
-    //logger.warn(`<div class="${_class}">${value}</div>`);
     return `<div class="${_class}">${value}</div>`;
 }

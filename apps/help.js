@@ -30,7 +30,9 @@ export class setting extends plugin {
         changelogs: Version.changelogs,
         elem: "cryo",
       },
-      { e, scale: 1.2 },
+      {
+        e, scale: 1.2
+      },
     );
   }
 
