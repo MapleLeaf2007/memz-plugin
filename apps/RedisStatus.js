@@ -43,7 +43,7 @@ export class RedisStatus extends plugin {
     }
 
     const redisInstance =
-      redisConfig === "本体" ? Redis : new Redis(redisConfig);
+      redisConfig === "本体" ? redis : new Redis(redisConfig);
 
     try {
       const info = await redisInstance.info();
