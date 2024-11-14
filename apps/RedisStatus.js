@@ -159,7 +159,7 @@ ${dbStats.databaseStats}`;
   }
 
   generateProTextResponse(stats, hitRate, dbStats, redisConfig) {
-    return `Redis 实例: ${redisConfig}
+    return `Redis 状态PRO
 已运行天数: ${stats.uptime_in_days} days
 当前监听端口: ${stats.tcp_port}
 连接的客户端数量: ${stats.connected_clients}
