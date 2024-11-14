@@ -90,7 +90,7 @@ export class Whois extends plugin {
 
       const screenshotBuffer = await generateScreenshot(html);
 
-      await this.reply(segment.image(screenshotBuffer), true);
+      await e.reply(segment.image(`base64://${screenshotBuffer}`), true);
     } catch (error) {
       await this.reply(`错误: ${error.message}`, true);
     }
