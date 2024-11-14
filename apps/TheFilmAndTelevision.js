@@ -10,13 +10,13 @@ export class VideoAPI extends plugin {
       rule: [
         {
           reg: "^#?搜影视\\s*(\\S+)$",
-          fnc: "preview",
+          fnc: "TheFilmAndTelevision",
         },
       ],
     });
   }
 
-  async preview(e) {
+  async TheFilmAndTelevision(e) {
     if (!search_movie) return logger.warn("[memz-plugin]搜影视功能已禁用");
     const match = e.msg.match(/^#?搜影视\s*(\S+)$/);
     const keyword = match ? match[1] : null;
@@ -67,7 +67,7 @@ export class VideoAPI extends plugin {
         if (nameMatch && linkMatch) {
           results.push({
             name: nameMatch[1].trim(),
-            category: warningNotice ? "网络搜索资源" : "影视资源",
+            category: "影视资源",
             link: linkMatch[1],
           });
         }
