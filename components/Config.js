@@ -4,6 +4,7 @@ import fs from "node:fs";
 import YamlReader from "./YamlReader.js";
 import _ from "lodash";
 import { Plugin_Path } from "./Path.js";
+import { cfgSchema } from "../config/admin.js"
 class Config {
   constructor() {
     this.config = {};
@@ -44,6 +45,7 @@ class Config {
       this.watch(`${path}${file}`, file.replace(".yaml", ""), "config");
     }
   }
+
   /**
    * 获取配置yaml
    * @param type 默认跑配置-defSet，用户配置-config
@@ -151,10 +153,29 @@ class Config {
   }
 
   getCfg() {
-    let config = this.getDefOrConfig("config");
+    let memzconfig = this.getDefOrConfig('memz')
+    let updateconfig = this.getDefOrConfig('update')
+    let apiconfig = this.getDefOrConfig('api')
     return {
-      ...config,
-    };
+      ...memzconfig,
+      ...updateconfig,
+      ...apiconfig
+    }
+  }
+
+  getCfgSchemaMap() {
+    let ret = {}
+    _.forEach(cfgSchema, (cfgGroup) => {
+      _.forEach(cfgGroup.cfg, (cfgItem, cfgKey) => {
+        ret[cfgItem.key] = cfgItem
+        cfgItem.cfgKey = cfgKey
+      })
+    })
+    return ret
+  }
+
+  getCfgSchema() {
+    return cfgSchema
   }
 
   /**

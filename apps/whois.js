@@ -1,5 +1,5 @@
-import whois from "whois-json";
 import fs from "fs";
+import whois from "whois-json";
 import { Config, Plugin_Path } from "../components/index.js";
 import { generateScreenshot } from "../model/generateScreenshot.js";
 const { WhoisAll } = Config.getConfig("memz");
@@ -82,10 +82,7 @@ export class Whois extends plugin {
         .map(([key, value]) => `${key}: ${value}`)
         .join("<br>");
 
-      const htmlTemplate = fs.readFileSync(
-        `${Plugin_Path}/resources/html/whois/whois.html`,
-        "utf8",
-      );
+      const htmlTemplate = fs.readFileSync(`${Plugin_Path}/resources/html/whois/whois.html`, "utf8");
       const html = htmlTemplate.replace("{{whoisdata}}", whoisDataHtml);
 
       const screenshotBuffer = await generateScreenshot(html);
