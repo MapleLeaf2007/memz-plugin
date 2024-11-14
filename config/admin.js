@@ -91,30 +91,23 @@ export const cfgSchema = {
             }
         },
     },
-    // request: {
-    //     title: '请求相关设置',
-    //     cfg: {
-    //         friendAdd: {
-    //             title: '好友申请',
-    //             key: '好友申请',
-    //             def: false,
-    //             desc: '好友申请是否上报',
-    //             fileName: 'request-config'
-    //         },
-    //         groupInvite: {
-    //             title: '群聊邀请',
-    //             key: '群邀请',
-    //             def: false,
-    //             desc: '群聊邀请是否上报 (邀请机器人入群)',
-    //             fileName: 'request-config'
-    //         },
-    //         groupAdd: {
-    //             title: '群聊申请',
-    //             key: '群申请',
-    //             def: false,
-    //             desc: '群聊申请是否上报 (申请加入群聊)',
-    //             fileName: 'request-config'
-    //         },
-    //     }
-    // }
+    update: {
+        title: '自动更新设置',
+        cfg: {
+            autoupdate: {
+                title: '自动更新',
+                key: '自动更新',
+                def: false,
+                desc: '是否自动更新插件',
+                fileName: 'update'
+            },
+            checkupdate: {
+                title: '自动检查更新',
+                key: '自动检查更新',
+                def: false,
+                desc: '是否自动检查插件更新',
+                fileName: 'update'
+            }
+        }
+    }
 }
