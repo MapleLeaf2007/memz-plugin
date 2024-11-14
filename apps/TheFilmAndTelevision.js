@@ -57,8 +57,7 @@ export class VideoAPI extends plugin {
       }
 
       const results = [];
-      const warningNotice = text.includes("【注意】以下资源来自网络搜索");
-      const items = text.split("\n名称：").slice(1); // 分割各项资源
+      const items = text.split("\n名称：").slice(1);
 
       for (const item of items) {
         const nameMatch = item.match(/^(.*?)\s*链接：/);
