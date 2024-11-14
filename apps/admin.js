@@ -1,11 +1,10 @@
-import { Config, Render, Version } from '../components/index.js'
-import lodash from 'lodash'
+import { Config, Render, Version } from '../components/index.js';
+import lodash from 'lodash';
 
+const keysPattern = lodash.map(Config.getCfgSchemaMap(), 'key').join('|');
+const sysCfgReg = new RegExp(`^#memz设置\\s*(全部开启|全部关闭|(${keysPattern}))?\\s*(.*)$`, 'i');
 
-let keys = lodash.map(Config.getCfgSchemaMap(), (i) => i.key)
-let sysCfgReg = new RegExp(`^#memz设置\\s*(${keys.join('|')})?\\s*(.*)$`)
-
-export class setting extends plugin {
+export class Setting extends plugin {
     constructor() {
         super({
             name: '[memz-plugin] 设置',
@@ -15,43 +14,46 @@ export class setting extends plugin {
             rule: [
                 {
                     reg: sysCfgReg,
-                    fnc: 'setting',
-                    permission: 'master'
-                }
-            ]
-        })
+                    fnc: 'handleSetting',
+                    permission: 'master',
+                },
+            ],
+        });
     }
-    async setting(e) {
-        let cfgReg = sysCfgReg
-        let regRet = cfgReg.exec(e.msg)
-        let cfgSchemaMap = Config.getCfgSchemaMap()
-        if (!regRet) {
-            return true
-        }
 
-        if (regRet[1]) {
-            // 设置模式
-            let val = regRet[2] || ''
+    async handleSetting(e) {
+        const { msg } = e;
+        const regResult = sysCfgReg.exec(msg);
 
-            let cfgSchema = cfgSchemaMap[regRet[1]]
-            if (cfgSchema.input) {
-                val = cfgSchema.input(val)
-            } else {
-                val = cfgSchema.type === 'num' ? (val * 1 || cfgSchema.def) : !/关闭/.test(val)
+        if (!regResult) return true;
+
+        const [_, action, key, value] = regResult;
+        const cfgSchemaMap = Config.getCfgSchemaMap();
+
+        if (action === '全部开启' || action === '全部关闭') {
+            const newValue = action === '全部开启';
+            for (const schemaKey in cfgSchemaMap) {
+                const cfgSchema = cfgSchemaMap[schemaKey];
+                const val = cfgSchema.type === 'num' ? (newValue ? 1 : 0) : newValue;
+                Config.modify(cfgSchema.fileName, cfgSchema.cfgKey, val);
             }
-            Config.modify(cfgSchema.fileName, cfgSchema.cfgKey, val)
+        }
+        else if (key) {
+            const cfgSchema = cfgSchemaMap[key];
+            const val = cfgSchema.input
+                ? cfgSchema.input(value)
+                : cfgSchema.type === 'num'
+                    ? Number(value) || cfgSchema.def
+                    : !/关闭/i.test(value);
+
+            Config.modify(cfgSchema.fileName, cfgSchema.cfgKey, val);
         }
 
-        let schema = Config.getCfgSchema()
-        let cfg = Config.getCfg()
-        logger.debug('[memz-plugin]schema：', schema)
-        logger.debug('[memz-plugin]cfg：', cfg)
+        const schema = Config.getCfgSchema();
+        const cfg = Config.getCfg();
+        logger.debug('[memz-plugin] schema:', schema);
+        logger.debug('[memz-plugin] cfg:', cfg);
 
-        // 渲染图像
-        return await Render.render('admin/index', {
-            schema,
-            cfg,
-            isMiao: Version.isMiao
-        }, { e, scale: 1.4 })
+        return Render.render('admin/index', { schema, cfg, isMiao: Version.isMiao }, { e, scale: 1.4 });
     }
 }
