@@ -8,13 +8,20 @@ const __dirname = path.dirname(__filename);
 
 const appsDir = path.join(__dirname, "apps");
 
+const colors = ['red', 'green', 'yellow', 'blue', 'magenta', 'cyan', 'white'];
+
+const coloredDashes = Array.from({ length: 20 }, () => {
+  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+  return chalk[randomColor]('-');
+}).join('');
+
 let successCount = 0;
 let failureCount = 0;
 
 const startTime = Date.now();
 let apps = {};
 
-logger.info(`\t${chalk.cyan("「MEMZ插件载入中···」")}`);
+logger.info(`${chalk.cyan("MEMZ插件载入中......")}`);
 
 try {
   const files = (await fs.readdir(appsDir)).filter((file) =>
@@ -48,11 +55,11 @@ try {
 const endTime = Date.now();
 const elapsedTime = endTime - startTime;
 
-logger.info(`${chalk.cyan("-------------------")}`);
+logger.info(coloredDashes);
 logger.info(`${chalk.green("MEMZ插件载入完成")}`);
 logger.info(`成功加载：${chalk.green(successCount)} 个`);
 logger.info(`加载失败：${chalk.red(failureCount)} 个`);
 logger.info(`总耗时：${chalk.yellow(elapsedTime)} 毫秒`);
-logger.info(`${chalk.cyan("-------------------")}`);
+logger.info(coloredDashes);
 
 export { apps };
