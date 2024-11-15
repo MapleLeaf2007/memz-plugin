@@ -1,6 +1,6 @@
 import lodash from "lodash";
 import { Config } from "./components/index.js";
-
+import { Plugin_Path } from "./components/index.js";
 export function supportGuoba() {
   return {
     pluginInfo: {
@@ -12,8 +12,7 @@ export function supportGuoba() {
       isV3: true,
       isV2: false,
       description: "Yunzai系列Bot插件",
-      icon: "mdi:stove",
-      iconColor: "rgb(241,212,152)",
+      iconPath: `${Plugin_Path}/resources/memz.gif`,
     },
     configInfo: {
       schemas: [
