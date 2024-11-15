@@ -8,4 +8,4 @@ checkupdate: true
 CUSTOM_REPOSITORY:
   - https://gitee.com/memzjs/memz-plugin
 # 插件检查更新cron
-cron: "0 0 8 * * ? *"
+cron: "30 0/10 * * * ? *"
