@@ -3,7 +3,13 @@ import path from "node:path";
 import chalk from "chalk";
 import { fileURLToPath, pathToFileURL } from "url";
 import startServer from './server/index.js';
-const server = startServer(1129);
+import Config from './components/Config.js';
+const { enabled } = Config.getConfig("api");
+if (enabled) {
+  const server = startServer();
+} else {
+  logger.info(chalk.cyan("[memz-plugin]MEMZ-API服务未启用"))
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

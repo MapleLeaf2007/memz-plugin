@@ -1,3 +1,5 @@
+#*是否开启API服务端
+enabled: true
 #*啟動服務器的端口號
 port: 1129
 #*是否開啟CORS跨域,開啟後,服务器会自动添加 Access-Control-Allow-Origin 头

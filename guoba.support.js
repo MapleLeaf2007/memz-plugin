@@ -51,6 +51,27 @@ export function supportGuoba() {
         },
         {
           component: "Divider",
+          label: "API服务端设置",
+        },
+        {
+          field: "api.enabled",
+          label: "API服务",
+          bottomHelpMessage: "是否开启API服务",
+          component: "Switch",
+        },
+        {
+          field: "api.port",
+          label: "API服务端口号",
+          bottomHelpMessage: "启动API服务时占用的端口号,不要与其他端口重复",
+          component: "InputNumber",
+          required: true,
+          componentProps: {
+            min: 1,
+            placeholder: "请输入端口号"
+          }
+        },
+        {
+          component: "Divider",
           label: "仓库更新推送设置",
         },
         {
@@ -152,6 +173,7 @@ export function supportGuoba() {
         return {
           memz: Config.getDefOrConfig("memz"),
           update: Config.getDefOrConfig("update"),
+          api: Config.getDefOrConfig("api")
         };
       },
       setConfigData(data, { Result }) {
