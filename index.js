@@ -2,6 +2,8 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import chalk from "chalk";
 import { fileURLToPath, pathToFileURL } from "url";
+import startServer from './server/index.js';
+const server = startServer(1129);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

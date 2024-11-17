@@ -1,0 +1,16 @@
+#*啟動服務器的端口號
+port: 1129
+#*是否開啟CORS跨域,開啟後,服务器会自动添加 Access-Control-Allow-Origin 头
+#* "*"表示允许所有来源访问,可以指定具体的 URL，例如 http://example.com
+cors:
+  enabled: true
+  origin: "*"
+#*请求速率限制
+#*默認每 60 秒最多允许一个 IP 发送 100 次请求
+rateLimit:
+  windowMs: 60000 #*时间窗口，单位为毫秒
+  max: 100 #*每秒最大请求数
+#*黑名单 IP 列表
+blacklistedIPs: []
+#*白名单 IP 列表
+whitelistedIPs: []
