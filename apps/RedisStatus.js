@@ -13,7 +13,7 @@ export class RedisStatus extends plugin {
       priority: 6,
       rule: [
         {
-          reg: /^#?redis(状态|统计)(\s*pro)?/i,
+          reg: /^#?redis(状态|统计|狀態|統計)(\s*pro)?/i,
           fnc: "getRedisInfo",
         },
       ],
@@ -25,7 +25,7 @@ export class RedisStatus extends plugin {
       return logger.warn("[memz-plugin]Redis状态当前为仅主人可用");
 
     let qw = e.msg.match(
-      /^#?redis(状态|统计)(\s*pro)?(\s*文本)?(\s*;?\s*([^;]*);\s*([^;]*);\s*([^;]*))?/i,
+      /^#?redis(状态|统计|狀態|統計)(\s*pro)?(\s*文本)?(\s*;?\s*([^;]*);\s*([^;]*);\s*([^;]*))?/i,
     );
 
     const isPro = !!qw[2];

@@ -12,11 +12,11 @@ export class setting extends plugin {
       priority: 1,
       rule: [
         {
-          reg: /^#?memz版本$/i,
+          reg: /^#?memz(版本|version)(信息)?$/i,
           fnc: "version",
         },
         {
-          reg: /^#?memz(帮助|help|菜单)$/i,
+          reg: /^#?memz(帮助|help|菜单|幫助|菜單)$/i,
           fnc: "help",
         },
       ],
