@@ -79,7 +79,6 @@ export function supportGuoba() {
           label: "API来源",
           bottomHelpMessage: "* 表示允许所有来源访问,可以指定具体的 URL，例如 http://example.com",
           component: "Input",
-          required: true,
           componentProps: {
             placeholder: "来源"
           }
@@ -98,7 +97,6 @@ export function supportGuoba() {
           label: "每秒最大请求数",
           bottomHelpMessage: "每个时间窗口内最多允许一个IP发送的请求数",
           component: "InputNumber",
-          required: true,
           componentProps: {
             placeholder: "请求数",
             addonAfter: '次'
