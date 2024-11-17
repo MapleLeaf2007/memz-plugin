@@ -1,7 +1,8 @@
+import { MEMZ_NAME, BotName } from "../components/index.js";
 export const helpCfg = {
   themeSet: false,
-  title: "MEMZ-Plugin-HelpList",
-  subTitle: "Yunzai-Bot & MEMZ-Plugin",
+  title: `${MEMZ_NAME}-HelpList`,
+  subTitle: `${BotName} & ${MEMZ_NAME}`,
   colWidth: 265,
   theme: "all",
   themeExclude: ["default"],
