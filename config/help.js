@@ -120,6 +120,11 @@ export const ApihelpList = [
         icon: 80,
         title: "#bilbil热榜",
         desc: "查询B站热榜",
+      },
+      {
+        icon: 80,
+        title: "#Steam热榜",
+        desc: "查询Steam热們遊戲",
       }
     ],
   }
