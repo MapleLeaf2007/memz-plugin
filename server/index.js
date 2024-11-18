@@ -187,8 +187,8 @@ const startServer = async () => {
             : http.createServer((req, res) => handleRequest(req, res));
 
         server.on('error', (error) => {
+            logger.error(`[MEMZ-API]API服务启动失败`);
             if (error.code === 'EADDRINUSE') {
-                logger.error(`[MEMZ-API]API服务启动失败`);
                 logger.error(`[MEMZ-API]端口 ${config.port} 已被占用，请修改配置文件中的端口号或关闭占用该端口的程序。`);
             } else {
                 logger.error(`[MEMZ-API]服务器运行时发生错误: ${error.message}`);
