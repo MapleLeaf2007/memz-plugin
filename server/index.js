@@ -1,5 +1,6 @@
 import http from 'http';
-import https from 'https'; // 引入 https 模块
+import https from 'https';
+import os from 'os';
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
@@ -142,6 +143,20 @@ const handleRequest = async (req, res) => {
     logger.info(`[请求完成] IP: ${ip} 路由: ${route} 响应时间: ${endTime - startTime}ms`);
 };
 
+// 获取本地 IP 地址
+const getLocalIPs = () => {
+    const interfaces = os.networkInterfaces();
+    const addresses = [];
+
+    for (const iface of Object.values(interfaces)) {
+        iface.forEach(details => {
+            if (details.family === 'IPv4' || details.family === 'IPv6') {
+                addresses.push(details.address);
+            }
+        });
+    }
+    return addresses;
+};
 // 启动服务
 const startServer = async () => {
     const startTime = Date.now();
@@ -158,23 +173,29 @@ const startServer = async () => {
     logger.info(chalk.yellowBright(`加载失败：${loadStats.failure} 个`));
     logger.info(chalk.cyanBright(`总耗时：${loadStats.totalTime} 毫秒`));
 
-    let server; // 在 try-catch 外部声明 server
+    let server;
     try {
         const serverOptions = config.https.enabled ? {
             key: await fs.readFile(config.https.key),
             cert: await fs.readFile(config.https.cert)
         } : {};
 
-        server = config.https.enabled
+        const server = config.https.enabled
             ? https.createServer(serverOptions, (req, res) => handleRequest(req, res))
             : http.createServer((req, res) => handleRequest(req, res));
 
-        // 启动服务器
-        server.listen(config.port, () => {
+        server.listen(config.port, '::', () => {
             const protocol = config.https.enabled ? 'https' : 'http';
-            logger.info(`[memz-plugin]API服务器已启动: ${protocol}://127.0.0.1:${config.port}`);
-        });
+            const ips = getLocalIPs();
 
+            logger.info(`#######################################################`);
+            logger.info(chalk.greenBright(`- MEMZ-API服务器已启动`));
+            ips.forEach(ip => {
+                const formattedIP = ip.includes(':') ? `[${ip}]` : ip;
+                logger.info(chalk.blueBright(`- ${protocol}://${formattedIP}:${config.port}`));
+            });
+            logger.info(`#######################################################`);
+        });
     } catch (error) {
         if (error.code === 'ENOENT') {
             logger.error(`文件未找到: ${error.path}。请检查配置文件中的路径是否正确。`);
