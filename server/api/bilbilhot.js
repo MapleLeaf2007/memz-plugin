@@ -4,7 +4,7 @@ export default async (req, res) => {
             const response = await fetch('https://api.bilibili.com/x/web-interface/wbi/search/square?limit=10');
             const rawData = await response.json();
             const time = new Date().toISOString();
-            const title = 'Bilibili熱榜'
+            const title = 'BiliBili熱榜'
             const source = 'MEMZ-Plugin'
             if (rawData.code === 0 && rawData.data?.trending?.list) {
                 const parsedData = rawData.data.trending.list.map(item => ({
