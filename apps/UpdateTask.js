@@ -24,12 +24,12 @@ export class UpdateTask extends plugin {
         this.task = {
             cron: cron,
             name: "[memz-plugin]仓库定时检查更新",
-            log: false,
+            log: true,
             fnc: () => this.UpdateTask(),
         };
     }
 
-    async UpdateTask(e) {
+    async UpdateTask() {
         if (checkupdate == false) {
             logger.warn("[memz-plugin]仓库定时检查更新已关闭");
             return true;
