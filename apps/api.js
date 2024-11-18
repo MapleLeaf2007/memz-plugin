@@ -1,4 +1,7 @@
-const BilBil热榜接口 = 'http://127.0.0.1:1129/bilbilhot';
+import { Config } from "../components/index.js";
+const { enabled, port } = Config.getConfig("api");
+
+const BilBil热榜接口 = `http://127.0.0.1:${port}/bilbilhot`;
 export class BilBil热榜插件 extends plugin {
     constructor() {
         super({
@@ -16,6 +19,7 @@ export class BilBil热榜插件 extends plugin {
     }
 
     async 获取BilBil热榜(e) {
+        if (!enabled) { return logger.warn("[memz-plugin]API服務端未启用！") }
         try {
             const 响应 = await fetch(BilBil热榜接口);
             if (!响应.ok) { throw new Error(`HTTP error! status: ${响应.status}`) }
