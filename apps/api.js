@@ -3,7 +3,7 @@ const { enabled, port } = Config.getConfig("api");
 
 const BilBil热榜接口 = `http://127.0.0.1:${port}/bilbilhot`;
 const Steam热榜接口 = `http://127.0.0.1:${port}/steamhot`;
-
+const 调用统计接口 = `http://127.0.0.1:${port}/stats`;
 export class MEMZ_API extends plugin {
     constructor() {
         super({
@@ -19,6 +19,10 @@ export class MEMZ_API extends plugin {
                 {
                     reg: /^#?(Steam|SteamCharts)(热门榜单|熱榜|热榜|熱門榜單)$/i,
                     fnc: "获取Steam热榜",
+                },
+                {
+                    reg: /^#?(MEMZ)?API调用统计$/i,
+                    fnc: "获取API统计",
                 }
             ],
         });
@@ -67,6 +71,35 @@ export class MEMZ_API extends plugin {
         } catch (错误) {
             e.reply(`抱歉，获取 Steam 热榜失败，请稍后再试！\n错误信息：${错误.message}`, true);
             logger.error("获取 Steam 热榜失败", 错误);
+        }
+    }
+    async 获取API统计(e) {
+        try {
+            const 响应 = await fetch(调用统计接口);
+            if (!响应.ok) {
+                throw new Error(`HTTP error! status: ${响应.status}`);
+            }
+
+            const 数据 = await 响应.json();
+            let 回复消息 = `API 调用统计信息\n更新时间：${new Date().toLocaleString()}\n\n`;
+
+            for (const [ip, stats] of Object.entries(数据)) {
+                回复消息 += `IP: ${ip}\n`;
+                if (stats.total) {
+                    回复消息 += `  总计: ${stats.total} 次\n`;
+                }
+                for (const [endpoint, count] of Object.entries(stats)) {
+                    if (endpoint !== "total") {
+                        回复消息 += `  接口 ${endpoint}: ${count} 次\n`;
+                    }
+                }
+                回复消息 += "\n";
+            }
+
+            e.reply(回复消息.trim(), true);
+        } catch (错误) {
+            e.reply(`抱歉，获取 API 统计信息失败，请稍后再试！\n错误信息：${错误.message}`, true);
+            logger.error('获取API统计失败', 错误);
         }
     }
 }
