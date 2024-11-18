@@ -188,12 +188,33 @@ const startServer = async () => {
 
         server.on('error', (error) => {
             logger.error(`[MEMZ-API]API服务启动失败`);
-            if (error.code === 'EADDRINUSE') {
-                logger.error(`[MEMZ-API]端口 ${config.port} 已被占用，请修改配置文件中的端口号或关闭占用该端口的程序。`);
-            } else {
-                logger.error(`[MEMZ-API]服务器运行时发生错误: ${error.message}`);
+
+            switch (error.code) {
+                case 'EADDRINUSE':
+                    logger.error(`[MEMZ-API]端口 ${config.port} 已被占用，请修改配置文件中的端口号或关闭占用该端口的程序。`);
+                case 'EACCES':
+                    logger.error(`[MEMZ-API]端口 ${config.port} 权限不足，请尝试使用管理员权限启动程序，或者修改为更高的端口号（>=1024）。`);
+                case 'ENOTFOUND':
+                    logger.error(`[MEMZ-API]无法找到指定的主机，请检查配置文件中的主机地址是否正确。`);
+                case 'EADDRNOTAVAIL':
+                    logger.error(`[MEMZ-API]绑定的地址无效，无法在当前环境下使用。请检查配置文件中的地址设置。`);
+                case 'ENOTDIR':
+                    logger.error(`[MEMZ-API]指定的文件路径无效，请检查配置文件的路径设置是否正确。`);
+                case 'EPERM':
+                    logger.error(`[MEMZ-API]操作权限不足，无法完成请求。请检查相关权限或以管理员权限运行。`);
+                case 'EPIPE':
+                    logger.error(`[MEMZ-API]管道错误，可能是连接中断或写入无效数据。`);
+                case 'ECONNREFUSED':
+                    logger.error(`[MEMZ-API]连接被拒绝，请检查网络状态或目标服务器是否可达。`);
+                case 'ECONNRESET':
+                    logger.error(`[MEMZ-API]连接被对方重置，可能是远程服务器的问题。`);
+                case 'ETIMEOUT':
+                    logger.error(`[MEMZ-API]连接超时，请检查网络设置或目标服务器响应速度。`);
+                default:
+                    logger.error(`[MEMZ-API]服务器运行时发生未知错误: ${error.message}`);
             }
         });
+
 
         server.listen(config.port, '::', () => {
             const protocol = config.https.enabled ? 'https' : 'http';
