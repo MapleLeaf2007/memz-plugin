@@ -21,7 +21,12 @@ export default async (req, res) => {
                     path: "/bilbilhot",
                     method: "GET",
                     description: "获取BiliBili热榜"
-                }
+                },
+                {
+                    path: "/steamhot",
+                    method: "GET",
+                    description: "获取Steam热榜"
+                },
             ]
         };
 
