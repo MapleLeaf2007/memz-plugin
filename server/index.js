@@ -28,10 +28,10 @@ let loadStats = {
     failure: 0,
     totalTime: 0,
 };
-
-// 加载API
 const loadApiHandler = async (filePath) => {
-    const route = `/${path.basename(filePath, '.js')}`;
+    const baseName = path.basename(filePath, '.js');
+    let route = `/${baseName}`;
+
     try {
         const fileUrl = pathToFileURL(filePath);
         const handlerModule = await import(fileUrl);
@@ -46,10 +46,11 @@ const loadApiHandler = async (filePath) => {
             loadStats.failure++;
         }
     } catch (err) {
-        logger.error(chalk.red(`[memz-plugin]API 加载失败: ${filePath}`), err.message);
+        logger.error(chalk.red(`[memz-plugin]API加载失败: ${filePath}`), err.message);
         loadStats.failure++;
     }
 };
+
 
 // 更新请求统计
 const updateRequestStats = (ip, route) => {
@@ -65,7 +66,7 @@ const updateRequestStats = (ip, route) => {
 
 // 健康检查
 const healthCheck = (req, res) => {
-    const message = config.language === 'en' ? 'Service is running' : '服务正常';
+    const message = '服务正常';
     res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
     res.end(JSON.stringify({
         status: message,
@@ -116,7 +117,7 @@ const handleRequest = async (req, res) => {
     const handler = apiHandlersCache[route];
     if (handler) {
         try {
-            logger.info(`[请求日志] IP: ${ip} 路由: ${route}`);
+            logger.info(`[请求日志] IP:${ip} 路由:${route}`);
             updateRequestStats(ip, route);
 
             if (config.cors.enabled) {
@@ -128,7 +129,7 @@ const handleRequest = async (req, res) => {
         } catch (err) {
             res.writeHead(500, { 'Content-Type': 'text/plain; charset=utf-8' });
             res.end(`500 服务器内部错误：${err.message}`);
-            logger.error(`[API 错误] 路由: ${route} 错误: ${err.message}`);
+            logger.error(`[API错误] 路由: ${route} 错误: ${err.message}`);
         }
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' });
@@ -151,7 +152,7 @@ const startServer = async () => {
     }
     loadStats.totalTime = Date.now() - startTime;
 
-    logger.info(chalk.green(`MEMZ-API服务载入完成`));
+    logger.info(chalk.green('MEMZ-API服务载入完成'));
     logger.info(chalk.greenBright(`成功加载：${loadStats.success} 个`));
     logger.info(chalk.yellowBright(`加载失败：${loadStats.failure} 个`));
     logger.info(chalk.cyanBright(`总耗时：${loadStats.totalTime} 毫秒`));

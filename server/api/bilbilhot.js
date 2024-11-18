@@ -3,7 +3,9 @@ export default async (req, res) => {
         try {
             const response = await fetch('https://api.bilibili.com/x/web-interface/wbi/search/square?limit=10');
             const rawData = await response.json();
-
+            const time = new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString()
+            const title = 'Bilibili熱榜'
+            const 来源 = 'MEMZ-Plugin'
             if (rawData.code === 0 && rawData.data?.trending?.list) {
                 const parsedData = rawData.data.trending.list.map(item => ({
                     show_name: item.show_name || '',
@@ -13,10 +15,10 @@ export default async (req, res) => {
                 const result = {
                     code: 0,
                     message: '解析成功',
-                    title: 'BiliBili熱榜',
-                    time: new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString(),
+                    title: title,
+                    time: time,
                     data: parsedData,
-                    来源: 'MEMZ-Plugin'
+                    来源: 来源
                 };
 
                 res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -29,10 +31,10 @@ export default async (req, res) => {
             res.end(JSON.stringify({
                 code: 500,
                 message: '解析失败',
-                title: 'Bilibili熱榜',
-                time: new Date(new Date().getTime() + 8 * 60 * 60 * 1000).toISOString(),
+                title: title,
+                time: time,
                 error: error.message,
-                来源: 'MEMZ-Plugin'
+                来源: 来源
             }));
         }
     } else {
