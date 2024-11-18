@@ -11,7 +11,7 @@ import Config from '../components/Config.js';
 // 嘻嘻,直接调用云崽的Redis配置,不过这是TRSS的,也不知道Miao适配不适配
 import Cfg from '../../../lib/config/config.js';
 let config = {};
-const rc = Cfg.getConfig("redis")
+const rc = Cfg.redis
 const redis = new Redis({
     host: rc.host,
     port: rc.port,
