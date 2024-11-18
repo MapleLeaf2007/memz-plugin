@@ -2,17 +2,23 @@ import { Config } from "../components/index.js";
 const { enabled, port } = Config.getConfig("api");
 
 const BilBil热榜接口 = `http://127.0.0.1:${port}/bilbilhot`;
-export class BilBil热榜插件 extends plugin {
+const Steam热榜接口 = `http://127.0.0.1:${port}/steamhot`;
+
+export class MEMZ_API extends plugin {
     constructor() {
         super({
-            name: "BilBil热榜插件",
-            dsc: "查询 Bilibili 热榜",
+            name: "MEMZ_API",
+            dsc: "MEMZ_API",
             event: "message",
             priority: 9,
             rule: [
                 {
                     reg: /^#?(B站|Bilibili)(熱榜|热榜|热门)(榜单)?$/i,
                     fnc: "获取BilBil热榜",
+                },
+                {
+                    reg: /^#?(Steam|SteamCharts)(热门榜单|熱榜|热榜|熱門榜單)$/i,
+                    fnc: "获取Steam热榜",
                 }
             ],
         });
@@ -34,6 +40,33 @@ export class BilBil热榜插件 extends plugin {
         } catch (错误) {
             e.reply(`抱歉，获取 Bilibili 热榜失败，请稍后再试！\n错误信息：${错误.message}`, true);
             logger.error('获取Bilibili热榜失败', 错误);
+        }
+    }
+    async 获取Steam热榜(e) {
+        if (!enabled) { return logger.warn("[memz-plugin]API 服务端未启用！") }
+        try {
+            const 响应 = await fetch(Steam热榜接口);
+            if (!响应.ok) {
+                throw new Error(`HTTP 错误！状态码：${响应.status}`);
+            }
+
+            const 数据 = await 响应.json();
+            if (数据.code !== 0) {
+                throw new Error(`API 返回错误: ${数据.message}`);
+            }
+
+            let 回复消息 = `Steam 热榜\n更新时间：${new Date(数据.time).toLocaleString()}\n`;
+            数据.data.slice(0, 10).forEach((游戏, 索引) => {
+                回复消息 += `${索引 + 1}. ${游戏.show_name}\n`;
+                回复消息 += `   当前玩家：${游戏.current_players}\n`;
+                回复消息 += `   峰值玩家：${游戏.peak_players}\n`;
+                回复消息 += `   总时长：${游戏.hours_played}\n\n`;
+            });
+
+            e.reply(回复消息.trim(), true);
+        } catch (错误) {
+            e.reply(`抱歉，获取 Steam 热榜失败，请稍后再试！\n错误信息：${错误.message}`, true);
+            logger.error("获取 Steam 热榜失败", 错误);
         }
     }
 }

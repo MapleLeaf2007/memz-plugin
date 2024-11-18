@@ -5,7 +5,7 @@ export default async (req, res) => {
             const rawData = await response.json();
             const time = new Date().toISOString();
             const title = 'Bilibili熱榜'
-            const 来源 = 'MEMZ-Plugin'
+            const source = 'MEMZ-Plugin'
             if (rawData.code === 0 && rawData.data?.trending?.list) {
                 const parsedData = rawData.data.trending.list.map(item => ({
                     show_name: item.show_name || '',
@@ -18,7 +18,7 @@ export default async (req, res) => {
                     title: title,
                     time: time,
                     data: parsedData,
-                    来源: 来源
+                    source: source
                 };
 
                 res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -34,7 +34,7 @@ export default async (req, res) => {
                 title: title,
                 time: time,
                 error: error.message,
-                来源: 来源
+                source: source
             }));
         }
     } else {
