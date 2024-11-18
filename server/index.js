@@ -92,11 +92,14 @@ const loadApiHandler = async (filePath) => {
         if (typeof handler === 'function') {
             apiHandlersCache[route] = handler;
             logger.info(chalk.blueBright(`[memz-plugin]API加载完成 路由: ${route}`));
+            loadStats.success++
         } else {
             logger.warn(chalk.yellow(`[memz-plugin]API服务跳过无效文件: ${filePath}`));
+            loadStats.failure++
         }
     } catch (err) {
         logger.error(chalk.red(`[memz-plugin]API加载失败: ${filePath}`), err.message);
+        loadStats.failure++
     }
 };
 // 获取本地IP
