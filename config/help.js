@@ -112,3 +112,15 @@ export const helpList = [
     ],
   },
 ];
+export const ApihelpList = [
+  {
+    group: "热榜",
+    list: [
+      {
+        icon: 80,
+        title: "#bilbil热榜",
+        desc: "查询B站热榜",
+      }
+    ],
+  }
+];

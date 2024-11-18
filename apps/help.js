@@ -1,5 +1,5 @@
 import { Render, Version } from "../components/index.js";
-import { helpCfg, helpList } from "../config/help.js";
+import { helpCfg, helpList, ApihelpList } from "../config/help.js";
 import { style } from "../resources/help/imgs/config.js";
 import _ from "lodash";
 
@@ -14,6 +14,10 @@ export class setting extends plugin {
         {
           reg: /^#?memz(版本|version)(信息)?$/i,
           fnc: "version",
+        },
+        {
+          reg: /^#?memz(api|接口)(帮助|help|菜单|幫助|菜單)$/i,
+          fnc: "apihelp",
         },
         {
           reg: /^#?memz(帮助|help|菜单|幫助|菜單)$/i,
@@ -38,6 +42,9 @@ export class setting extends plugin {
 
   async help(e) {
     await getHelp(e, helpList)
+  }
+  async apihelp(e) {
+    await getHelp(e, ApihelpList)
   }
 }
 async function getHelp(e, helpList) {
