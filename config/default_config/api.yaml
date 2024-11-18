@@ -2,6 +2,13 @@
 enabled: true
 #*啟動服務器的端口號
 port: 1129
+#*是否啟用 HTTPS 支持
+https:
+  #*是否啟用 HTTPS
+  enabled: false
+  #*HTTPS 证书和私钥文件路径
+  key: "private-key.pem"
+  cert: "certificate.pem"
 #*是否開啟CORS跨域,開啟後,服务器会自动添加 Access-Control-Allow-Origin 头
 #* "*"表示允许所有来源访问,可以指定具体的 URL，例如 http://example.com
 cors:

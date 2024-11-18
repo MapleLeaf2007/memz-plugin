@@ -1,4 +1,5 @@
 import http from 'http';
+import https from 'https'; // 引入 https 模块
 import fs from 'fs/promises';
 import path from 'path';
 import chalk from 'chalk';
@@ -14,9 +15,9 @@ const apiHandlersCache = {}; // 缓存
 const loadConfig = async () => {
     try {
         config = Config.getConfig("api");
-        logger.debug(chalk.green('[memz-plugin]API服務配置加載成功!', config));
+        logger.debug(chalk.green('[memz-plugin]API服务配置加载成功!', config));
     } catch (err) {
-        logger.error(chalk.red('[memz-plugin]API服務配置加载失败'), err.message);
+        logger.error(chalk.red('[memz-plugin]API服务配置加载失败'), err.message);
     }
 };
 
@@ -28,6 +29,7 @@ let loadStats = {
     failure: 0,
     totalTime: 0,
 };
+
 const loadApiHandler = async (filePath) => {
     const baseName = path.basename(filePath, '.js');
     let route = `/${baseName}`;
@@ -42,7 +44,7 @@ const loadApiHandler = async (filePath) => {
             logger.info(chalk.blueBright(`[memz-plugin]API加载完成 路由: ${route}`));
             loadStats.success++;
         } else {
-            logger.warn(chalk.yellow(`[memz-plugin]API服務跳过无效文件: ${filePath}`));
+            logger.warn(chalk.yellow(`[memz-plugin]API服务跳过无效文件: ${filePath}`));
             loadStats.failure++;
         }
     } catch (err) {
@@ -50,7 +52,6 @@ const loadApiHandler = async (filePath) => {
         loadStats.failure++;
     }
 };
-
 
 // 更新请求统计
 const updateRequestStats = (ip, route) => {
@@ -157,10 +158,32 @@ const startServer = async () => {
     logger.info(chalk.yellowBright(`加载失败：${loadStats.failure} 个`));
     logger.info(chalk.cyanBright(`总耗时：${loadStats.totalTime} 毫秒`));
 
-    const server = http.createServer((req, res) => handleRequest(req, res));
-    server.listen(config.port, () => {
-        logger.info(`[memz-plugin]API服务器已启动: http://127.0.0.1:${config.port}`);
-    });
+    let server; // 在 try-catch 外部声明 server
+    try {
+        const serverOptions = config.https.enabled ? {
+            key: await fs.readFile(config.https.key),
+            cert: await fs.readFile(config.https.cert)
+        } : {};
+
+        server = config.https.enabled
+            ? https.createServer(serverOptions, (req, res) => handleRequest(req, res))
+            : http.createServer((req, res) => handleRequest(req, res));
+
+        // 启动服务器
+        server.listen(config.port, () => {
+            const protocol = config.https.enabled ? 'https' : 'http';
+            logger.info(`[memz-plugin]API服务器已启动: ${protocol}://127.0.0.1:${config.port}`);
+        });
+
+    } catch (error) {
+        if (error.code === 'ENOENT') {
+            logger.error(`文件未找到: ${error.path}。请检查配置文件中的路径是否正确。`);
+        } else if (error instanceof ReferenceError && error.message === 'server is not defined') {
+            logger.error('未能成功定义服务器，请检查相关配置或初始化顺序。');
+        } else {
+            logger.error(`启动服务器时发生错误: ${error.message}`);
+        }
+    }
 
     return server;
 };

@@ -69,6 +69,24 @@ export function supportGuoba() {
           }
         },
         {
+          field: "api.https.enabled",
+          label: "HTTPS服务",
+          bottomHelpMessage: "开启前请配置 SSL 证书,重启生效",
+          component: "Switch",
+        },
+        {
+          field: "api.https.key",
+          label: "HTTPS私钥文件路径",
+          bottomHelpMessage: "请输入私钥文件路径,不开启HTTPS服务时无需配置",
+          component: "Input"
+        },
+        {
+          field: "api.https.cert",
+          label: "HTTPS证书文件路径",
+          bottomHelpMessage: "请输入证书文件路径,不开启HTTPS服务时无需配置",
+          component: "Input"
+        },
+        {
           field: "api.cors.enabled",
           label: "CORS跨域",
           bottomHelpMessage: "開啟後,服务器会自动添加 Access-Control-Allow-Origin 头",
