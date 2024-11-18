@@ -15,7 +15,7 @@ git clone --depth=1 https://gitee.com/memzjs/memz-plugin.git ./plugins/memz-plug
 ### 安装依赖命令
 
 ```bash
-pnpm install -P #or npm install -P
+pnpm i
 ```
 
 ## 使用
