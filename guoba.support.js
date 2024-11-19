@@ -173,6 +173,21 @@ export function supportGuoba() {
           component: "Switch",
         },
         {
+          field: "memz.PingProxy",
+          label: "Ping是否开启代理",
+          bottomHelpMessage: "用于一些服务器无法访问Itdog的情况",
+          component: "Switch",
+        },
+        {
+          field: "memz.PingProxyAddress",
+          label: "Ping代理地址",
+          bottomHelpMessage: "支持HTTP/SOCKS5协议",
+          component: "Input",
+          componentProps: {
+            placeholder: "代理地址"
+          }
+        },
+        {
           field: "memz.UnicodeAll",
           label: "Unicode功能所有人可用",
           bottomHelpMessage: "关闭时仅主人可用",

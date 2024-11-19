@@ -21,7 +21,7 @@ export class MEMZ_API extends plugin {
                     fnc: "获取Steam热榜",
                 },
                 {
-                    reg: /^#?(MEMZ)?API调用统计$/i,
+                    reg: /^#?(MEMZ)?API(调用|请求|访问)统计$/i,
                     fnc: "获取API统计",
                 }
             ],

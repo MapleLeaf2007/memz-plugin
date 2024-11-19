@@ -115,11 +115,22 @@ const getLocalIPs = () => {
     }
     return addresses;
 };
-
 // 请求处理
 const handleRequest = async (req, res) => {
     const startTime = Date.now();
-    const ip = req.socket.remoteAddress.replace(/^.*:/, '');
+    const originalIP = req.socket.remoteAddress;
+    let ip;
+
+    if (originalIP.includes(':')) {
+        if (originalIP.startsWith('::ffff:')) {
+            ip = originalIP.replace('::ffff:', '');
+        } else {
+            // 如果是IPv6 地址，那就替换:为.,防止Redis分割(
+            ip = originalIP.replace(/:/g, '.');
+        }
+    } else {
+        ip = originalIP;
+    }
 
     // IP 黑名单
     if (config.blacklistedIPs.includes(ip)) {
@@ -174,6 +185,8 @@ const handleRequest = async (req, res) => {
     const endTime = Date.now();
     logger.info(`[请求完成] IP: ${ip} 路由: ${route} 响应时间: ${endTime - startTime}ms`);
 };
+
+
 const startServer = async () => {
     try {
         const startTime = Date.now();

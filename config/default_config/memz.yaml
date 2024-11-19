@@ -11,6 +11,10 @@ WhoisAll: true
 SeoAll: true
 # 是否所有人可用Ping
 PingAll: true
+# Ping是否使用代理
+PingProxy: false
+# Ping代理设置
+PingProxyAddress: ""
 # 是否所有人可用Unicode编码解码
 UnicodeAll: true
 # 是否所有人可用url编码解码
