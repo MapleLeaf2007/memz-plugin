@@ -20,10 +20,7 @@ export class PingScreenshot extends plugin {
 
   async handlePing(e) {
     logger.debug("进入 handlePing 函数");
-    if (!PingAll && !e.isMaster) {
-      logger.warn("[memz-plugin]Ping功能当前为仅主人可用");
-      return;
-    }
+    if (!PingAll && !e.isMaster) { return logger.warn("[memz-plugin]Ping功能当前为仅主人可用") }
 
     e.reply("正在获取Ping数据...请稍等......", true);
 
