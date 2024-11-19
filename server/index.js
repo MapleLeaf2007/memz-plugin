@@ -8,7 +8,7 @@ import { pathToFileURL } from 'url';
 import Redis from 'ioredis';
 import { Plugin_Path } from '../components/Path.js';
 import Config from '../components/Config.js';
-// 嘻嘻,直接调用云崽的Redis配置,不过这是TRSS的,也不知道Miao适配不适配
+// 直接调用云崽的Redis配置,不过这是TRSS的,也不知道Miao适配不适配
 import Cfg from '../../../lib/config/config.js';
 let config = {};
 const rc = Cfg.redis
