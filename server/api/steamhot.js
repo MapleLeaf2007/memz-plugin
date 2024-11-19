@@ -1,8 +1,8 @@
+import { MEMZ_NAME } from '../components/index.js';
 export default async (req, res) => {
     const url = 'https://steamcharts.com/top';
     const timestamp = new Date().toISOString();
     const title = 'Steam Charts';
-    const source = 'MEMZ-Plugin';
 
     if (req.method === 'GET') {
         try {
@@ -40,7 +40,7 @@ export default async (req, res) => {
                 title: title,
                 time: timestamp,
                 data: rankings,
-                source: source,
+                source: MEMZ_NAME,
             };
 
             res.writeHead(200, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -53,7 +53,7 @@ export default async (req, res) => {
                 title: title,
                 time: timestamp,
                 error: error.message,
-                source: source,
+                source: MEMZ_NAME,
             }));
         }
     } else {

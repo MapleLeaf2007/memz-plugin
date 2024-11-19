@@ -1,6 +1,7 @@
 import whois from 'whois-json';
 import { URL } from 'url';
-
+import { MEMZ_NAME } from '../components/index.js';
+const time = new Date().toISOString()
 const fieldMapping = {
     domainName: "域名",
     roid: "注册号",
@@ -54,10 +55,10 @@ export default async (req, res) => {
             res.writeHead(400, { 'Content-Type': 'application/json; charset=utf-8' });
             res.end(JSON.stringify({
                 code: 400,
-                message: '缺少必要的域名参数',
+                message: '缺少必要的域名参数, 请在查询参数中添加 ?domain=域名 参数',
                 title: 'Whois查询',
-                time: new Date().toISOString(),
-                source: 'MEMZ-Plugin'
+                time: time,
+                source: MEMZ_NAME
             }));
             return;
         }
@@ -70,9 +71,9 @@ export default async (req, res) => {
             code: 0,
             message: '查询成功',
             title: 'Whois查询',
-            time: new Date().toISOString(),
+            time: time,
             data: chineseData,
-            source: 'MEMZ-Plugin'
+            source: MEMZ_NAME
         }));
     } catch (error) {
         res.writeHead(500, { 'Content-Type': 'application/json; charset=utf-8' });
@@ -80,9 +81,9 @@ export default async (req, res) => {
             code: 500,
             message: '查询失败',
             title: 'Whois查询',
-            time: new Date().toISOString(),
+            time: time,
             error: error.message,
-            source: 'MEMZ-Plugin'
+            source: MEMZ_NAME
         }));
     }
 };
