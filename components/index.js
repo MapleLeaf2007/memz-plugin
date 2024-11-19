@@ -13,9 +13,7 @@ import {
   Plugin_Path,
   Plugin_Temp,
   Plugin_Data,
-  Plugin_Name,
-  MEMZ_API_Server,
-  MEMZ_API_Data
+  Plugin_Name
 } from "./Path.js";
 export {
   Version,
@@ -28,7 +26,5 @@ export {
   Plugin_Temp,
   Plugin_Data,
   MEMZ_NAME,
-  BotName,
-  MEMZ_API_Server,
-  MEMZ_API_Data
+  BotName
 };

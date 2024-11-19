@@ -13,7 +13,7 @@ export class MEMZ_API extends plugin {
             priority: 9,
             rule: [
                 {
-                    reg: /^#?(B站|Bilibili)(熱榜|热榜|热门)(榜单)?$/i,
+                    reg: /^#?(B站|Bilibili|哔哩哔哩)(熱榜|热榜|热门)(榜单)?$/i,
                     fnc: "获取BilBil热榜",
                 },
                 {
@@ -35,7 +35,7 @@ export class MEMZ_API extends plugin {
             if (!响应.ok) { throw new Error(`HTTP error! status: ${响应.status}`) }
             const 数据 = await 响应.json();
             if (数据.code !== 0) { throw new Error(`API 返回错误: ${数据.message}`) }
-            let 回复消息 = `Bilibili 热榜\n更新时间：${new Date(数据.time).toLocaleString()}\n`;
+            let 回复消息 = `BiliBili 热榜\n更新时间：${new Date(数据.time).toLocaleString()}\n`;
             数据.data.forEach((item, index) => {
                 回复消息 += `${index + 1}. ${item.show_name}（热度：${item.heat_score}）\n`;
             });
