@@ -14,6 +14,7 @@ Yunzai系列Bot插件,本插件基于TRSS-Yunzai作为开发环境,其他框架�
 <img src="https://count.getloli.com/@MEMZ-Plugin?name=MEMZ-Plugin&theme=random&padding=7&offset=0&align=top&scale=1&pixelated=0&darkmode=auto" />
 
 </div>
+
 ## 安装插件
 
 ### 安装(二选一)
