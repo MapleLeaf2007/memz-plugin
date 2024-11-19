@@ -118,7 +118,7 @@ export const ApihelpList = [
     list: [
       {
         icon: 80,
-        title: "#bilbil热榜",
+        title: "#bilibili热榜",
         desc: "查询B站热榜",
       },
       {

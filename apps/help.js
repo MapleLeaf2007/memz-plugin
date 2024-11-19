@@ -1,8 +1,9 @@
+import _ from "lodash";
 import { Render, Version } from "../components/index.js";
 import { helpCfg, helpList, ApihelpList } from "../config/help.js";
 import { style } from "../resources/help/imgs/config.js";
-import _ from "lodash";
-
+import { Config } from "../components/index.js";
+const { enabled } = Config.getConfig("api");
 export class setting extends plugin {
   constructor() {
     super({
@@ -16,7 +17,7 @@ export class setting extends plugin {
           fnc: "version",
         },
         {
-          reg: /^#?memz(api|接口)(帮助|help|菜单|幫助|菜單)$/i,
+          reg: /^#?(memz)?(api|接口)(帮助|help|菜单|幫助|菜單)$/i,
           fnc: "apihelp",
         },
         {
@@ -44,6 +45,10 @@ export class setting extends plugin {
     await getHelp(e, helpList)
   }
   async apihelp(e) {
+    if (!enabled) {
+      e.reply("未启用API服务，无法使用api相关功能", true)
+      return logger.warn("[memz-plugin]API服务未启用，无法使用api相关功能")
+    }
     await getHelp(e, ApihelpList)
   }
 }
