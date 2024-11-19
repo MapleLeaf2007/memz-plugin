@@ -27,6 +27,11 @@ export default async (req, res) => {
                     method: "GET",
                     description: "获取Steam热榜"
                 },
+                {
+                    path: "/whois?domain=域名",
+                    method: "GET",
+                    description: "获取域名的Whois信息"
+                },
             ]
         };
 
