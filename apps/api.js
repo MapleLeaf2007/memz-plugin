@@ -74,6 +74,11 @@ export class MEMZ_API extends plugin {
         }
     }
     async 获取API统计(e) {
+        if (!enabled) {
+            logger.warn("[memz-plugin]API 服务端未启用！")
+            e.reply("MEMZ-API 服务端未启用！", true);
+            return;
+        }
         try {
             const 响应 = await fetch(调用统计接口);
             if (!响应.ok) {
