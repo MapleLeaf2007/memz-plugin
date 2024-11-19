@@ -1,7 +1,7 @@
 import { Config } from "../components/index.js";
 const { enabled, port } = Config.getConfig("api");
 
-const BilBil热榜接口 = `http://127.0.0.1:${port}/bilbilhot`;
+const BilBil热榜接口 = `http://127.0.0.1:${port}/bilibilihot`;
 const Steam热榜接口 = `http://127.0.0.1:${port}/steamhot`;
 const 调用统计接口 = `http://127.0.0.1:${port}/stats`;
 export class MEMZ_API extends plugin {
