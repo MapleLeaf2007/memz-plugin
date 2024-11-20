@@ -29,7 +29,7 @@ export const cfgSchema = {
                 fileName: 'api'
             },
             port: {
-                title: 'MEMZ-API端口号',
+                title: 'API端口号',
                 key: 'api端口',
                 type: 'num',
                 def: 1129,
