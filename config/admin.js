@@ -19,48 +19,34 @@ export const cfgSchema = {
         },
     },
     tools: {
-        title: '工具设置',
+        title: 'API设置',
         cfg: {
-            WhoisAll: {
-                title: 'whois',
-                key: 'Whois',
+            enabled: {
+                title: 'api',
+                key: 'api',
                 def: false,
-                desc: '是否所有人可用Whois',
-                fileName: 'memz'
+                desc: '是否开启API服务端',
+                fileName: 'api'
             },
-            SeoAll: {
-                title: 'seo',
-                key: 'SEO',
-                def: false,
-                desc: 'SEO是否所有人可用',
-                fileName: 'memz'
+            port: {
+                title: 'MEMZ-API端口号',
+                key: 'api端口',
+                type: 'num',
+                def: 1129,
+                input: (n) => {
+                    if (n > 0 && n <= 65535) {
+                        return n * 1
+                    } else {
+                        return 54545
+                    }
+                },
+                desc: '1-65535',
             },
             PingAll: {
                 title: 'ping',
                 key: 'ping',
                 def: false,
                 desc: 'Ping是否所有人可用',
-                fileName: 'memz'
-            },
-            UnicodeAll: {
-                title: 'unicode',
-                key: 'unicode',
-                def: false,
-                desc: 'UnicodeAll是否所有人可用',
-                fileName: 'memz'
-            },
-            UrlAll: {
-                title: 'url',
-                key: 'url',
-                def: false,
-                desc: 'url编码|解码是否所有人可用',
-                fileName: 'memz'
-            },
-            BaseConversionAll: {
-                title: '进制转换',
-                key: '进制转换',
-                def: false,
-                desc: '进制转换是否所有人可用',
                 fileName: 'memz'
             }
         },
