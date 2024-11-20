@@ -173,6 +173,19 @@ export function supportGuoba() {
           component: "Switch",
         },
         {
+          field: 'memz.PingApi',
+          label: 'Ping类型',
+          bottomHelpMessage: '建议ZHALIMA',
+          component: 'Select',
+          componentProps: {
+            options: [
+              { label: 'ZHALEMA', value: 1 },
+              { label: 'IpInfo', value: 2 },
+            ],
+            placeholder: '请选择Ping类型',
+          },
+        },
+        {
           field: "memz.PingProxy",
           label: "Ping是否开启代理",
           bottomHelpMessage: "用于一些服务器无法访问ZHALE.MA的情况",
@@ -185,6 +198,15 @@ export function supportGuoba() {
           component: "Input",
           componentProps: {
             placeholder: "代理地址"
+          }
+        },
+        {
+          field: "memz.IpinfoToken",
+          label: "Ipinfo的Token",
+          bottomHelpMessage: "前往 https://ipinfo.io 注册账号并获取 Token",
+          component: "Input",
+          componentProps: {
+            placeholder: "Token"
           }
         },
         {

@@ -15,6 +15,10 @@ PingAll: true
 PingProxy: false
 # Ping代理设置
 PingProxyAddress: ""
+# Ping接口 1为炸了吗网站截图测速,2为ipinfo.io测速
+PingApi: 1
+# Ping功能Ipinfo.io的token
+IpinfoToken: ""
 # 是否所有人可用Unicode编码解码
 UnicodeAll: true
 # 是否所有人可用url编码解码
