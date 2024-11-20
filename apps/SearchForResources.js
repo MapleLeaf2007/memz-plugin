@@ -95,7 +95,7 @@ export class ResourceSearchPlugin extends plugin {
         const nmsg = await Bot.makeForwardMsg(forward);
         await e.reply(nmsg);
       } else {
-        await e.reply("未找到匹配的结果。", true);
+        await e.reply("没有找到你想要的哦~", true);
       }
     } catch (error) {
       await e.reply(`搜索过程中发生错误：${error.message}`, true);

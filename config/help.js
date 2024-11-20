@@ -49,11 +49,6 @@ export const helpList = [
         desc: "unicode(解|编)码",
       },
       {
-        icon: 81,
-        title: "#摩尔斯(编|解)码",
-        desc: "摩尔斯(编|解)码,仅支持英文",
-      },
-      {
         icon: 71,
         title: "#进制转换",
         desc: "没有什么用的进制转换",
@@ -122,9 +117,20 @@ export const ApihelpList = [
         desc: "查询B站热榜",
       },
       {
-        icon: 80,
+        icon: 50,
         title: "#Steam热榜",
         desc: "查询Steam热們遊戲",
+      },
+
+    ],
+  },
+  {
+    group: "工具",
+    list: [
+      {
+        icon: 70,
+        title: "#whois+域名",
+        desc: "查询域名信息",
       }
     ],
   }
