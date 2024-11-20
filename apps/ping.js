@@ -21,6 +21,9 @@ export class PingScreenshot extends plugin {
   }
 
   async ping(e) {
+    if (!PingAll && !e.isMaster) {
+      return logger.warn("[memz-plugin]Ping功能当前为仅主人可用")
+    }
     if (PingApi === 1) {
       logger.debug("PingApi 是 1，执行 Zhalema 函数");
       await this.Zhalema(e);
@@ -33,6 +36,7 @@ export class PingScreenshot extends plugin {
   }
 
   async ipinfo(e) {
+
     const match = e.msg.match(/^#(http|ping|tcping)\s*(\S+)$/i);
     if (!match) {
       logger.warn("未匹配到正确的Ping命令");
@@ -97,11 +101,6 @@ export class PingScreenshot extends plugin {
   }
 
   async Zhalema(e) {
-    logger.debug("进入 Zhalema 函数");
-    if (!PingAll && !e.isMaster) {
-      return logger.warn("[memz-plugin]Ping功能当前为仅主人可用")
-    }
-
     e.reply("正在获取Ping数据...请稍等......", true);
 
     const match = e.msg.match(/^#(http|ping|tcping)\s*(\S+)$/i);
