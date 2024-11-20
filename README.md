@@ -1,7 +1,5 @@
 # MEMZ-Plugin
 
-![memz-plugin](https://socialify.git.ci/MapleLeaf2007/memz-plugin/image?description=1&font=Bitter&forks=1&issues=1&logo=%20&name=1&pattern=Signal&pulls=1&theme=Auto)
-
 ## 📋介绍
 
 Yunzai系列Bot插件,本插件基于TRSS-Yunzai作为开发环境,其他框架可能有不支持的地方,可提issue适配
