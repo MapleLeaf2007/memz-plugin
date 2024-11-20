@@ -28,6 +28,11 @@ export const helpList = [
         title: "#seo+域名",
         desc: "查询域名的SEO信息",
       },
+      {
+        icon: 84,
+        title: "#网页截图+域名",
+        desc: "网页截图",
+      },
     ],
   },
   {
