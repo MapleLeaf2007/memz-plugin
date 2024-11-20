@@ -36,7 +36,7 @@ export class PingScreenshot extends plugin {
     logger.debug(`[MEMZ-Plugin] 构造的目标 URL: ${url}`);
 
     const launchOptions = {
-      headless: false,
+      headless: true,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     };
 
