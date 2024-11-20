@@ -17,7 +17,6 @@ export class PingScreenshot extends plugin {
       ],
     });
   }
-
   async handlePing(e) {
     logger.debug("进入 handlePing 函数");
     if (!PingAll && !e.isMaster) { return logger.warn("[memz-plugin]Ping功能当前为仅主人可用") }
@@ -33,11 +32,11 @@ export class PingScreenshot extends plugin {
     const [, type, siteName] = match;
     logger.debug(`解析的命令类型: ${type}, 目标: ${siteName}`);
 
-    const url = `https://www.itdog.cn/${type}/${siteName}`;
+    const url = `https://zhale.me/${type}/?{"Target":"${siteName}","Options":{"ISPs":["移动","电信","联通","海外"],"Method":"GET","ParseMode":"default","SkipSSLVerify":false,"FollowRedirect":true},"IsContinue":false}`;
     logger.debug(`[MEMZ-Plugin] 构造的目标 URL: ${url}`);
 
     const launchOptions = {
-      headless: true,
+      headless: false,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     };
 
@@ -55,17 +54,9 @@ export class PingScreenshot extends plugin {
       logger.debug(`导航到目标页面: ${url}`);
       await page.goto(url, { waitUntil: "networkidle2" });
 
-      logger.debug("等待 '单次测试' 按钮出现...");
-      await page.waitForFunction(
-        () => {
-          const buttons = Array.from(document.querySelectorAll("button"));
-          return buttons.some((btn) => btn.textContent.includes("单次测试"));
-        },
-        { timeout: 10000 }
-      );
       logger.debug("开始等待加载进度条...");
       let progress = 0;
-      const progressSelector = "#complete_progress .progress-bar";
+      const progressSelector = ".process-bar";
 
       while (progress < 100) {
         try {
@@ -75,9 +66,13 @@ export class PingScreenshot extends plugin {
           progress = await page.evaluate((selector) => {
             const progressElement = document.querySelector(selector);
             if (progressElement) {
-              const styleWidth = progressElement.style.width;
-              const num = parseInt(styleWidth.replace("%", ""), 10);
-              return isNaN(num) ? 0 : num;
+              const width = progressElement.style.width;
+              if (width) {
+                const match = width.match(/(\d+)%/);
+                if (match) {
+                  return parseInt(match[1], 10);
+                }
+              }
             }
             return 0;
           }, progressSelector);
@@ -94,20 +89,21 @@ export class PingScreenshot extends plugin {
         await new Promise((resolve) => setTimeout(resolve, 500));
       }
 
-
       logger.debug("设置页面视口大小...");
       await page.setViewport({ width: 1420, height: 1000 });
 
       logger.debug("开始截图...");
       const clipOptions = {
-        x: 140,
-        y: 799,
+        x: 95,
+        y: 420,
         width: 1245,
         height: 1000,
       };
+
       logger.debug(
         `截图区域 - x: ${clipOptions.x}, y: ${clipOptions.y}, width: ${clipOptions.width}, height: ${clipOptions.height}`
       );
+
 
       const screenshot = await page.screenshot({ encoding: "base64", clip: clipOptions });
       logger.debug("截图成功，发送截图");
@@ -122,4 +118,5 @@ export class PingScreenshot extends plugin {
       logger.debug("退出 handlePing 函数");
     }
   }
+
 }

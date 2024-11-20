@@ -175,7 +175,7 @@ export function supportGuoba() {
         {
           field: "memz.PingProxy",
           label: "Ping是否开启代理",
-          bottomHelpMessage: "用于一些服务器无法访问Itdog的情况",
+          bottomHelpMessage: "用于一些服务器无法访问ZHALE.MA的情况",
           component: "Switch",
         },
         {
