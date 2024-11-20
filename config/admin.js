@@ -18,7 +18,7 @@ export const cfgSchema = {
             }
         },
     },
-    tools: {
+    api: {
         title: 'API设置',
         cfg: {
             enabled: {
@@ -42,13 +42,33 @@ export const cfgSchema = {
                 },
                 desc: '1-65535',
             },
+
+        },
+    },
+    tools: {
+        title: '工具设置',
+        cfg: {
             PingAll: {
                 title: 'ping',
                 key: 'ping',
                 def: false,
                 desc: 'Ping是否所有人可用',
                 fileName: 'memz'
-            }
+            },
+            PingProxy: {
+                title: 'ping代理',
+                key: 'ping代理',
+                def: false,
+                desc: 'Ping是否使用代理',
+                fileName: 'memz'
+            },
+            WhoisAll: {
+                title: 'whois',
+                key: 'whois',
+                def: false,
+                desc: '是否所有人可用Whois',
+                fileName: 'memz'
+            },
         },
     },
     search: {
