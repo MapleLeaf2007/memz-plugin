@@ -9,6 +9,8 @@ RedisStatusAll: false
 WhoisAll: true
 # 是否所有人可用SEO
 SeoAll: true
+# 是否所有人可用网页截图
+webpage: false
 # 是否所有人可用Ping
 PingAll: true
 # Ping是否使用代理

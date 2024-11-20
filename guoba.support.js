@@ -50,6 +50,12 @@ export function supportGuoba() {
           component: "Switch",
         },
         {
+          field: "memz.webpage",
+          label: "网页截图所有人可用",
+          bottomHelpMessage: "关闭时仅主人可用",
+          component: "Switch",
+        },
+        {
           component: "Divider",
           label: "API服务端设置",
         },
