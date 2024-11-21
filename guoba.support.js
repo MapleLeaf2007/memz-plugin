@@ -39,19 +39,19 @@ export function supportGuoba() {
         },
         {
           field: "memz.SystemStatusAll",
-          label: "系统状态所有人可用",
+          label: "系统状态",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
         {
           field: "memz.RedisStatusAll",
-          label: "Redis状态所有人可用",
+          label: "Redis状态",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
         {
           field: "memz.webpage",
-          label: "网页截图所有人可用",
+          label: "网页截图",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
@@ -67,7 +67,7 @@ export function supportGuoba() {
         },
         {
           field: "api.port",
-          label: "API服务端口号",
+          label: "API服务端口",
           bottomHelpMessage: "启动API服务时占用的端口号,不要与其他端口重复",
           component: "InputNumber",
           componentProps: {
@@ -139,7 +139,7 @@ export function supportGuoba() {
         {
           field: "update.CUSTOM_REPOSITORY",
           label: "仓库链接",
-          bottomHelpMessage: "填入Gitee仓库链接,如https://gitee.com/memzjs/memz-plugin,支持Gitee/Github",
+          bottomHelpMessage: "填入仓库链接,如https://gitee.com/memzjs/memz-plugin,支持Gitee/Github",
           component: "GTags",
           componentProps: {
             allowAdd: true,
@@ -148,7 +148,7 @@ export function supportGuoba() {
         },
         {
           field: "update.cron",
-          label: "自动检查定时表达式",
+          label: "自动检查",
           helpMessage: "修改后重启生效",
           bottomHelpMessage: "自动检查仓库更新Cron表达式",
           component: "EasyCron",
@@ -162,19 +162,19 @@ export function supportGuoba() {
         },
         {
           field: "memz.WhoisAll",
-          label: "Whois功能所有人可用",
+          label: "Whois",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
         {
           field: "memz.SeoAll",
-          label: "SEO所有人可用",
+          label: "SEO",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
         {
           field: "memz.PingAll",
-          label: "Ping功能所有人可用",
+          label: "Ping功能",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
@@ -193,7 +193,7 @@ export function supportGuoba() {
         },
         {
           field: "memz.PingProxy",
-          label: "Ping是否开启代理",
+          label: "Ping代理",
           bottomHelpMessage: "用于一些服务器无法访问ZHALE.MA的情况",
           component: "Switch",
         },
@@ -217,19 +217,19 @@ export function supportGuoba() {
         },
         {
           field: "memz.UnicodeAll",
-          label: "Unicode功能所有人可用",
+          label: "Unicode编码解码",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
         {
           field: "memz.UrlAll",
-          label: "Url功能所有人可用",
+          label: "Url编码解码",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
         {
           field: "memz.BaseConversionAll",
-          label: "进制转换功能所有人可用",
+          label: "进制转换",
           bottomHelpMessage: "关闭时仅主人可用",
           component: "Switch",
         },
