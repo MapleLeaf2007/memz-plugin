@@ -1,9 +1,9 @@
 import xlsx from "xlsx";
 import path from "node:path";
 import fs from "fs";
-import { Config, Plugin_Data } from "../components/index.js";
+import { Config, PluginData } from "../components/index.js";
 
-const folderPath = path.join(Plugin_Data, "xlsx");
+const folderPath = path.join(PluginData, "xlsx");
 
 function loadDataFromExcelFiles() {
   const files = fs.readdirSync(folderPath);

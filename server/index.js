@@ -6,7 +6,7 @@ import path from 'path';
 import chalk from 'chalk';
 import { pathToFileURL } from 'url';
 import Redis from 'ioredis';
-import { Plugin_Path } from '../components/Path.js';
+import { PluginPath } from '../components/Path.js';
 import Config from '../components/Config.js';
 // 直接调用云崽的Redis配置,不过这是TRSS的,也不知道Miao适配不适配
 import Cfg from '../../../lib/config/config.js';
@@ -191,7 +191,7 @@ const startServer = async () => {
     try {
         const startTime = Date.now();
 
-        const apiDir = path.join(Plugin_Path, 'server', 'api');
+        const apiDir = path.join(PluginPath, 'server', 'api');
         const files = await fs.readdir(apiDir);
         for (const file of files) {
             if (file.endsWith('.js')) {
