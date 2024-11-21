@@ -129,7 +129,7 @@ export const ApihelpList = [
       {
         icon: 50,
         title: '#Steam热榜',
-        desc: '查询Steam热們遊戲'
+        desc: '查询Steam热门游戏'
       }
 
     ]

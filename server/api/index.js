@@ -18,7 +18,7 @@ export default async (req, res) => {
           description: '获取访问统计数据'
         },
         {
-          path: '/bilbilhot',
+          path: '/bilibilihot',
           method: 'GET',
           description: '获取BiliBili热榜'
         },
