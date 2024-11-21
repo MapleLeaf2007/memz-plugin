@@ -45,7 +45,7 @@ export class Cili extends plugin {
           user_id: 2173302144,
           nickname: '为什么不玩原神',
           message: [
-                        `名称: ${row.title}\n文件大小: ${row.size}\n下载链接: ${row.link}`
+            `名称: ${row.title}\n文件大小: ${row.size}\n下载链接: ${row.link}`
           ]
         }))
         const nmsg = await Bot.makeForwardMsg(forward)
