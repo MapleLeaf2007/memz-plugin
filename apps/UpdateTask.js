@@ -30,25 +30,23 @@ export class UpdateTask extends plugin {
   }
 
   async UpdateTask () {
-    if (checkupdate == false) {
+    if (!checkupdate) {
       logger.warn('[memz-plugin]仓库定时检查更新已关闭')
       return true
     }
 
     // 去重
-    REPOSITORY_LIST = Array.from(new Set(REPOSITORY_LIST))
-    if (REPOSITORY_LIST.length === 0) {
+    const uniqueRepositories = Array.from(new Set(REPOSITORY_LIST.map(JSON.stringify))).map(JSON.parse)
+    if (uniqueRepositories.length === 0) {
       logger.warn('[memz-plugin]未检测到有效的仓库地址')
       return false
     }
 
     let content = []
-    let index = -1
-
-    for (const item of REPOSITORY_LIST) {
-      index++
-      if (index > 1) {
-        await this.sleep(1000)
+    for (let index = 0; index < uniqueRepositories.length; index++) {
+      const item = uniqueRepositories[index]
+      if (index > 0) {
+        await this.sleep(1000) // 延迟避免请求过于频繁
       }
 
       logger.info(`[memz-plugin]开始检查仓库更新：${item.owner}/${item.repo}`)
@@ -88,7 +86,6 @@ export class UpdateTask extends plugin {
 
       const masters = cfg.masterQQ
       for (const master of masters) {
-        // 判断是否为QQBot,暂定
         if (master.toString().length > 11) continue
         await Bot.pickFriend(master).sendMsg(msg)
         await this.sleep(2000)
@@ -99,23 +96,25 @@ export class UpdateTask extends plugin {
   }
 
   async getRepositoryLatestCommit (source, owner, repo) {
-    if (source === 'Gitee') {
-      return await this.getGiteeLatestCommit(owner, repo)
-    } else if (source === 'GitHub') {
-      return await this.getGithubLatestCommit(owner, repo)
-    } else {
-      return { error: '未知的仓库来源' }
+    try {
+      if (source === 'Gitee') {
+        return await this.getGiteeLatestCommit(owner, repo)
+      } else if (source === 'GitHub') {
+        return await this.getGithubLatestCommit(owner, repo)
+      } else {
+        return { error: '未知的仓库来源' }
+      }
+    } catch (error) {
+      logger.error(`[memz-plugin]获取仓库提交信息失败：${error.message}`)
+      return { error: '查询出错：' + error.message }
     }
   }
 
-  // 获取 Gitee 提交
   async getGiteeLatestCommit (owner, repo) {
     const apiUrl = `https://gitee.com/api/v5/repos/${owner}/${repo}/commits`
-
     try {
       const response = await fetch(apiUrl)
       const commits = await response.json()
-
       if (commits.length > 0) {
         const latestCommit = commits[0]
         return {
@@ -125,27 +124,23 @@ export class UpdateTask extends plugin {
           sha: latestCommit.sha,
           author: latestCommit.commit.author.name,
           email: latestCommit.commit.author.email,
-          date: moment(latestCommit.commit.author.date).format(
-            'YYYY-MM-DD HH:mm:ss'
-          ),
+          date: moment(latestCommit.commit.author.date).format('YYYY-MM-DD HH:mm:ss'),
           message: latestCommit.commit.message.trim()
         }
       } else {
         return { error: '该仓库没有提交记录。' }
       }
     } catch (error) {
+      logger.error(`[memz-plugin]查询 Gitee 提交失败：${error.message}`)
       return { error: '查询出错：' + error.message }
     }
   }
 
-  // 获取 GitHub 提交
   async getGithubLatestCommit (owner, repo) {
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/commits`
-
     try {
       const response = await fetch(apiUrl)
       const commits = await response.json()
-
       if (commits.length > 0) {
         const latestCommit = commits[0]
         return {
@@ -155,15 +150,14 @@ export class UpdateTask extends plugin {
           sha: latestCommit.sha,
           author: latestCommit.commit.author.name,
           email: latestCommit.commit.author.email,
-          date: moment(latestCommit.commit.author.date).format(
-            'YYYY-MM-DD HH:mm:ss'
-          ),
+          date: moment(latestCommit.commit.author.date).format('YYYY-MM-DD HH:mm:ss'),
           message: latestCommit.commit.message.trim()
         }
       } else {
         return { error: '该仓库没有提交记录。' }
       }
     } catch (error) {
+      logger.error(`[memz-plugin]查询 GitHub 提交失败：${error.message}`)
       return { error: '查询出错：' + error.message }
     }
   }
