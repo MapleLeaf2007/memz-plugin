@@ -2,7 +2,6 @@ import fs from "fs";
 import whois from "whois-json";
 import { Config, Plugin_Path } from "../components/index.js";
 import { generateScreenshot } from "../model/generateScreenshot.js";
-const { WhoisAll } = Config.getConfig("memz");
 
 const whoisFieldsMap = {
   domainName: "域名",
@@ -71,6 +70,7 @@ export class Whois extends plugin {
     });
   }
   async whois(e) {
+    const { WhoisAll } = Config.getConfig("memz");
     if (!WhoisAll && !e.isMaster)
       return logger.warn("[memz-plugin]Whois状态当前为仅主人可用");
     const domain = e.msg.match(/#?whois\s*(.+)/)[1].trim();

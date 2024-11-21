@@ -1,8 +1,5 @@
 import { Config } from "../components/index.js";
 import puppeteer from "../../../lib/puppeteer/puppeteer.js";
-
-const { webpage } = Config.getConfig("memz");
-
 export class Webpage extends plugin {
     constructor() {
         super({
@@ -20,6 +17,7 @@ export class Webpage extends plugin {
     }
 
     async webpage(e) {
+        const { webpage } = Config.getConfig("memz");
         if (!webpage && !e.isMaster) {
             return logger.warn("[memz-plugin] 网页截图状态当前为仅主人可用");
         }

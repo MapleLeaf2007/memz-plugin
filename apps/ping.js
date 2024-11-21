@@ -2,7 +2,6 @@ import puppeteer from "puppeteer";
 import { Config } from "../components/index.js";
 import dns from 'dns'
 import net from 'net'
-const { PingAll, PingProxy, PingProxyAddress, PingApi, IpinfoToken } = Config.getConfig("memz");
 
 export class PingScreenshot extends plugin {
   constructor() {
@@ -21,6 +20,7 @@ export class PingScreenshot extends plugin {
   }
 
   async ping(e) {
+    const { PingAll, PingApi } = Config.getConfig("memz");
     if (!PingAll && !e.isMaster) {
       return logger.warn("[memz-plugin]Ping功能当前为仅主人可用")
     }
@@ -36,7 +36,7 @@ export class PingScreenshot extends plugin {
   }
 
   async ipinfo(e) {
-
+    const { IpinfoToken } = Config.getConfig("memz");
     const match = e.msg.match(/^#(http|ping|tcping)\s*(\S+)$/i);
     if (!match) {
       logger.warn("未匹配到正确的Ping命令");
@@ -101,6 +101,7 @@ export class PingScreenshot extends plugin {
   }
 
   async Zhalema(e) {
+    const { PingProxy, PingProxyAddress } = Config.getConfig("memz");
     e.reply("正在获取Ping数据...请稍等......", true);
 
     const match = e.msg.match(/^#(http|ping|tcping)\s*(\S+)$/i);

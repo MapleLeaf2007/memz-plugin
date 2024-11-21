@@ -1,5 +1,4 @@
 import { Config } from "../components/index.js";
-const { UnicodeAll } = Config.getConfig("memz");
 
 
 export function encodeToUnicode(msg) {
@@ -73,6 +72,7 @@ export class Unicode extends plugin {
   }
 
   async handleEncodingDecoding(e) {
+    const { UnicodeAll } = Config.getConfig("memz");
     if (!UnicodeAll && !e.isMaster)
       return logger.warn("[memz-plugin]Unicode功能当前为仅主人可用");
     await this.handleReply(e, {

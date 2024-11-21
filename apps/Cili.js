@@ -1,5 +1,4 @@
 import { Config } from "../components/index.js";
-const { search_magnet } = Config.getConfig("memz");
 export class Cili extends plugin {
     constructor() {
         super({
@@ -17,6 +16,7 @@ export class Cili extends plugin {
     }
 
     async fetchSearchResults(e) {
+        const { search_magnet } = Config.getConfig("memz");
         if (!search_magnet && !e.isMaster) return logger.warn("[memz-plugin]磁力搜索状态当前为仅主人可用");
         const msg = e.msg;
         const searchQuery = msg.match(/^#?磁力搜索\s*(.+)$/)[1];

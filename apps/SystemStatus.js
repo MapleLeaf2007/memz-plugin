@@ -3,7 +3,6 @@ import si from "systeminformation";
 import { exec } from "child_process";
 import { promisify } from "util";
 import { Config } from "../components/index.js";
-const { SystemStatusAll } = Config.getConfig("memz");
 const execAsync = promisify(exec);
 
 export class SystemStatus extends plugin {
@@ -23,6 +22,7 @@ export class SystemStatus extends plugin {
   }
 
   async handleMasterCheck(e) {
+    const { SystemStatusAll } = Config.getConfig("memz");
     if (!SystemStatusAll && !e.isMaster) {
       logger.warn("[memz-plugin]系统状态当前为仅主人可用");
       return false;

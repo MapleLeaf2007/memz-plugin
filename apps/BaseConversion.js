@@ -1,5 +1,4 @@
 import { Config } from "../components/index.js";
-const { BaseConversionAll } = Config.getConfig("memz");
 async function convertBase(number, fromBase, toBase) {
   if (fromBase < 2 || fromBase > 36 || toBase < 2 || toBase > 36) {
     throw new Error("Base must be in the range 2-36");
@@ -28,6 +27,7 @@ export class TextMsg extends plugin {
   }
 
   async BaseConversion(e) {
+    const { BaseConversionAll } = Config.getConfig("memz");
     if (!BaseConversionAll && !e.isMaster)
       return logger.warn("[memz-plugin]进制转换状态当前为仅主人可用");
     let args = e.msg

@@ -1,5 +1,4 @@
 import { Config } from "../components/index.js";
-const { SeoAll } = Config.getConfig("memz");
 
 export async function fetchSeoFromHtml(url) {
   const response = await fetch(url);
@@ -38,6 +37,7 @@ export class SeoPlugin extends plugin {
   }
 
   async fetchSeoInfoHandler(e) {
+    const { SeoAll } = Config.getConfig("memz");
     if (!SeoAll && !e.isMaster)
       return logger.warn("[memz-plugin]Seo状态当前为仅主人可用");
     let url = e.msg.match(/^#?seo\s*(.+)/)[1].trim();

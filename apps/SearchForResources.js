@@ -2,7 +2,7 @@ import xlsx from "xlsx";
 import path from "node:path";
 import fs from "fs";
 import { Config, Plugin_Data } from "../components/index.js";
-const { search_resource } = Config.getConfig("memz");
+
 const folderPath = path.join(Plugin_Data, "xlsx");
 
 function loadDataFromExcelFiles() {
@@ -69,6 +69,7 @@ export class ResourceSearchPlugin extends plugin {
   }
 
   async handleSearch(e) {
+    const { search_resource } = Config.getConfig("memz");
     if (!search_resource)
       return logger.warn("[memz-plugin]搜资源状态当前为关闭");
     const match = e.msg.match(/^#?搜资源\s*(\S+)$/);

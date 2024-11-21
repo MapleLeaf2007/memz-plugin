@@ -1,7 +1,6 @@
 import fs from "fs";
 import Redis from "ioredis";
 import { Config, Plugin_Path } from "../components/index.js";
-const { RedisStatusAll } = Config.getConfig("memz");
 import { generateScreenshot } from "../model/generateScreenshot.js";
 
 export class RedisStatus extends plugin {
@@ -21,6 +20,7 @@ export class RedisStatus extends plugin {
   }
 
   async getRedisInfo(e) {
+    const { RedisStatusAll } = Config.getConfig("memz");
     if (!RedisStatusAll && !e.isMaster)
       return logger.warn("[memz-plugin]Redis状态当前为仅主人可用");
 
