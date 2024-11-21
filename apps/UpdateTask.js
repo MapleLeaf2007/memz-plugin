@@ -21,11 +21,13 @@ export class UpdateTask extends plugin {
         }
       ]
     })
-    this.task = {
-      cron,
-      name: '[memz-plugin]仓库定时检查更新',
-      log: true,
-      fnc: () => this.UpdateTask()
+    this.task = []
+    if (checkupdate) {
+      this.task.push({
+        name: '[memz-plugin]定时检查仓库更新',
+        cron,
+        fnc: this.UpdateTask
+      })
     }
   }
 
