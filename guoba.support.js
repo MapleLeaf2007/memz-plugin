@@ -75,31 +75,31 @@ export function supportGuoba() {
           }
         },
         {
-          field: "api.https.enabled",
+          field: "api.httpsenabled",
           label: "HTTPS服务",
           bottomHelpMessage: "开启前请配置 SSL 证书,重启生效",
           component: "Switch",
         },
         {
-          field: "api.https.key",
+          field: "api.httpskey",
           label: "HTTPS私钥文件路径",
           bottomHelpMessage: "请输入私钥文件路径,不开启HTTPS服务时无需配置",
           component: "Input"
         },
         {
-          field: "api.https.cert",
+          field: "api.httpscert",
           label: "HTTPS证书文件路径",
           bottomHelpMessage: "请输入证书文件路径,不开启HTTPS服务时无需配置",
           component: "Input"
         },
         {
-          field: "api.cors.enabled",
+          field: "api.corsenabled",
           label: "CORS跨域",
           bottomHelpMessage: "開啟後,服务器会自动添加 Access-Control-Allow-Origin 头",
           component: "Switch",
         },
         {
-          field: "api.cors.origin",
+          field: "api.corsorigin",
           label: "API来源",
           bottomHelpMessage: "* 表示允许所有来源访问,可以指定具体的 URL，例如 http://example.com",
           component: "Input",
@@ -108,7 +108,7 @@ export function supportGuoba() {
           }
         },
         {
-          field: "api.rateLimit.windowMs",
+          field: "api.rateLimitwindowMs",
           label: "请求速率时间窗口",
           component: "InputNumber",
           componentProps: {
@@ -117,7 +117,7 @@ export function supportGuoba() {
           }
         },
         {
-          field: "api.rateLimit.max",
+          field: "api.rateLimitmax",
           label: "每秒最大请求数",
           bottomHelpMessage: "每个时间窗口内最多允许一个IP发送的请求数",
           component: "InputNumber",

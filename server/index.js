@@ -166,8 +166,8 @@ const handleRequest = async (req, res) => {
             logger.info(`[请求日志] IP:${ip} 路由:${route}`);
             await updateRequestStats(ip, route);
 
-            if (config.cors.enabled) {
-                res.setHeader('Access-Control-Allow-Origin', config.cors.origin);
+            if (config.corsenabled) {
+                res.setHeader('Access-Control-Allow-Origin', config.corsorigin);
             }
             res.setHeader('Content-Type', 'application/json; charset=utf-8');
             await handler(req, res);
@@ -205,21 +205,21 @@ const startServer = async () => {
         logger.info(chalk.yellowBright(`加载失败：${loadStats.failure} 个`));
         logger.info(chalk.cyanBright(`总耗时：${loadStats.totalTime} 毫秒`));
 
-        const serverOptions = config.https.enabled
+        const serverOptions = config.httpsenabled
             ? {
-                key: await fs.readFile(config.https.key),
-                cert: await fs.readFile(config.https.cert),
+                key: await fs.readFile(config.httpskey),
+                cert: await fs.readFile(config.httpscert),
             }
             : {};
 
-        const server = config.https.enabled
+        const server = config.httpsenabled
             ? https.createServer(serverOptions, handleRequest)
             : http.createServer(handleRequest);
 
         server.on('error', handleServerError);
 
         server.listen(config.port, '::', () => {
-            const protocol = config.https.enabled ? 'https' : 'http';
+            const protocol = config.httpsenabled ? 'https' : 'http';
             const ips = getLocalIPs();
             logger.info(`#######################################################`);
             logger.info(chalk.greenBright('- MEMZ-API 服务器已启动'));
