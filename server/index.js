@@ -8,18 +8,17 @@ import { pathToFileURL } from 'url'
 import Redis from 'ioredis'
 import { PluginPath } from '../components/Path.js'
 import Config from '../components/Config.js'
-// 直接调用云崽的Redis配置,不过这是TRSS的,也不知道Miao适配不适配
-import Cfg from '../../../lib/config/config.js'
-let config = {}
-const rc = Cfg.redis
+import { RedisConfig } from '../model/Redis.js'
+
 const redis = new Redis({
-  host: rc.host,
-  port: rc.port,
-  username: rc.username,
-  password: rc.password,
+  host: RedisConfig.host,
+  port: RedisConfig.port,
+  username: RedisConfig.username,
+  password: RedisConfig.password,
   db: 2
 })
 
+let config = {}
 const apiHandlersCache = {}
 // 统计
 let loadStats = {
