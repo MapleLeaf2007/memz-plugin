@@ -33,8 +33,7 @@ export class UpdateTask extends plugin {
 
   async UpdateTask () {
     if (!checkupdate) {
-      logger.warn('[memz-plugin]仓库定时检查更新已关闭')
-      return true
+      return logger.warn('[memz-plugin]仓库定时检查更新已关闭')
     }
 
     // 去重

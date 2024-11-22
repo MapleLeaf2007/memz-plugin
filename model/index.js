@@ -1,4 +1,4 @@
-import { generateScreenshot } from './generateScreenshot.js'
+import { generateScreenshot } from './Screenshot.js'
 import {
   RedisConfig,
   RedisHost,

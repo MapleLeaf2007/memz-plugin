@@ -1,6 +1,6 @@
 import fs from 'fs'
 import whois from 'whois-json'
-import { generateScreenshot } from '../model/generateScreenshot.js'
+import { generateScreenshot } from '../model/Screenshot.js'
 import { Config, PluginPath } from '../components/index.js'
 import puppeteer from '../../../lib/puppeteer/puppeteer.js'
 const whoisFieldsMap = {
@@ -303,6 +303,7 @@ export class WebTools extends plugin {
     await page.close()
     return screenshotBase64
   }
+
   async BaseConversion (e) {
     const { BaseConversionAll } = Config.getConfig('memz')
     if (!BaseConversionAll && !e.isMaster) { return logger.warn('[memz-plugin]进制转换状态当前为仅主人可用') }
