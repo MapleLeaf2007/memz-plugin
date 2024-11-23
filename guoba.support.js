@@ -249,7 +249,7 @@ export function supportGuoba () {
           component: 'Switch'
         },
         {
-          field: 'memz.search_magnet',
+          field: 'memz.SearchMagnet',
           label: '磁力搜索',
           bottomHelpMessage: '由于内容涉及违规, 不建议开启,关闭时仅主人可用',
           component: 'Switch'
