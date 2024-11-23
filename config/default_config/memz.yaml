@@ -36,4 +36,4 @@ SearchResource: true
 # 申请游戏是否开启
 apply_game: true
 # 是否开启磁力搜索
-search_magnet: false
+SearchMagnet: false

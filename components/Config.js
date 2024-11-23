@@ -17,33 +17,112 @@ class Config {
 
   /** 初始化配置 */
   initCfg () {
-    let path = `${PluginPath}/config/config/`
+    const path = `${PluginPath}/config/config/`
     if (!fs.existsSync(path)) fs.mkdirSync(path)
-    let pathDef = `${PluginPath}/config/default_config/`
-    const files = fs
-      .readdirSync(pathDef)
-      .filter((file) => file.endsWith('.yaml'))
-    for (let file of files) {
+    const pathDef = `${PluginPath}/config/default_config/`
+    const files = fs.readdirSync(pathDef).filter(file => file.endsWith('.yaml'))
+    this.files = files
+    const ignore = []
+    for (const file of files) {
       if (!fs.existsSync(`${path}${file}`)) {
         fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
       } else {
         const config = YAML.parse(fs.readFileSync(`${path}${file}`, 'utf8'))
-        const defConfig = YAML.parse(
-          fs.readFileSync(`${pathDef}${file}`, 'utf8')
-        )
-        const { differences, result } = this.mergeObjectsWithPriority(
-          config,
-          defConfig
-        )
-        if (differences) {
+        const defaultConfig = YAML.parse(fs.readFileSync(`${pathDef}${file}`, 'utf8'))
+        let isChange = false
+        const saveKeys = []
+        const merge = (defValue, value, prefix = '') => {
+          const defKeys = Object.keys(defValue)
+          const configKeys = Object.keys(value || {})
+          for (const key of defKeys) {
+            switch (typeof defValue[key]) {
+              case 'object':
+                if (!Array.isArray(defValue[key]) && !ignore.includes(`${file.replace('.yaml', '')}.${key}`)) {
+                  defValue[key] = merge(defValue[key], value[key], key + '.')
+                  break
+                }
+              // eslint-disable-next-line no-fallthrough
+              default:
+                if (!configKeys.includes(key)) {
+                  isChange = true
+                } else {
+                  defValue[key] = value[key]
+                }
+                saveKeys.push(`${prefix}${key}`)
+            }
+          }
+          return defValue
+        }
+        const value = merge(defaultConfig, config)
+        if (isChange) {
           fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
-          for (const key in result) {
-            this.modify(file.replace('.yaml', ''), key, result[key])
+          for (const key of saveKeys) {
+            this.modify(file.replace('.yaml', ''), key, key.split('.').reduce((obj, key) => obj[key], value))
           }
         }
       }
       this.watch(`${path}${file}`, file.replace('.yaml', ''), 'config')
     }
+  }
+
+  /**
+   * 获取插件基本配置
+   * @returns {{
+   *  SystemStatusAll: boolean,
+   *  RedisStatusAll: boolean,
+   *  WhoisAll: boolean,
+   *  SeoAll: boolean,
+   *  webpage: boolean,
+   *  PingAll: boolean,
+   *  PingProxy: boolean,
+   *  PingProxyAddress: string,
+   *  PingApi: number,
+   *  IpinfoToken: string,
+   *  UnicodeAll: boolean,
+   *  UrlAll: boolean,
+   *  BaseConversionAll: boolean,
+   *  SearchMovie: boolean,
+   *  SearchResource: boolean,
+   *  apply_game: boolean,
+   *  SearchMagnet: boolean
+   * }}
+  */
+  get memz () {
+    return this.getDefOrConfig('memz')
+  }
+
+  /**
+   * 获取更新与推送配置
+   * @returns {{
+  *  autoupdate: boolean,
+  *  updatecron: string,
+  *  checkupdate: boolean,
+  *  CUSTOM_REPOSITORY: string[],
+  *  cron: string
+  * }}
+  */
+  get update () {
+    return this.getDefOrConfig('update')
+  }
+
+  /**
+   * 获取推送配置
+   * @returns {{
+  *  enabled: boolean,
+  *  port: number,
+  *  httpsenabled: boolean,
+  *  httpskey: string,
+  *  httpscert: string,
+  *  corsenabled: boolean,
+  *  corsorigin: string,
+  *  rateLimitwindowMs: number,
+  *  rateLimitmax: number,
+  *  blacklistedIPs: string[],
+  *  whitelistedIPs: string[],
+  * }}
+  */
+  get api () {
+    return this.getDefOrConfig('api')
   }
 
   /**
