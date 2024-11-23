@@ -237,13 +237,13 @@ export function supportGuoba () {
           label: '网络搜索设置'
         },
         {
-          field: 'memz.search_movie',
+          field: 'memz.SearchMovie',
           label: '搜影视',
           bottomHelpMessage: '使用API搜索影视资源,关闭时所有人不可用',
           component: 'Switch'
         },
         {
-          field: 'memz.search_resource',
+          field: 'memz.SearchResource',
           label: '搜资源',
           bottomHelpMessage: '搜索本地xlsx文件的游戏,关闭时所有人不可用',
           component: 'Switch'
