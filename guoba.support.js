@@ -254,12 +254,6 @@ export function supportGuoba () {
           bottomHelpMessage: '由于内容涉及违规, 不建议开启,关闭时仅主人可用',
           component: 'Switch'
         }
-        // {
-        //   field: "memz.apply_game",
-        //   label: "是否开启申请游戏",
-        //   bottomHelpMessage: "关闭时所有人不可用",
-        //   component: "Switch",
-        // },
       ],
       getConfigData () {
         return {

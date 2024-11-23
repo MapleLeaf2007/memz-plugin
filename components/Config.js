@@ -15,53 +15,32 @@ class Config {
     this.initCfg()
   }
 
-  /** 初始化配置 */
   initCfg () {
-    const path = `${PluginPath}/config/config/`
+    let path = `${PluginPath}/config/config/`
     if (!fs.existsSync(path)) fs.mkdirSync(path)
-    const pathDef = `${PluginPath}/config/default_config/`
-    const files = fs.readdirSync(pathDef).filter(file => file.endsWith('.yaml'))
-    this.files = files
-    const ignore = []
-    for (const file of files) {
+    let pathDef = `${PluginPath}/config/default_config/`
+    const files = fs
+      .readdirSync(pathDef)
+      .filter((file) => file.endsWith('.yaml'))
+    for (let file of files) {
       if (!fs.existsSync(`${path}${file}`)) {
         fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
       } else {
         const config = YAML.parse(fs.readFileSync(`${path}${file}`, 'utf8'))
-        const defaultConfig = YAML.parse(fs.readFileSync(`${pathDef}${file}`, 'utf8'))
-        let isChange = false
-        const saveKeys = []
-        const merge = (defValue, value, prefix = '') => {
-          const defKeys = Object.keys(defValue)
-          const configKeys = Object.keys(value || {})
-          for (const key of defKeys) {
-            switch (typeof defValue[key]) {
-              case 'object':
-                if (!Array.isArray(defValue[key]) && !ignore.includes(`${file.replace('.yaml', '')}.${key}`)) {
-                  defValue[key] = merge(defValue[key], value[key], key + '.')
-                  break
-                }
-              // eslint-disable-next-line no-fallthrough
-              default:
-                if (!configKeys.includes(key)) {
-                  isChange = true
-                } else {
-                  defValue[key] = value[key]
-                }
-                saveKeys.push(`${prefix}${key}`)
-            }
-          }
-          return defValue
-        }
-        const value = merge(defaultConfig, config)
-        if (isChange) {
+        const defConfig = YAML.parse(
+          fs.readFileSync(`${pathDef}${file}`, 'utf8')
+        )
+        const { differences, result } = this.mergeObjectsWithPriority(
+          config,
+          defConfig
+        )
+        if (differences) {
           fs.copyFileSync(`${pathDef}${file}`, `${path}${file}`)
-          for (const key of saveKeys) {
-            this.modify(file.replace('.yaml', ''), key, key.split('.').reduce((obj, key) => obj[key], value))
+          for (const key in result) {
+            this.modify(file.replace('.yaml', ''), key, result[key])
           }
         }
       }
-      this.watch(`${path}${file}`, file.replace('.yaml', ''), 'config')
     }
   }
 
