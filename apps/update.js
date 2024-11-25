@@ -35,7 +35,7 @@ export class Updates extends plugin {
     this.task.push({
       name: '[memz-plugin]自动更新]',
       cron: updatecron,
-      fnc: () => this.update(this.e)
+      fnc: () => this.update.bind(this.e)
     })
   }
 
