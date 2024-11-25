@@ -177,7 +177,7 @@ export class SystemStatus extends plugin {
       let output = `
 📊 系统状态
 
-适配器: ${e.adapter_name || 'ICQQ'}
+适配器: ${e.bot?.version?.id || e?.adapter_name || 'QQ'}
 操作系统: ${osInfo.platform}
 系统架构: ${systemArchitecture}
 主机名: ${os.hostname()}
