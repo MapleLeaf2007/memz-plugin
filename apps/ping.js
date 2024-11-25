@@ -102,7 +102,7 @@ export class PingScreenshot extends plugin {
 
   async Zhalema (e) {
     const { PingProxy, PingProxyAddress } = Config.getConfig('memz')
-    e.reply('正在获取Ping数据...请稍等......', true)
+    e.reply('正在获取Ping数据...请稍等......', true, { recallMsg: 5 })
 
     const match = e.msg.match(/^#(http|ping|tcping)\s*(\S+)$/i)
     if (!match) {

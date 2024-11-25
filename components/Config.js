@@ -45,66 +45,6 @@ class Config {
   }
 
   /**
-   * 获取插件基本配置
-   * @returns {{
-   *  SystemStatusAll: boolean,
-   *  RedisStatusAll: boolean,
-   *  WhoisAll: boolean,
-   *  SeoAll: boolean,
-   *  webpage: boolean,
-   *  PingAll: boolean,
-   *  PingProxy: boolean,
-   *  PingProxyAddress: string,
-   *  PingApi: number,
-   *  IpinfoToken: string,
-   *  UnicodeAll: boolean,
-   *  UrlAll: boolean,
-   *  BaseConversionAll: boolean,
-   *  SearchMovie: boolean,
-   *  SearchResource: boolean,
-   *  apply_game: boolean,
-   *  SearchMagnet: boolean
-   * }}
-  */
-  get memz () {
-    return this.getDefOrConfig('memz')
-  }
-
-  /**
-   * 获取更新与推送配置
-   * @returns {{
-  *  autoupdate: boolean,
-  *  updatecron: string,
-  *  checkupdate: boolean,
-  *  CUSTOM_REPOSITORY: string[],
-  *  cron: string
-  * }}
-  */
-  get update () {
-    return this.getDefOrConfig('update')
-  }
-
-  /**
-   * 获取推送配置
-   * @returns {{
-  *  enabled: boolean,
-  *  port: number,
-  *  httpsenabled: boolean,
-  *  httpskey: string,
-  *  httpscert: string,
-  *  corsenabled: boolean,
-  *  corsorigin: string,
-  *  rateLimitwindowMs: number,
-  *  rateLimitmax: number,
-  *  blacklistedIPs: string[],
-  *  whitelistedIPs: string[],
-  * }}
-  */
-  get api () {
-    return this.getDefOrConfig('api')
-  }
-
-  /**
    * 获取配置yaml
    * @param type 默认跑配置-defSet，用户配置-config
    * @param name 名称
