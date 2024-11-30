@@ -10,12 +10,10 @@ export async function generateScreenshot (html) {
 
     await page.setContent(html, { waitUntil: 'domcontentloaded' })
 
-    // 自适应页面高度
-    const height = await page.evaluate(() => document.documentElement.scrollHeight)
-
+    // 自动调整页面，截图整个页面
     const buffer = await page.screenshot({
       encoding: 'base64',
-      clip: { x: 0, y: 0, width: 800, height }
+      fullPage: true
     })
 
     await page.close()
